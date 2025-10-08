@@ -2323,6 +2323,11 @@ lucide.createIcons();
         return;
     }
 
+            if (password.length > 72) {
+    showNotification('La contraseña no puede tener más de 72 caracteres');
+    return;
+}
+
     try {
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
@@ -3369,6 +3374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
