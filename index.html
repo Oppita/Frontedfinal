@@ -3324,11 +3324,52 @@ document.addEventListener("DOMContentLoaded", () => {
   // createList("Mis Ofertas");
   // createPriceAlert(5, 25000);
 
+  // CÓDIGO SEGURO PARA PRODUCTOS DESTACADOS - PREVENIR ERROR 3102
+  document.addEventListener("DOMContentLoaded", () => {
+    const destacadosList = document.getElementById("destacados-list");
+    
+    // Verificar si el elemento existe antes de manipularlo
+    if (!destacadosList) {
+        console.warn("Elemento 'destacados-list' no encontrado en el DOM");
+        return;
+    }
+    
+    // Verificar si products existe
+    if (typeof products === 'undefined') {
+        console.warn("Variable 'products' no definida");
+        destacadosList.innerHTML = '<p class="text-center">No hay productos disponibles</p>';
+        return;
+    }
+    
+    try {
+        const destacados = getTopProductsByAhorro(products, 4);
+        if (destacados && destacados.length > 0) {
+            destacados.forEach(prod => {
+                destacadosList.innerHTML += `
+                    <div class="bg-white rounded-xl shadow p-4">
+                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-40 object-contain mb-2">
+                        <h3 class="font-semibold text-sm mb-1">${prod.name}</h3>
+                        <p class="text-green-600 font-bold">${renderPrice(prod.price)}</p>
+                        <p class="text-gray-500 line-through text-sm">${renderPrice(prod.previousPrice)}</p>
+                        <p class="text-red-500 text-sm font-bold">↓ ${prod.ahorro}%</p>
+                    </div>
+                `;
+            });
+        } else {
+            destacadosList.innerHTML = '<p class="text-center">No hay productos destacados</p>';
+        }
+    } catch (error) {
+        console.error('Error al cargar productos destacados:', error);
+        destacadosList.innerHTML = '<p class="text-center">Error al cargar productos</p>';
+    }
+  });
+
 </script>
 
 
 </body>
 </html>
+
 
 
 
