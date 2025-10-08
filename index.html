@@ -2595,8 +2595,9 @@ async function handleLogin(event) {
         }
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            showLandingPage();
-            updateAlertsBadge(); // inicializar badge
+        debugState(); // Para debug
+        showLandingPage();
+        updateAlertsBadge();
         });
     </script>
 
@@ -3328,6 +3329,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
