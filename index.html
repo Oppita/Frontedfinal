@@ -2358,6 +2358,9 @@ async function handleLogin(event) {
             
             // Cargar datos del usuario (favoritos, listas, etc.)
             loadUserData();
+
+            // Check price alerts on login
+            checkPriceAlerts();
         } else {
             showNotification('Error en login: ' + (data.detail || 'Credenciales incorrectas'));
         }
@@ -2366,9 +2369,6 @@ async function handleLogin(event) {
         showNotification('Error de conexión. Intenta nuevamente.');
     }
 }
-            // Check price alerts on login
-            checkPriceAlerts();
-        }
         function logout() {
             state.isLoggedIn = false;
             state.user = null;
@@ -3303,5 +3303,6 @@ function renderPrice(value) {
 
 </body>
 </html>
+
 
 
