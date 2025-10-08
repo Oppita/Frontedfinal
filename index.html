@@ -482,7 +482,9 @@
         </div>
     </div>
     <script>
-        // State management
+        // ===== INICIALIZACIÓN DEL STATE Y FUNCIONES BÁSICAS =====
+
+        // State management - VERSIÓN MEJORADA
         let state = {
             currentPage: 'landing',
             selectedCategory: {
@@ -498,8 +500,29 @@
             user: null,
             priceAlerts: [],
             shoppingLists: [],
-            currentListId: null
+            currentListId: null,
+            currentProductList: null,
+            products: window.products || [] // Asegurar que products esté definido
         };
+
+        // Verificar si products está definido globalmente
+        if (typeof products === 'undefined') {
+            console.warn('Variable global "products" no definida');
+            window.products = {}; // Inicializar como objeto vacío
+            state.products = {};
+        }
+
+        // FUNCIÓN DE DEBUG
+        function debugState() {
+            console.log('=== DEBUG STATE ===');
+            console.log('Current Page:', state.currentPage);
+            console.log('Is Logged In:', state.isLoggedIn);
+            console.log('User:', state.user);
+            console.log('Products count:', Object.keys(products || {}).length);
+            console.log('Products defined:', typeof products !== 'undefined');
+            console.log('Backend URL:', window.API_URL || 'No definida');
+            console.log('==================');
+        }
         // Category structure (Lucide migrado completo)
 const categories = {
   main: [
@@ -3305,6 +3328,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
