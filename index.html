@@ -2282,24 +2282,90 @@ lucide.createIcons();
             }
         }
         // Auth functions
-        function handleRegister(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const name = formData.get('name');
-            const email = formData.get('email');
+        async function handleRegister(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+
+    try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Guardar token y datos de usuario
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            
+            // Actualizar estado
             state.isLoggedIn = true;
-            state.user = { name, email };
-            showNotification('¡Bienvenido!');
+            state.user = data.user;
+            
+            showNotification('¡Registro exitoso! Bienvenido a Pricezapp');
             showCategoriesPage();
+        } else {
+            showNotification('Error en registro: ' + (data.detail || 'Intenta nuevamente'));
         }
-        function handleLogin(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const email = formData.get('email');
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error de conexión. Intenta nuevamente.');
+    }
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const email = formData.get('email');
+    const password = formData.get('password');
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok && data.access_token) {
+            // Guardar token y datos de usuario
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user', JSON.stringify(data.user || { name: 'Usuario', email: email }));
+            
+            // Actualizar estado
             state.isLoggedIn = true;
-            state.user = { name: 'Usuario', email };
-            showNotification('¡Bienvenido de nuevo!');
+            state.user = data.user || { name: 'Usuario', email: email };
+            
+            showNotification('¡Inicio de sesión exitoso!');
             showCategoriesPage();
+            
+            // Cargar datos del usuario (favoritos, listas, etc.)
+            loadUserData();
+        } else {
+            showNotification('Error en login: ' + (data.detail || 'Credenciales incorrectas'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error de conexión. Intenta nuevamente.');
+    }
+}
             // Check price alerts on login
             checkPriceAlerts();
         }
@@ -3192,3 +3258,4 @@ function renderPrice(value) {
 
 </body>
 </html>
+
