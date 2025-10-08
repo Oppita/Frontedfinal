@@ -10,12 +10,17 @@
     <style>
     /* Definir la fuente Neue Metana Mono */
     @font-face {
-      font-family: 'Neue Metana Mono';
-      src: url('fonts/NeueMetanaMono-Regular.woff2') format('woff2'),
-           url('fonts/NeueMetanaMono-Regular.woff') format('woff');
-      font-weight: normal;
-      font-style: normal;
-    }
+    font-family: 'Neue Metana Mono';
+    src: url('fonts/NeueMetanaMono-Regular.woff2') format('woff2'),
+         url('fonts/NeueMetanaMono-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Mejor experiencia de carga */
+}
+
+.title {
+    font-family: 'Neue Metana Mono', 'Inter', monospace; /* Fallbacks */
+}
 
     /* Estilos existentes */
     body {
@@ -2289,6 +2294,12 @@ lucide.createIcons();
     const email = formData.get('email');
     const password = formData.get('password');
 
+    // Validación básica
+    if (!name || !email || !password) {
+        showNotification('Por favor completa todos los campos');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
@@ -2302,14 +2313,18 @@ lucide.createIcons();
             })
         });
 
+        // Verificar si la respuesta es JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Respuesta del servidor no es JSON');
+        }
+
         const data = await response.json();
         
         if (response.ok) {
-            // Guardar token y datos de usuario
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user));
             
-            // Actualizar estado
             state.isLoggedIn = true;
             state.user = data.user;
             
@@ -2319,8 +2334,8 @@ lucide.createIcons();
             showNotification('Error en registro: ' + (data.detail || 'Intenta nuevamente'));
         }
     } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error de conexión. Intenta nuevamente.');
+        console.error('Error de registro:', error);
+        showNotification('Error de conexión. Verifica tu conexión e intenta nuevamente.');
     }
 }
 
@@ -2329,6 +2344,12 @@ async function handleLogin(event) {
     const formData = new FormData(event.target);
     const email = formData.get('email');
     const password = formData.get('password');
+
+    // Validación básica
+    if (!email || !password) {
+        showNotification('Por favor completa todos los campos');
+        return;
+    }
 
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -2342,77 +2363,34 @@ async function handleLogin(event) {
             })
         });
 
+        // Verificar si la respuesta es JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Respuesta del servidor no es JSON');
+        }
+
         const data = await response.json();
         
         if (response.ok && data.access_token) {
-            // Guardar token y datos de usuario
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user || { name: 'Usuario', email: email }));
             
-            // Actualizar estado
             state.isLoggedIn = true;
             state.user = data.user || { name: 'Usuario', email: email };
             
             showNotification('¡Inicio de sesión exitoso!');
             showCategoriesPage();
             
-            // Cargar datos del usuario (favoritos, listas, etc.)
             loadUserData();
-
-            // Check price alerts on login
             checkPriceAlerts();
         } else {
             showNotification('Error en login: ' + (data.detail || 'Credenciales incorrectas'));
         }
     } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error de conexión. Intenta nuevamente.');
+        console.error('Error de login:', error);
+        showNotification('Error de conexión. Verifica tu conexión e intenta nuevamente.');
     }
 }
-        function logout() {
-            state.isLoggedIn = false;
-            state.user = null;
-            state.shoppingCart = [];
-            state.favorites = [];
-            state.priceAlerts = [];
-            state.shoppingLists = [];
-            state.currentListId = null;
-            showLandingPage();
-        }
-        // Modal and list helper functions
-        window.pendingProductForList = null;
-        function askForList(product) {
-            window.pendingProductForList = product || null;
-            populateExistingLists();
-            document.getElementById("select-list-modal").classList.remove("hidden");
-        }
-        function closeListModal() {
-            window.pendingProductForList = null;
-            document.getElementById("select-list-modal").classList.add("hidden");
-        }
-        function populateExistingLists() {
-            const selectModal = document.getElementById("existing-lists");
-            const selectSimple = document.getElementById("shopping-list-select");
-            if (selectModal) {
-                selectModal.innerHTML = '<option value="">-- Selecciona una lista --</option>';
-                state.shoppingLists.forEach(list => {
-                    const opt = document.createElement("option");
-                    opt.value = list.id;
-                    opt.textContent = list.name;
-                    selectModal.appendChild(opt);
-                });
-            }
-            if (selectSimple) {
-                // update the existing select used on product page too
-                selectSimple.innerHTML = '<option value="">-- Selecciona una lista --</option>';
-                state.shoppingLists.forEach(list => {
-                    const opt = document.createElement("option");
-                    opt.value = list.id;
-                    opt.textContent = list.name;
-                    selectSimple.appendChild(opt);
-                });
-            }
-        }
         function createListFromModal() {
             const nameInput = document.getElementById("new-list-name");
             const name = nameInput.value.trim();
@@ -3327,6 +3305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
