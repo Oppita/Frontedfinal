@@ -3051,6 +3051,8 @@ function renderCategories() {
   }
 }
 
+    
+
 // ====== FUNCIÓN GLOBAL PARA FORMATEAR PRECIOS ======
 function formatCOP(value) {
     if (typeof value !== 'number') return value;
@@ -3174,6 +3176,49 @@ function renderPrice(value) {
     }
   }
 
+
+    async function loadUserData() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        // Cargar favoritos
+        const favResponse = await fetch(`${API_URL}/favorites/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (favResponse.ok) {
+            const favorites = await favResponse.json();
+            state.favorites = favorites;
+        }
+
+        // Cargar listas de compras
+        const listsResponse = await fetch(`${API_URL}/lists/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (listsResponse.ok) {
+            const lists = await listsResponse.json();
+            state.shoppingLists = lists;
+        }
+
+        // Cargar alertas
+        const alertsResponse = await fetch(`${API_URL}/alerts/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (alertsResponse.ok) {
+            const alerts = await alertsResponse.json();
+            state.priceAlerts = alerts;
+        }
+    } catch (error) {
+        console.error('Error cargando datos del usuario:', error);
+    }
+}
+
   // 🚪 Cerrar sesión
   function logoutUser() {
     localStorage.removeItem("token");
@@ -3258,4 +3303,5 @@ function renderPrice(value) {
 
 </body>
 </html>
+
 
