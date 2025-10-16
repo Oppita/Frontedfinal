@@ -61,6 +61,12 @@
       font-family: 'Neue Metana Mono', serif; /* Usar Neue Metana Mono con fallback a serif */
     }
   </style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+
+    
 <!-- Injected: Chart.js + Tailwind safe-check (in case original doesn't have) -->
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -2310,115 +2316,39 @@ lucide.createIcons();
             }
         }
         // Auth functions
-        async function handleRegister(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const password = formData.get('password');
+        async function handleRegister(e) {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.email.value;
+  const password = form.password.value;
 
-    // Validación básica
-    if (!name || !email || !password) {
-        showNotification('Por favor completa todos los campos');
-        return;
-    }
-
-            if (password.length > 72) {
-    showNotification('La contraseña no puede tener más de 72 caracteres');
-    return;
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) return alert(error.message);
+  alert("Revisa tu correo para confirmar tu cuenta");
 }
 
-    try {
-        const response = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                email: email,
-                password: password
-            })
-        });
+async function handleLogin(e) {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.email.value;
+  const password = form.password.value;
 
-        // Verificar si la respuesta es JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Respuesta del servidor no es JSON');
-        }
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return alert(error.message);
 
-        const data = await response.json();
-        
-        if (response.ok) {
-            localStorage.setItem('token', data.access_token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            
-            state.isLoggedIn = true;
-            state.user = data.user;
-            
-            showNotification('¡Registro exitoso! Bienvenido a Pricezapp');
-            showCategoriesPage();
-        } else {
-            showNotification('Error en registro: ' + (data.detail || 'Intenta nuevamente'));
-        }
-    } catch (error) {
-        console.error('Error de registro:', error);
-        showNotification('Error de conexión. Verifica tu conexión e intenta nuevamente.');
-    }
+  localStorage.setItem("user", JSON.stringify(data.user));
+  state.isLoggedIn = true;
+  state.user = data.user;
+  showCategoriesPage();
 }
 
-async function handleLogin(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const email = formData.get('email');
-    const password = formData.get('password');
-
-    // Validación básica
-    if (!email || !password) {
-        showNotification('Por favor completa todos los campos');
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        // Verificar si la respuesta es JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Respuesta del servidor no es JSON');
-        }
-
-        const data = await response.json();
-        
-        if (response.ok && data.access_token) {
-            localStorage.setItem('token', data.access_token);
-            localStorage.setItem('user', JSON.stringify(data.user || { name: 'Usuario', email: email }));
-            
-            state.isLoggedIn = true;
-            state.user = data.user || { name: 'Usuario', email: email };
-            
-            showNotification('¡Inicio de sesión exitoso!');
-            showCategoriesPage();
-            
-            loadUserData();
-            checkPriceAlerts();
-        } else {
-            showNotification('Error en login: ' + (data.detail || 'Credenciales incorrectas'));
-        }
-    } catch (error) {
-        console.error('Error de login:', error);
-        showNotification('Error de conexión. Verifica tu conexión e intenta nuevamente.');
-    }
+async function logout() {
+  await supabase.auth.signOut();
+  localStorage.removeItem("user");
+  state.isLoggedIn = false;
+  showLandingPage();
 }
+
         function createListFromModal() {
             const nameInput = document.getElementById("new-list-name");
             const name = nameInput.value.trim();
@@ -3374,6 +3304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
