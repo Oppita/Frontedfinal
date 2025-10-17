@@ -6836,12 +6836,12 @@ async function handleLogout() {
   try {
     const { data } = await window.supabaseClient.auth.getSession();
     if (data?.session) {
-      console.log("🔁 Sesión restaurada:", data.session.user?.email);
-      showCategoriesPage();
-    } else {
-      console.log("🚪 No hay sesión activa");
-      showLoginPage();
-    }
+  console.log("🔁 Sesión restaurada:", data.session.user?.email);
+  showCategoriesPage();
+} else {
+  console.log("🚪 No hay sesión activa");
+  showLandingPage(); // 👈 Muestra landing en lugar de login
+}
   } catch (err) {
     console.error("Error al recuperar sesión:", err);
     showLoginPage();
@@ -6852,6 +6852,7 @@ async function handleLogout() {
 
 </body>
 </html>
+
 
 
 
