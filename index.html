@@ -2325,6 +2325,9 @@ lucide.createIcons();
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) return alert(error.message);
   alert("Revisa tu correo para confirmar tu cuenta");
+            state.isLoggedIn = true;
+state.user = data.user;
+
 }
 
 async function handleLogin(e) {
@@ -3396,6 +3399,11 @@ async function handleLogout() {
   } catch (err) {
     console.error("Error al recuperar sesión:", err);
     showLoginPage();
+
+      console.log("🔁 Sesión restaurada:", data.session.user?.email);
+  state.isLoggedIn = true;
+  state.user = data.session.user;
+  showCategoriesPage();
   }
 })();
 </script>
@@ -3403,6 +3411,7 @@ async function handleLogout() {
 
 </body>
 </html>
+
 
 
 
