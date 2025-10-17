@@ -3370,7 +3370,81 @@ try {
 <!-- Tu archivo de conexión a Supabase -->
 
 <!-- Tu archivo principal JS -->
-<script src="app.js"></script>
+<!-- ========================== APP.JS INLINE ========================== -->
+<script>
+console.log("✅ app.js embebido y ejecutándose correctamente");
+
+// Manejo de navegación (mostrar páginas)
+function showPage(pageId) {
+  document.querySelectorAll('div[id$="-page"]').forEach(p => p.classList.add('hidden'));
+  const el = document.getElementById(pageId);
+  if (el) el.classList.remove('hidden');
+}
+
+// Mostrar secciones específicas
+function showLoginPage() { showPage('login-page'); }
+function showRegisterPage() { showPage('register-page'); }
+function showCategoriesPage() { showPage('categories-page'); }
+
+// ===================== AUTENTICACIÓN SUPABASE =====================
+const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';  // <--- REEMPLAZA ESTO
+const SUPABASE_ANON_KEY = 'TU_ANON_KEY';                // <--- REEMPLAZA ESTO
+
+// Inicializar cliente global
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+console.log("✅ Supabase inicializado correctamente");
+
+// Registro de usuario
+async function handleRegister(e) {
+  e.preventDefault();
+  const email = e.target.email.value.trim();
+  const password = e.target.password.value.trim();
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) throw error;
+    alert('✅ Usuario registrado. Revisa tu correo para confirmar la cuenta.');
+  } catch (err) {
+    alert('❌ Error en registro: ' + err.message);
+  }
+}
+
+// Inicio de sesión
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = e.target.email.value.trim();
+  const password = e.target.password.value.trim();
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    alert('✅ Sesión iniciada correctamente');
+    console.log("Usuario:", data.user);
+    showCategoriesPage();
+  } catch (err) {
+    alert('❌ Error al iniciar sesión: ' + err.message);
+  }
+}
+
+// Cerrar sesión
+async function handleLogout() {
+  await supabaseClient.auth.signOut();
+  alert("👋 Sesión cerrada.");
+  showLoginPage();
+}
+
+// Recuperar sesión al recargar
+(async function initAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (data.session) {
+    console.log("🔄 Sesión recuperada:", data.session.user.email);
+    showCategoriesPage();
+  } else {
+    console.log("🚪 No hay sesión activa");
+    showLoginPage();
+  }
+})();
+</script>
+<!-- ================================================================ -->
+
 
 
     
@@ -3389,5 +3463,6 @@ try {
 
 
 <!--  -->
+
 
 
