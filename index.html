@@ -57,23 +57,47 @@
 
 <!-- Supabase helper placeholder: replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values in a separate supabase.js if preferred -->
 <script>
-/* Supabase init placeholder.
-   To enable real authentication/persistence:
-   1) Create a supabase project, copy your Project URL and anon key.
-   2) Replace the empty strings below OR create an external supabase.js with secure handling.
-*/
-try {
-  if (window.supabase) {
-    // Uncomment and fill the lines below to initialize in-file (not recommended for production)
-    // const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
-    // const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
-    // window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    // console.log('Supabase SDK loaded.');
+const SUPABASE_URL = 'https://abcd1234.supabase.co'; // tu URL real
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // tu anon key
+
+// Inicializar Supabase
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+console.log('✅ Supabase inicializado correctamente');
+
+// Funciones de autenticación básicas
+async function handleRegister(e) {
+  e.preventDefault();
+  const email = e.target.email.value;
+  const password = e.target.password.value;
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) throw error;
+    alert('✅ Registro exitoso. Revisa tu correo para confirmar la cuenta.');
+  } catch (err) {
+    alert('❌ Error en registro: ' + err.message);
   }
-} catch(e) {
-  console.warn('Supabase SDK not available or error during init', e);
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = e.target.email.value;
+  const password = e.target.password.value;
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    alert('✅ Sesión iniciada correctamente');
+    console.log('Usuario:', data.user);
+  } catch (err) {
+    alert('❌ Error al iniciar sesión: ' + err.message);
+  }
+}
+
+async function handleLogout() {
+  await supabaseClient.auth.signOut();
+  alert('👋 Sesión cerrada.');
 }
 </script>
+
 
 
 
@@ -3365,3 +3389,4 @@ try {
 
 
 <!--  -->
+
