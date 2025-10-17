@@ -1,4 +1,4 @@
-
+<!-- 
 
 <html lang="es">
 <head>
@@ -1388,12 +1388,21 @@ const categories = {
                 showLoginPage();
                 return;
             }
+
+
+            
             // Populate main categories
             const container = document.getElementById('main-categories-container');
-            container.innerHTML = '';
-            renderCategories();
-            // Renderizar productos destacados debajo de las categorías
-            renderFeaturedProducts();
+if (!container) {
+  console.warn("⚠️ Contenedor de categorías no encontrado. Reintentando en 300ms...");
+  setTimeout(showCategoriesPage, 300);
+  return;
+}
+
+// Si el contenedor existe, continuar normalmente
+container.innerHTML = '';
+renderCategories();
+renderFeaturedProducts();
 // Add global search functionality
             const globalSearch = document.getElementById('global-search');
             globalSearch.value = '';
@@ -2965,10 +2974,27 @@ function getLucideIcon(categoryName) {
 
 
 // Render categories into container using card-base and Lucide icons
-function renderCategories() {
+function renderCategories(retries = 0) {
   const container = document.getElementById('main-categories-container');
-  if (!container) return;
+  
+  // 🧩 Si no existe el contenedor, reintentar hasta 10 veces con pausas de 200 ms
+  if (!container) {
+    if (retries < 10) {
+      console.warn(`⚠️ renderCategories(): contenedor no disponible (intento ${retries + 1}). Reintentando...`);
+      setTimeout(() => renderCategories(retries + 1), 200);
+    } else {
+      console.error("❌ renderCategories(): contenedor no encontrado tras varios intentos.");
+    }
+    return;
+  }
+
   container.innerHTML = '';
+
+  if (!categories?.main || !Array.isArray(categories.main)) {
+    console.error("❌ categories.main no está definido o no es un arreglo");
+    return;
+  }
+
   categories.main.forEach(cat => {
     const div = document.createElement('div');
     div.className = 'card-base categoria';
@@ -2976,14 +3002,18 @@ function renderCategories() {
       state.selectedCategory.main = cat.name;
       showSubcategoriesPage();
     };
-    div.innerHTML = '<i data-lucide="'+getLucideIcon(cat.name)+'" class="card-icon"></i>' +
-                    '<p class="card-text">'+cat.name+'</p>';
+    div.innerHTML = `
+      <i data-lucide="${getLucideIcon(cat.name)}" class="card-icon"></i>
+      <p class="card-text">${cat.name}</p>
+    `;
     container.appendChild(div);
   });
+
   if (window.lucide && typeof lucide.createIcons === 'function') {
     try { lucide.createIcons(); } catch(e) {}
   }
 }
+
 
 // ====== FUNCIÓN GLOBAL PARA FORMATEAR PRECIOS ======
 function formatCOP(value) {
@@ -3211,8 +3241,7 @@ async function handleLogin(e) {
     alert("✅ Inicio de sesión exitoso");
     state.isLoggedIn = true;
     state.user = data.user;
-    if (typeof showCategoriesPage === "function") showCategoriesPage();
-  } catch (err) {
+     } catch (err) {
     alert("Error al iniciar sesión: " + (err.message || err));
   }
 }
@@ -3244,14 +3273,17 @@ async function logout() {
 }
 
 
-(async function restoreSession() {
+async function restoreSession() {
   try {
     const { data } = await supabaseClient.auth.getSession();
     if (data?.session?.user) {
-      console.log("🔁 Sesión detectada, pero permaneciendo en landing hasta login manual.");
+      console.log("✅ Sesión restaurada automáticamente, cargando categorías...");
       state.isLoggedIn = true;
       state.user = data.session.user;
-      // 🚫 No redirigir automáticamente
+      // 🔄 Cargar los datos guardados del usuario desde Supabase
+      await loadUserDataFromSupabase(state.user.id);
+      // 👇 Redirigir a la página de categorías principales
+      if (typeof showCategoriesPage === "function") showCategoriesPage();
     } else {
       console.log("🚪 No hay sesión activa. Mostrando landing page.");
       if (typeof showLandingPage === "function") showLandingPage();
@@ -3259,7 +3291,143 @@ async function logout() {
   } catch (err) {
     console.error("Error al restaurar sesión:", err);
   }
-})();
+}
+
+
+
+
+/* --- CLOUD SYNC FUNCTIONS --- */
+async function ensureUserDataRow(userId) {
+  if (!userId) return;
+  try {
+    const { data, error } = await supabaseClient
+      .from("user_data")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) {
+      await supabaseClient.from("user_data").insert([{ user_id: userId }]);
+      console.log("🆕 user_data row created for", userId);
+    }
+  } catch (err) {
+    console.error("ensureUserDataRow error:", err);
+  }
+}
+
+async function loadUserDataFromSupabase(userId) {
+  if (!userId) return;
+  try {
+    await ensureUserDataRow(userId);
+    const { data, error } = await supabaseClient
+      .from("user_data")
+      .select("favorites, lists, alerts, cart")
+      .eq("user_id", userId)
+      .single();
+    if (error) throw error;
+    state.favorites = data.favorites || [];
+    state.lists = data.lists || [];
+    state.alerts = data.alerts || [];
+    state.cart = data.cart || [];
+    // Sync localStorage too
+    try { localStorage.setItem(`user_${userId}`, JSON.stringify(data)); } catch(e){}
+    console.log("📦 Loaded user data from Supabase for", userId);
+    // Notify UI if your app listens to events
+    document.dispatchEvent(new Event("favoritesRestored"));
+    document.dispatchEvent(new Event("listsRestored"));
+    document.dispatchEvent(new Event("alertsRestored"));
+    document.dispatchEvent(new Event("cartRestored"));
+  } catch (err) {
+    console.error("loadUserDataFromSupabase error:", err);
+  }
+}
+
+async function saveUserDataToSupabase() {
+  if (!state?.user?.id) return;
+  try {
+    const payload = {
+      user_id: state.user.id,
+      favorites: state.favorites || [],
+      lists: state.lists || [],
+      alerts: state.alerts || [],
+      cart: state.cart || [],
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await supabaseClient
+      .from("user_data")
+      .upsert([payload], { onConflict: "user_id" });
+    if (error) throw error;
+    console.log("💾 Saved user data to Supabase for", state.user.id);
+    try { localStorage.setItem(`user_${state.user.id}`, JSON.stringify(payload)); } catch(e){}
+  } catch (err) {
+    console.error("saveUserDataToSupabase error:", err);
+  }
+}
+
+/* Hook saves to events — trigger these events in your app when data changes */
+document.addEventListener("favoritesUpdated", saveUserDataToSupabase);
+document.addEventListener("listsUpdated", saveUserDataToSupabase);
+document.addEventListener("alertsUpdated", saveUserDataToSupabase);
+document.addEventListener("cartUpdated", saveUserDataToSupabase);
+
+/* --- Restore session and sync on load --- */
+async function restoreAndSync() {
+  try {
+    if (!window.supabaseClient) return console.warn("Supabase client not initialized");
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session?.user) {
+      state.isLoggedIn = true;
+      state.user = data.session.user;
+      console.log("🔁 Session active:", state.user.email);
+      // load from cloud
+      await loadUserDataFromSupabase(state.user.id);
+      // show categories (if desired by UX)
+      if (typeof showCategoriesPage === "function") showCategoriesPage();
+    } else {
+      if (typeof showLandingPage === "function") showLandingPage();
+    }
+  } catch (err) {
+    console.error("restoreAndSync error:", err);
+  }
+}
+
+/* --- After manual login, sync cloud data too --- */
+const _origHandleLogin = window.handleLogin;
+window.handleLogin = async function(e) {
+  if (_origHandleLogin) await _origHandleLogin(e);
+  try {
+    if (state?.user?.id) {
+      await ensureUserDataRow(state.user.id);
+      await loadUserDataFromSupabase(state.user.id);
+      // notify UI in case needed
+      document.dispatchEvent(new Event("favoritesUpdated"));
+      document.dispatchEvent(new Event("listsUpdated"));
+      document.dispatchEvent(new Event("alertsUpdated"));
+      document.dispatchEvent(new Event("cartUpdated"));
+    }
+  } catch (err) {
+    console.error("post-login sync error:", err);
+  }
+};
+
+/* --- Ensure logout keeps remote data but clears local cache --- */
+const _origLogout = window.logout;
+window.logout = async function() {
+  try {
+    if (state?.user?.id) localStorage.removeItem(`user_${state.user.id}`);
+  } catch(e){}
+  if (_origLogout) await _origLogout();
+};
+
+/* --- Run restore on DOMContentLoaded (small delay to ensure supabaseClient available) --- */
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => { restoreAndSync(); }, 150);
+});
+
+
+
+
+
 
 
 
@@ -3284,6 +3452,374 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 });
 
 </script>
+
+
+<!-- ✅ SESIÓN PERSISTENTE Y SINCRONIZACIÓN DE DATOS POR USUARIO -->
+<script>
+// ======= Funciones de almacenamiento =======
+function saveUserData() {
+  if (!state?.user?.id) return;
+  const userKey = `user_${state.user.id}`;
+  const data = {
+    favorites: state.favorites || [],
+    lists: state.lists || [],
+    alerts: state.alerts || [],
+    cart: state.cart || []
+  };
+  localStorage.setItem(userKey, JSON.stringify(data));
+  console.log("💾 Datos guardados para", userKey);
+}
+
+function loadUserData(userId) {
+  const userKey = `user_${userId}`;
+  const stored = localStorage.getItem(userKey);
+  if (stored) {
+    try {
+      const data = JSON.parse(stored);
+      state.favorites = data.favorites || [];
+      state.lists = data.lists || [];
+      state.alerts = data.alerts || [];
+      state.cart = data.cart || [];
+      console.log("📦 Datos restaurados para", userKey);
+    } catch (e) {
+      console.warn("Error al cargar datos locales:", e);
+    }
+  }
+}
+
+function clearUserData(userId) {
+  if (!userId) return;
+  const userKey = `user_${userId}`;
+  localStorage.removeItem(userKey);
+  console.log("🧹 Datos locales eliminados para", userKey);
+}
+
+// ======= Persistencia de sesión =======
+
+(async function persistentSession() {
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session?.user) {
+      console.log("🔁 Sesión restaurada (manteniendo landing).");
+      state.isLoggedIn = true;
+      state.user = data.session.user;
+      loadUserData(data.session.user.id);
+      // 🚫 No redirigir automáticamente, se queda en landing
+    } else {
+      console.log("🚪 No hay sesión activa");
+      if (typeof showLandingPage === "function") showLandingPage();
+    }
+  } catch (err) {
+    console.error("Error al verificar sesión persistente:", err);
+  }
+})();
+
+
+// ======= Eventos =======
+document.addEventListener("favoritesUpdated", saveUserData);
+document.addEventListener("listsUpdated", saveUserData);
+document.addEventListener("alertsUpdated", saveUserData);
+document.addEventListener("cartUpdated", saveUserData);
+
+// ======= Logout =======
+async function logout() {
+  if (state?.user?.id) clearUserData(state.user.id);
+  await supabaseClient.auth.signOut();
+  state.isLoggedIn = false;
+  state.user = null;
+  if (typeof showLandingPage === "function") showLandingPage();
+}
+</script>
+
+<!-- ✅ SESIÓN PERSISTENTE + SINCRONIZACIÓN COMPLETA -->
+<script>
+async function restoreUserSession() {
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session?.user) {
+      console.log("🔁 Sesión activa detectada:", data.session.user.email);
+      state.isLoggedIn = true;
+      state.user = data.session.user;
+      // 🔹 Restaurar datos del usuario
+      loadUserData(data.session.user.id);
+      // 🔹 Redirigir automáticamente a categorías
+      if (typeof showCategoriesPage === "function") showCategoriesPage();
+    } else {
+      console.log("🚪 No hay sesión activa. Mostrando landing...");
+      if (typeof showLandingPage === "function") showLandingPage();
+    }
+  } catch (err) {
+    console.error("Error al restaurar sesión:", err);
+  }
+}
+
+// ✅ Cargar datos de usuario guardados localmente
+function loadUserData(userId) {
+  const key = `user_${userId}`;
+  const stored = localStorage.getItem(key);
+  if (!stored) return console.log("ℹ️ No hay datos guardados para el usuario:", userId);
+  try {
+    const data = JSON.parse(stored);
+    state.favorites = data.favorites || [];
+    state.lists = data.lists || [];
+    state.alerts = data.alerts || [];
+    state.cart = data.cart || [];
+    console.log("📦 Datos del usuario restaurados correctamente.");
+  } catch (err) {
+    console.error("Error al cargar datos del usuario:", err);
+  }
+}
+
+// ✅ Guardar datos del usuario actual
+function saveUserData() {
+  if (!state?.user?.id) return;
+  const key = `user_${state.user.id}`;
+  const data = {
+    favorites: state.favorites || [],
+    lists: state.lists || [],
+    alerts: state.alerts || [],
+    cart: state.cart || [],
+  };
+  localStorage.setItem(key, JSON.stringify(data));
+  console.log("💾 Datos guardados localmente para", key);
+}
+
+// ✅ Borrar datos al cerrar sesión
+async function logout() {
+  if (state?.user?.id) {
+    localStorage.removeItem(`user_${state.user.id}`);
+    console.log("🧹 Datos locales eliminados.");
+  }
+  await supabaseClient.auth.signOut();
+  state.isLoggedIn = false;
+  state.user = null;
+  if (typeof showLandingPage === "function") showLandingPage();
+}
+
+// ✅ Vincular eventos de guardado
+document.addEventListener("favoritesUpdated", saveUserData);
+document.addEventListener("listsUpdated", saveUserData);
+document.addEventListener("alertsUpdated", saveUserData);
+document.addEventListener("cartUpdated", saveUserData);
+
+// ✅ Llamar cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", restoreUserSession);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- BEGIN NON-INVASIVE PERSISTENCE & SUPABASE SYNC PATCH (NO UI CHANGES) -->
+<script>
+(function(){
+  // Namespace for patch
+  if (window.pzPatchInstalled) return;
+  window.pzPatchInstalled = true;
+  window.pzPatch = window.pzPatch || {};
+
+  // Config (replace the ANON KEY before deploying)
+  const PZ_SUPABASE_URL = "https://dhkjjgjmluqylxhfgbyx.supabase.co";
+  const PZ_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
+ // <-- REPLACE with your anon key
+
+  // Helper: safe DOM setter
+  function safeSetInnerHTML(selOrElem, html) {
+    try {
+      const el = typeof selOrElem === 'string' ? document.getElementById(selOrElem) : selOrElem;
+      if (el) el.innerHTML = html;
+      return !!el;
+    } catch (e) {
+      console.warn('safeSetInnerHTML error', e);
+      return false;
+    }
+  }
+
+  // Use existing global state if present, otherwise create a namespaced one.
+  window.state = window.state || {};
+  // Ensure commonly used arrays exist, but avoid overwriting existing values.
+  window.state.favorites = window.state.favorites || window.favorites || [];
+  window.state.shoppingLists = window.state.shoppingLists || window.shoppingLists || [];
+  window.state.shoppingCart = window.state.shoppingCart || window.shoppingCart || [];
+
+  // localStorage key
+  const STORAGE_KEY = 'pricezapp_state';
+
+  function saveStateLocal() {
+    try {
+      const snapshot = {
+        favorites: window.state.favorites || [],
+        shoppingLists: window.state.shoppingLists || [],
+        shoppingCart: window.state.shoppingCart || []
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    } catch (e) {
+      console.warn('pzPatch.saveStateLocal failed', e);
+    }
+  }
+
+  function loadStateLocal() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      window.state.favorites = parsed.favorites || window.state.favorites || [];
+      window.state.shoppingLists = parsed.shoppingLists || window.state.shoppingLists || [];
+      window.state.shoppingCart = parsed.shoppingCart || window.state.shoppingCart || [];
+      return true;
+    } catch (e) {
+      console.warn('pzPatch.loadStateLocal failed', e);
+      return false;
+    }
+  }
+
+  // Initialize Supabase client only if available (non-destructive)
+  let pzClient = null;
+  try {
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      pzClient = window.supabase.createClient(PZ_SUPABASE_URL, PZ_SUPABASE_ANON_KEY);
+    } else if (typeof createClient === 'function') {
+      pzClient = createClient(PZ_SUPABASE_URL, PZ_SUPABASE_ANON_KEY);
+    } else {
+      // No supabase library loaded; do not attempt to import scripts; fallback to local only
+      console.info('pzPatch: supabase client not detected in page. Patch will use localStorage only until you include supabase-js CDN or your app\'s client.');
+    }
+  } catch (e) {
+    console.warn('pzPatch: error initializing supabase client', e);
+    pzClient = null;
+  }
+
+  async function syncFromSupabase(userId) {
+    if (!pzClient || !userId) return;
+    try {
+      const { data, error } = await pzClient.from('users_data').select('favorites,shopping_lists,shopping_cart').eq('user_id', userId).single();
+      if (error) {
+        console.warn('pzPatch.syncFromSupabase warning', error);
+        return;
+      }
+      if (data) {
+        // Merge data non-destructively (do not overwrite other runtime fields)
+        if (Array.isArray(data.favorites)) window.state.favorites = data.favorites;
+        if (Array.isArray(data.shopping_lists)) window.state.shoppingLists = data.shopping_lists;
+        if (Array.isArray(data.shopping_cart)) window.state.shoppingCart = data.shopping_cart;
+        // Persist locally for immediate restore on reload
+        saveStateLocal();
+        // Trigger optional hook if app provides one
+        if (typeof window.onPzPatchDataLoaded === 'function') {
+          try { window.onPzPatchDataLoaded(data); } catch(e){console.warn(e); }
+        }
+      }
+    } catch (e) {
+      console.warn('pzPatch.syncFromSupabase error', e);
+    }
+  }
+
+  async function syncToSupabase(userId) {
+    if (!pzClient || !userId) return;
+    try {
+      // Upsert row into users_data table
+      const payload = {
+        user_id: userId,
+        favorites: window.state.favorites || [],
+        shopping_lists: window.state.shoppingLists || [],
+        shopping_cart: window.state.shoppingCart || []
+      };
+      const { error } = await pzClient.from('users_data').upsert(payload, { onConflict: ['user_id'] });
+      if (error) console.warn('pzPatch.syncToSupabase warning', error);
+    } catch (e) {
+      console.warn('pzPatch.syncToSupabase error', e);
+    }
+  }
+
+  // Public methods under window.pzPatch
+  window.pzPatch.saveStateLocal = saveStateLocal;
+  window.pzPatch.loadStateLocal = loadStateLocal;
+  window.pzPatch.syncFromSupabase = syncFromSupabase;
+  window.pzPatch.syncToSupabase = syncToSupabase;
+  window.pzPatch.pzClient = pzClient;
+
+  // Restore local state immediately on DOM ready so UI can read it
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1) Load from localStorage (fast)
+    loadStateLocal();
+
+    // 2) If app exposes a restore function, call it with current state (non-invasive)
+    if (typeof window.restoreAppState === 'function') {
+      try { window.restoreAppState(window.state); } catch(e){ console.warn('restoreAppState failed', e); }
+    }
+
+    // 3) If supabase auth is present on page, try to sync with remote
+    try {
+      const attemptRemoteSync = async () => {
+        // If the page defines supabase auth client or session, try to get user id from common places
+        let userId = null;
+        try {
+          if (window.supabase && typeof window.supabase.auth !== 'undefined' && typeof window.supabase.auth.getSession === 'function') {
+            const ss = await window.supabase.auth.getSession();
+            userId = ss?.data?.session?.user?.id;
+          }
+        } catch(e){ /* ignore */ }
+
+        // Fallback: some apps put session in window.__supabase_session or window.sessionUser
+        if (!userId && window.__supabase_session && window.__supabase_session.user) userId = window.__supabase_session.user.id;
+        if (!userId && window.sessionUser && window.sessionUser.id) userId = window.sessionUser.id;
+        // If userId found, attempt syncFromSupabase then merge with local
+        if (userId) {
+          await syncFromSupabase(userId);
+          // after remote merged, call optional hook
+          if (typeof window.onPzPatchRemoteSyncDone === 'function') {
+            try { window.onPzPatchRemoteSyncDone(window.state); } catch(e){console.warn(e);}
+          }
+        } else {
+          // no user detected; keep local-only mode
+        }
+      };
+      attemptRemoteSync();
+    } catch (e) { console.warn('pzPatch remote sync init failed', e); }
+  });
+
+  // Save before unload and attempt background sync if user id known
+  window.addEventListener('beforeunload', function () {
+    try { saveStateLocal(); } catch(e){}
+    // Try to sync if session is available synchronously (best-effort)
+    try {
+      const maybeSync = async () => {
+        let userId = null;
+        if (window.supabase && typeof window.supabase.auth !== 'undefined' && typeof window.supabase.auth.getSession === 'function') {
+          try { const ss = await window.supabase.auth.getSession(); userId = ss?.data?.session?.user?.id; } catch(e){}
+        }
+        if (!userId && window.__supabase_session && window.__supabase_session.user) userId = window.__supabase_session.user.id;
+        if (userId) await syncToSupabase(userId);
+      };
+      // fire and forget (don't await)
+      maybeSync();
+    } catch(e){}
+  });
+
+  // Provide small utilities to guard DOM writes that were causing null errors.
+  // These do not modify existing logic, they just wrap potentially dangerous calls.
+  window.pzPatch.safeSetInnerHTML = safeSetInnerHTML;
+
+  // Minimal CSS fallback for missing local font to avoid console font load errors (non-invasive)
+  try {
+    const style = document.createElement('style');
+    style.textContent = "body .title { font-family: 'Space Mono', monospace !important; }";
+    document.head.appendChild(style);
+  } catch(e){}
+
+  console.info('pzPatch installed: persistence + optional Supabase sync (local-only until you set the anon key or include supabase client).');
+})();
+</script>
+<!-- END NON-INVASIVE PERSISTENCE & SUPABASE SYNC PATCH -->
 
 </body>
 </html>
