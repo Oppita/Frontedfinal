@@ -8,16 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-    /* Definir la fuente Neue Metana Mono */
-    @font-face {
-    font-family: 'Neue Metana Mono';
-    src: url('fonts/NeueMetanaMono-Regular.woff2') format('woff2'),
-         url('fonts/NeueMetanaMono-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap; /* Mejor experiencia de carga */
-}
-
+    /* Font removed to avoid 404s - use system fonts or include font files in /fonts/ */
 .title {
     font-family: 'Neue Metana Mono', 'Inter', monospace; /* Fallbacks */
 }
@@ -63,7 +54,27 @@
   </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+
+<!-- Supabase helper placeholder: replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values in a separate supabase.js if preferred -->
+<script>
+/* Supabase init placeholder.
+   To enable real authentication/persistence:
+   1) Create a supabase project, copy your Project URL and anon key.
+   2) Replace the empty strings below OR create an external supabase.js with secure handling.
+*/
+try {
+  if (window.supabase) {
+    // Uncomment and fill the lines below to initialize in-file (not recommended for production)
+    // const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+    // const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
+    // window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // console.log('Supabase SDK loaded.');
+  }
+} catch(e) {
+  console.warn('Supabase SDK not available or error during init', e);
+}
+</script>
+
 
 
     
@@ -257,6 +268,7 @@
             <section id="featured-products-section" class="max-w-7xl mx-auto px-4 py-10">
                 <h2 class="text-3xl font-bold text-white text-center mb-6">Productos Destacados</h2>
                 <div id="featured-products-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    <div id="destacados-list" style="display:none;"></div>
                     <!-- Los productos destacados se renderizan por JavaScript (máx 5 productos) -->
                 </div>
             </section>
@@ -488,117 +500,6 @@
         </div>
     </div>
     <script>
-        // ===== INICIALIZACIÓN DEL STATE Y FUNCIONES BÁSICAS =====
-
-        // State management - VERSIÓN MEJORADA
-        let state = {
-            currentPage: 'landing',
-            selectedCategory: {
-                main: '',
-                sub: '',
-                subsub: ''
-            },
-            selectedProduct: null,
-            shoppingCart: [],
-            favorites: [],
-            searchQuery: '',
-            isLoggedIn: false,
-            user: null,
-            priceAlerts: [],
-            shoppingLists: [],
-            currentListId: null,
-            currentProductList: null,
-            products: window.products || [] // Asegurar que products esté definido
-        };
-
-        // Verificar si products está definido globalmente
-        if (typeof products === 'undefined') {
-            console.warn('Variable global "products" no definida');
-            window.products = {}; // Inicializar como objeto vacío
-            state.products = {};
-        }
-
-        // FUNCIÓN DE DEBUG
-        function debugState() {
-            console.log('=== DEBUG STATE ===');
-            console.log('Current Page:', state.currentPage);
-            console.log('Is Logged In:', state.isLoggedIn);
-            console.log('User:', state.user);
-            console.log('Products count:', Object.keys(products || {}).length);
-            console.log('Products defined:', typeof products !== 'undefined');
-            console.log('Backend URL:', window.API_URL || 'No definida');
-            console.log('==================');
-        }
-        // Category structure (Lucide migrado completo)
-const categories = {
-  main: [
-    { id: 1, name: 'Almacén', icon: 'package', color: 'text-purple-700' },
-    { id: 2, name: 'Carnes', icon: 'beef', color: 'text-purple-700' },
-    { id: 3, name: 'Limpieza', icon: 'sparkles', color: 'text-purple-700' },
-    { id: 4, name: 'Aderezos', icon: 'salad', color: 'text-purple-700' },
-    { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-purple-700' },
-    { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-purple-700' },
-    { id: 7, name: 'Frutas y Verduras', icon: 'apple', color: 'text-purple-700' },
-    { id: 8, name: 'Panadería', icon: 'bread-slice', color: 'text-purple-700' },
-    { id: 9, name: 'Snacks', icon: 'popcorn', color: 'text-purple-700' },
-    { id: 10, name: 'Pescados y Mariscos', icon: 'fish', color: 'text-purple-700' },
-    { id: 11, name: 'Pollo', icon: 'drumstick', color: 'text-purple-700' },
-    { id: 12, name: 'Tecnología y Electrodomésticos', icon: 'tv', color: 'text-purple-700' },
-    { id: 12, name: 'Cereales', icon: 'bean', color: 'text-purple-700' }
-
-  ],
-  sub: {
-    'Almacén': [
-      { id: 1, name: 'Arroz', icon: 'circle-dot', color: 'text-purple-600' },
-      { id: 2, name: 'Pastas', icon: 'utensils', color: 'text-purple-600' },
-      { id: 3, name: 'Aceites', icon: 'bottle', color: 'text-purple-600' },
-      { id: 4, name: 'Vinagres', icon: 'flask-conical', color: 'text-purple-600' },
-      { id: 5, name: 'Harinas', icon: 'sandwich', color: 'text-purple-600' },
-      { id: 6, name: 'Café', icon: 'coffee', color: 'text-purple-600' },
-      { id: 7, name: 'Azúcar', icon: 'candy', color: 'text-purple-600' },
-      { id: 8, name: 'Sal', icon: 'salt', color: 'text-purple-600' },
-      { id: 9, name: 'Granos', icon: 'bean', color: 'text-purple-600' },
-      { id: 10, name: 'Condimentos y Especias', icon: 'sprout', color: 'text-purple-600' }
-    ],
-    'Carnes': [
-      { id: 11, name: 'Carnes de Res', icon: 'beef', color: 'text-purple-600' },
-      { id: 12, name: 'Carnes de Cerdo', icon: 'piggy-bank', color: 'text-purple-600' },
-      { id: 13, name: 'Carnes Frias y Embutidos', icon: 'sandwich', color: 'text-purple-600' }
-    ],
-    'Bebidas': [
-      { id: 16, name: 'Gaseosas', icon: 'cup-soda', color: 'text-purple-600' },
-      { id: 17, name: 'Aguas', icon: 'droplets', color: 'text-purple-600' },
-      { id: 18, name: 'Jugos', icon: 'cup-soda', color: 'text-purple-600' },
-      { id: 19, name: 'Cervezas', icon: 'beer', color: 'text-purple-600' },
-      { id: 20, name: 'Vinos', icon: 'wine', color: 'text-purple-600' },
-      { id: 21, name: 'Licores', icon: 'glass', color: 'text-purple-600' }
-    ]
-  },
-  subsub: {
-    'Arroz': [
-      { id: 101, name: 'Arroz Blanco', icon: 'circle-dot', color: 'text-purple-500' },
-      { id: 102, name: 'Arroz Especiales', icon: 'leaf', color: 'text-purple-500' },
-      { id: 103, name: 'Arroz Integral', icon: 'circle', color: 'text-purple-500' }
-    ],
-    'Pastas': [
-      { id: 111, name: 'Espaghettis', icon: 'utensils', color: 'text-purple-500' },
-      { id: 112, name: 'Fideos Cortos', icon: 'utensils', color: 'text-purple-500' },
-      { id: 113, name: 'Pastas Rellenas', icon: 'utensils', color: 'text-purple-500' }
-    ]
-  }
-};
-        // Supermarket logos
-        const supermarketLogos = {
-            'Olimpica': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20Olimpica.png?raw=true',
-            'Carulla': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20carulla.jpg?raw=true',
-            'Jumbo': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20jumbo.png?raw=true',
-            'Zapatoca': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20Zapatoca.png?raw=true',
-            'D1': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/Logo%20d1.png?raw=true',
-            'Éxito': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/Logo%20exito.png?raw=true',
-            'HiperMarFish': 'https://images.rappi.com/marketplace/hipermar_fish_1611073131820.jpg?d=70x70&e=webp&q=50',
-            'La Fazenda': 'https://images.rappi.com/marketplace/Fazenda_1611280099718.jpg'
-        };
-        // Products data with specific supermarket prices
         const products = {
             // Arroz products
             'Arroz Blanco': [
@@ -1284,6 +1185,120 @@ const categories = {
 
             ]
         };
+
+// ===== INICIALIZACIÓN DEL STATE Y FUNCIONES BÁSICAS =====
+
+        // State management - VERSIÓN MEJORADA
+        let state = {
+            currentPage: 'landing',
+            selectedCategory: {
+                main: '',
+                sub: '',
+                subsub: ''
+            },
+            selectedProduct: null,
+            shoppingCart: [],
+            favorites: [],
+            searchQuery: '',
+            isLoggedIn: false,
+            user: null,
+            priceAlerts: [],
+            shoppingLists: [],
+            currentListId: null,
+            currentProductList: null,
+            products: window.products || [] // Asegurar que products esté definido
+        // (Nota: products se define arriba para evitar errores de inicialización)
+        };
+
+        // Verificar si products está definido globalmente
+        if (typeof products === 'undefined') {
+            console.warn('Variable global "products" no definida');
+            window.products = {}; // Inicializar como objeto vacío
+            state.products = {};
+        }
+
+        // FUNCIÓN DE DEBUG
+        function debugState() {
+            console.log('=== DEBUG STATE ===');
+            console.log('Current Page:', state.currentPage);
+            console.log('Is Logged In:', state.isLoggedIn);
+            console.log('User:', state.user);
+            console.log('Products count:', Object.keys(products || {}).length);
+            console.log('Products defined:', typeof products !== 'undefined');
+            console.log('Backend URL:', window.API_URL || 'No definida');
+            console.log('==================');
+        }
+        // Category structure (Lucide migrado completo)
+const categories = {
+  main: [
+    { id: 1, name: 'Almacén', icon: 'package', color: 'text-purple-700' },
+    { id: 2, name: 'Carnes', icon: 'beef', color: 'text-purple-700' },
+    { id: 3, name: 'Limpieza', icon: 'sparkles', color: 'text-purple-700' },
+    { id: 4, name: 'Aderezos', icon: 'salad', color: 'text-purple-700' },
+    { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-purple-700' },
+    { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-purple-700' },
+    { id: 7, name: 'Frutas y Verduras', icon: 'apple', color: 'text-purple-700' },
+    { id: 8, name: 'Panadería', icon: 'bread-slice', color: 'text-purple-700' },
+    { id: 9, name: 'Snacks', icon: 'popcorn', color: 'text-purple-700' },
+    { id: 10, name: 'Pescados y Mariscos', icon: 'fish', color: 'text-purple-700' },
+    { id: 11, name: 'Pollo', icon: 'drumstick', color: 'text-purple-700' },
+    { id: 12, name: 'Tecnología y Electrodomésticos', icon: 'tv', color: 'text-purple-700' },
+    { id: 12, name: 'Cereales', icon: 'bean', color: 'text-purple-700' }
+
+  ],
+  sub: {
+    'Almacén': [
+      { id: 1, name: 'Arroz', icon: 'circle-dot', color: 'text-purple-600' },
+      { id: 2, name: 'Pastas', icon: 'utensils', color: 'text-purple-600' },
+      { id: 3, name: 'Aceites', icon: 'bottle', color: 'text-purple-600' },
+      { id: 4, name: 'Vinagres', icon: 'flask-conical', color: 'text-purple-600' },
+      { id: 5, name: 'Harinas', icon: 'sandwich', color: 'text-purple-600' },
+      { id: 6, name: 'Café', icon: 'coffee', color: 'text-purple-600' },
+      { id: 7, name: 'Azúcar', icon: 'candy', color: 'text-purple-600' },
+      { id: 8, name: 'Sal', icon: 'salt', color: 'text-purple-600' },
+      { id: 9, name: 'Granos', icon: 'bean', color: 'text-purple-600' },
+      { id: 10, name: 'Condimentos y Especias', icon: 'sprout', color: 'text-purple-600' }
+    ],
+    'Carnes': [
+      { id: 11, name: 'Carnes de Res', icon: 'beef', color: 'text-purple-600' },
+      { id: 12, name: 'Carnes de Cerdo', icon: 'piggy-bank', color: 'text-purple-600' },
+      { id: 13, name: 'Carnes Frias y Embutidos', icon: 'sandwich', color: 'text-purple-600' }
+    ],
+    'Bebidas': [
+      { id: 16, name: 'Gaseosas', icon: 'cup-soda', color: 'text-purple-600' },
+      { id: 17, name: 'Aguas', icon: 'droplets', color: 'text-purple-600' },
+      { id: 18, name: 'Jugos', icon: 'cup-soda', color: 'text-purple-600' },
+      { id: 19, name: 'Cervezas', icon: 'beer', color: 'text-purple-600' },
+      { id: 20, name: 'Vinos', icon: 'wine', color: 'text-purple-600' },
+      { id: 21, name: 'Licores', icon: 'glass', color: 'text-purple-600' }
+    ]
+  },
+  subsub: {
+    'Arroz': [
+      { id: 101, name: 'Arroz Blanco', icon: 'circle-dot', color: 'text-purple-500' },
+      { id: 102, name: 'Arroz Especiales', icon: 'leaf', color: 'text-purple-500' },
+      { id: 103, name: 'Arroz Integral', icon: 'circle', color: 'text-purple-500' }
+    ],
+    'Pastas': [
+      { id: 111, name: 'Espaghettis', icon: 'utensils', color: 'text-purple-500' },
+      { id: 112, name: 'Fideos Cortos', icon: 'utensils', color: 'text-purple-500' },
+      { id: 113, name: 'Pastas Rellenas', icon: 'utensils', color: 'text-purple-500' }
+    ]
+  }
+};
+        // Supermarket logos
+        const supermarketLogos = {
+            'Olimpica': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20Olimpica.png?raw=true',
+            'Carulla': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20carulla.jpg?raw=true',
+            'Jumbo': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20jumbo.png?raw=true',
+            'Zapatoca': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/logo%20Zapatoca.png?raw=true',
+            'D1': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/Logo%20d1.png?raw=true',
+            'Éxito': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/Logo%20exito.png?raw=true',
+            'HiperMarFish': 'https://images.rappi.com/marketplace/hipermar_fish_1611073131820.jpg?d=70x70&e=webp&q=50',
+            'La Fazenda': 'https://images.rappi.com/marketplace/Fazenda_1611280099718.jpg'
+        };
+        // Products data with specific supermarket prices
+        
         // Helper: Extract quantity and unit from product name
         function extractQuantity(productName) {
             const match = productName.match(/(\d+(?:\.\d+)?)\s*(ml|gr|g|kg|l)/i);
@@ -3307,8 +3322,28 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- SDK oficial de Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- Supabase helper placeholder: replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values in a separate supabase.js if preferred -->
+<script>
+/* Supabase init placeholder.
+   To enable real authentication/persistence:
+   1) Create a supabase project, copy your Project URL and anon key.
+   2) Replace the empty strings below OR create an external supabase.js with secure handling.
+*/
+try {
+  if (window.supabase) {
+    // Uncomment and fill the lines below to initialize in-file (not recommended for production)
+    // const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+    // const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
+    // window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // console.log('Supabase SDK loaded.');
+  }
+} catch(e) {
+  console.warn('Supabase SDK not available or error during init', e);
+}
+</script>
+
+
 <!-- Tu archivo de conexión a Supabase -->
-<script src="supabase.js"></script>
 
 <!-- Tu archivo principal JS -->
 <script src="app.js"></script>
@@ -3329,3 +3364,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+<!--  -->
