@@ -10,17 +10,12 @@
     <style>
     /* Definir la fuente Neue Metana Mono */
     @font-face {
-    font-family: 'Neue Metana Mono';
-    src: url('fonts/NeueMetanaMono-Regular.woff2') format('woff2'),
-         url('fonts/NeueMetanaMono-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap; /* Mejor experiencia de carga */
-}
-
-.title {
-    font-family: 'Neue Metana Mono', 'Inter', monospace; /* Fallbacks */
-}
+      font-family: 'Neue Metana Mono';
+      src: url('fonts/NeueMetanaMono-Regular.woff2') format('woff2'),
+           url('fonts/NeueMetanaMono-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
 
     /* Estilos existentes */
     body {
@@ -61,12 +56,6 @@
       font-family: 'Neue Metana Mono', serif; /* Usar Neue Metana Mono con fallback a serif */
     }
   </style>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-
-
-    
 <!-- Injected: Chart.js + Tailwind safe-check (in case original doesn't have) -->
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -488,9 +477,7 @@
         </div>
     </div>
     <script>
-        // ===== INICIALIZACIÓN DEL STATE Y FUNCIONES BÁSICAS =====
-
-        // State management - VERSIÓN MEJORADA
+        // State management
         let state = {
             currentPage: 'landing',
             selectedCategory: {
@@ -506,29 +493,8 @@
             user: null,
             priceAlerts: [],
             shoppingLists: [],
-            currentListId: null,
-            currentProductList: null,
-            products: window.products || [] // Asegurar que products esté definido
+            currentListId: null
         };
-
-        // Verificar si products está definido globalmente
-        if (typeof products === 'undefined') {
-            console.warn('Variable global "products" no definida');
-            window.products = {}; // Inicializar como objeto vacío
-            state.products = {};
-        }
-
-        // FUNCIÓN DE DEBUG
-        function debugState() {
-            console.log('=== DEBUG STATE ===');
-            console.log('Current Page:', state.currentPage);
-            console.log('Is Logged In:', state.isLoggedIn);
-            console.log('User:', state.user);
-            console.log('Products count:', Object.keys(products || {}).length);
-            console.log('Products defined:', typeof products !== 'undefined');
-            console.log('Backend URL:', window.API_URL || 'No definida');
-            console.log('==================');
-        }
         // Category structure (Lucide migrado completo)
 const categories = {
   main: [
@@ -2316,42 +2282,71 @@ lucide.createIcons();
             }
         }
         // Auth functions
-        async function handleRegister(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.email.value;
-  const password = form.password.value;
-
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert(error.message);
-  alert("Revisa tu correo para confirmar tu cuenta");
+        function handleRegister(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
             state.isLoggedIn = true;
-state.user = data.user;
-
-}
-
-async function handleLogin(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.email.value;
-  const password = form.password.value;
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return alert(error.message);
-
-  localStorage.setItem("user", JSON.stringify(data.user));
-  state.isLoggedIn = true;
-  state.user = data.user;
-  showCategoriesPage();
-}
-
-async function logout() {
-  await supabase.auth.signOut();
-  localStorage.removeItem("user");
-  state.isLoggedIn = false;
-  showLandingPage();
-}
-
+            state.user = { name, email };
+            showNotification('¡Bienvenido!');
+            showCategoriesPage();
+        }
+        function handleLogin(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const email = formData.get('email');
+            state.isLoggedIn = true;
+            state.user = { name: 'Usuario', email };
+            showNotification('¡Bienvenido de nuevo!');
+            showCategoriesPage();
+            // Check price alerts on login
+            checkPriceAlerts();
+        }
+        function logout() {
+            state.isLoggedIn = false;
+            state.user = null;
+            state.shoppingCart = [];
+            state.favorites = [];
+            state.priceAlerts = [];
+            state.shoppingLists = [];
+            state.currentListId = null;
+            showLandingPage();
+        }
+        // Modal and list helper functions
+        window.pendingProductForList = null;
+        function askForList(product) {
+            window.pendingProductForList = product || null;
+            populateExistingLists();
+            document.getElementById("select-list-modal").classList.remove("hidden");
+        }
+        function closeListModal() {
+            window.pendingProductForList = null;
+            document.getElementById("select-list-modal").classList.add("hidden");
+        }
+        function populateExistingLists() {
+            const selectModal = document.getElementById("existing-lists");
+            const selectSimple = document.getElementById("shopping-list-select");
+            if (selectModal) {
+                selectModal.innerHTML = '<option value="">-- Selecciona una lista --</option>';
+                state.shoppingLists.forEach(list => {
+                    const opt = document.createElement("option");
+                    opt.value = list.id;
+                    opt.textContent = list.name;
+                    selectModal.appendChild(opt);
+                });
+            }
+            if (selectSimple) {
+                // update the existing select used on product page too
+                selectSimple.innerHTML = '<option value="">-- Selecciona una lista --</option>';
+                state.shoppingLists.forEach(list => {
+                    const opt = document.createElement("option");
+                    opt.value = list.id;
+                    opt.textContent = list.name;
+                    selectSimple.appendChild(opt);
+                });
+            }
+        }
         function createListFromModal() {
             const nameInput = document.getElementById("new-list-name");
             const name = nameInput.value.trim();
@@ -2533,9 +2528,8 @@ async function logout() {
         }
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-        debugState(); // Para debug
-        showLandingPage();
-        updateAlertsBadge();
+            showLandingPage();
+            updateAlertsBadge(); // inicializar badge
         });
     </script>
 
@@ -2991,8 +2985,6 @@ function renderCategories() {
   }
 }
 
-    
-
 // ====== FUNCIÓN GLOBAL PARA FORMATEAR PRECIOS ======
 function formatCOP(value) {
     if (typeof value !== 'number') return value;
@@ -3035,45 +3027,21 @@ function renderPrice(value) {
     }
     return allProducts.sort((a, b) => b.ahorro - a.ahorro).slice(0, limit);
   }
-  // CON ESTE CÓDIGO SEGURO:
-document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    const destacados = getTopProductsByAhorro(products, 4);
     const destacadosList = document.getElementById("destacados-list");
-    
-    // Verificar si el elemento existe antes de manipularlo
-    if (!destacadosList) {
-        console.warn("Elemento 'destacados-list' no encontrado en el DOM");
-        return;
-    }
-    
-    // Verificar si products existe
-    if (typeof products === 'undefined') {
-        console.warn("Variable 'products' no definida");
-        destacadosList.innerHTML = '<p class="text-center">No hay productos disponibles</p>';
-        return;
-    }
-    
-    try {
-        const destacados = getTopProductsByAhorro(products, 4);
-        if (destacados && destacados.length > 0) {
-            destacados.forEach(prod => {
-                destacadosList.innerHTML += `
-                    <div class="bg-white rounded-xl shadow p-4">
-                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-40 object-contain mb-2">
-                        <h3 class="font-semibold text-sm mb-1">${prod.name}</h3>
-                        <p class="text-green-600 font-bold">${renderPrice(prod.price)}</p>
-                        <p class="text-gray-500 line-through text-sm">${renderPrice(prod.previousPrice)}</p>
-                        <p class="text-red-500 text-sm font-bold">↓ ${prod.ahorro}%</p>
-                    </div>
-                `;
-            });
-        } else {
-            destacadosList.innerHTML = '<p class="text-center">No hay productos destacados</p>';
-        }
-    } catch (error) {
-        console.error('Error al cargar productos destacados:', error);
-        destacadosList.innerHTML = '<p class="text-center">Error al cargar productos</p>';
-    }
-});
+    destacados.forEach(prod => {
+      destacadosList.innerHTML += `
+        <div class="bg-white rounded-xl shadow p-4">
+          <img src="${prod.image}" alt="${prod.name}" class="w-full h-40 object-contain mb-2">
+          <h3 class="font-semibold text-sm mb-1">${prod.name}</h3>
+          <p class="text-green-600 font-bold">${renderPrice(prod.price)}</p>
+          <p class="text-gray-500 line-through text-sm">${renderPrice(prod.previousPrice)}</p>
+          <p class="text-red-500 text-sm font-bold">↓ ${prod.ahorro}%</p>
+        </div>
+      `;
+    });
+  });
 </script>
 
 
@@ -3081,7 +3049,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
   // 🌐 URL del backend desplegado en Render
-  const API_URL = "https://backnedfinalhp.onrender.com";
+  const API_URL = "https://pricezappbackendv2.onrender.com";
 
   // ✅ Probar conexión automática al backend
   async function checkBackendStatus() {
@@ -3139,49 +3107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al iniciar sesión:", err);
     }
   }
-
-
-    async function loadUserData() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-        // Cargar favoritos
-        const favResponse = await fetch(`${API_URL}/favorites/`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (favResponse.ok) {
-            const favorites = await favResponse.json();
-            state.favorites = favorites;
-        }
-
-        // Cargar listas de compras
-        const listsResponse = await fetch(`${API_URL}/lists/`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (listsResponse.ok) {
-            const lists = await listsResponse.json();
-            state.shoppingLists = lists;
-        }
-
-        // Cargar alertas
-        const alertsResponse = await fetch(`${API_URL}/alerts/`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (alertsResponse.ok) {
-            const alerts = await alertsResponse.json();
-            state.priceAlerts = alerts;
-        }
-    } catch (error) {
-        console.error('Error cargando datos del usuario:', error);
-    }
-}
 
   // 🚪 Cerrar sesión
   function logoutUser() {
@@ -3262,166 +3187,103 @@ document.addEventListener("DOMContentLoaded", () => {
   // createList("Mis Ofertas");
   // createPriceAlert(5, 25000);
 
-  // CÓDIGO SEGURO PARA PRODUCTOS DESTACADOS - PREVENIR ERROR 3102
-  document.addEventListener("DOMContentLoaded", () => {
-    const destacadosList = document.getElementById("destacados-list");
-    
-    // Verificar si el elemento existe antes de manipularlo
-    if (!destacadosList) {
-        console.warn("Elemento 'destacados-list' no encontrado en el DOM");
-        return;
-    }
-    
-    // Verificar si products existe
-    if (typeof products === 'undefined') {
-        console.warn("Variable 'products' no definida");
-        destacadosList.innerHTML = '<p class="text-center">No hay productos disponibles</p>';
-        return;
-    }
-    
-    try {
-        const destacados = getTopProductsByAhorro(products, 4);
-        if (destacados && destacados.length > 0) {
-            destacados.forEach(prod => {
-                destacadosList.innerHTML += `
-                    <div class="bg-white rounded-xl shadow p-4">
-                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-40 object-contain mb-2">
-                        <h3 class="font-semibold text-sm mb-1">${prod.name}</h3>
-                        <p class="text-green-600 font-bold">${renderPrice(prod.price)}</p>
-                        <p class="text-gray-500 line-through text-sm">${renderPrice(prod.previousPrice)}</p>
-                        <p class="text-red-500 text-sm font-bold">↓ ${prod.ahorro}%</p>
-                    </div>
-                `;
-            });
-        } else {
-            destacadosList.innerHTML = '<p class="text-center">No hay productos destacados</p>';
-        }
-    } catch (error) {
-        console.error('Error al cargar productos destacados:', error);
-        destacadosList.innerHTML = '<p class="text-center">Error al cargar productos</p>';
-    }
-  });
-
 </script>
 
 
 
-
-<!-- SDK oficial de Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Tu archivo de conexión a Supabase -->
-<script src="supabase.js"></script>
-
-<!-- Tu archivo principal JS -->
-
-
-
-    
-
-
-<!-- === SUPABASE INIT (AUTOGENERADO) === -->
+<!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (versión final) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-console.log("✅ Iniciando Supabase (bloque único).");
-
-// Supabase credentials (inyectadas por el usuario)
 const SUPABASE_URL = "https://dhkjjgjmluqylxhfgbyx.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
-
-// Initialize global client
-window.supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-if (!window.supabaseClient) {
-  console.error("❌ No se pudo inicializar supabaseClient. Revisa la carga del SDK.");
-} else {
-  console.log("✅ Supabase inicializado correctamente (cliente global supabaseClient).");
-}
-
-// Auth handlers
-async function handleRegister(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.email?.value?.trim();
-  const password = form.password?.value?.trim();
-  if (!email || !password) return alert("Ingresa email y contraseña válidos.");
-  try {
-    const { data, error } = await window.supabaseClient.auth.signUp({ email, password });
-    if (error) throw error;
-    alert("✅ Registro exitoso. Revisa tu correo para confirmar la cuenta.");
-    showLoginPage();
-  } catch (err) {
-    console.error("Error en register:", err);
-    alert("Error en registro: " + (err.message || err));
-  }
-}
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
+window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function handleLogin(e) {
+  window.manualLoginTriggered = true;
   e.preventDefault();
-  const form = e.target;
-  const email = form.email?.value?.trim();
-  const password = form.password?.value?.trim();
-  if (!email || !password) return alert("Ingresa email y contraseña.");
+  const email = e.target.email.value.trim();
+  const password = e.target.password.value;
+  if (!email || !password) return alert("Por favor ingresa tu correo y contraseña.");
+
   try {
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    console.log("Usuario autenticado:", data.user);
-    alert("✅ Sesión iniciada correctamente");
-      state.isLoggedIn = true;       // 👈 Aquí el fix
-    state.user = data.user;        // 👈 Guardamos el usuario actual
-    showCategoriesPage();
+    alert("✅ Inicio de sesión exitoso");
+    state.isLoggedIn = true;
+    state.user = data.user;
+    if (typeof showCategoriesPage === "function") showCategoriesPage();
   } catch (err) {
-    console.error("Error en login:", err);
     alert("Error al iniciar sesión: " + (err.message || err));
   }
 }
 
-async function handleLogout() {
+async function handleRegister(e) {
+  e.preventDefault();
+  const email = e.target.email.value.trim();
+  const password = e.target.password.value;
+  const name = e.target.name.value.trim();
+  if (!email || !password || !name) return alert("Completa todos los campos");
+
   try {
-    await window.supabaseClient.auth.signOut();
-    alert("👋 Sesión cerrada.");
-    showLoginPage();
+    const { error } = await supabaseClient.auth.signUp({
+      email, password, options: { data: { name } }
+    });
+    if (error) throw error;
+    alert("Cuenta creada. Revisa tu correo para verificar.");
+    if (typeof showLoginPage === "function") showLoginPage();
   } catch (err) {
-    console.error("Error al cerrar sesión:", err);
+    alert("Error al crear cuenta: " + (err.message || err));
   }
 }
 
-// Restore session on load
+async function logout() {
+  await supabaseClient.auth.signOut();
+  state.isLoggedIn = false;
+  state.user = null;
+  if (typeof showLandingPage === "function") showLandingPage();
+}
+
+
 (async function restoreSession() {
   try {
-    const { data } = await window.supabaseClient.auth.getSession();
-    if (data?.session) {
-  console.log("🔁 Sesión restaurada:", data.session.user?.email);
-  showCategoriesPage();
-} else {
-  console.log("🚪 No hay sesión activa");
-  showLandingPage(); // 👈 Muestra landing en lugar de login
-}
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session?.user) {
+      console.log("🔁 Sesión detectada, pero permaneciendo en landing hasta login manual.");
+      state.isLoggedIn = true;
+      state.user = data.session.user;
+      // 🚫 No redirigir automáticamente
+    } else {
+      console.log("🚪 No hay sesión activa. Mostrando landing page.");
+      if (typeof showLandingPage === "function") showLandingPage();
+    }
   } catch (err) {
-    console.error("Error al recuperar sesión:", err);
-    showLoginPage();
-
-      console.log("🔁 Sesión restaurada:", data.session.user?.email);
-  state.isLoggedIn = true;
-  state.user = data.session.user;
-  showCategoriesPage();
+    console.error("Error al restaurar sesión:", err);
   }
 })();
+
+
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  console.log("📡 Evento Supabase:", event);
+  if (event === "SIGNED_IN" && session) {
+    // ✅ Solo redirigimos si el usuario acaba de iniciar sesión manualmente
+    if (window.manualLoginTriggered) {
+      alert("✅ Inicio de sesión exitoso");
+      state.isLoggedIn = true;
+      state.user = session.user;
+      if (typeof showCategoriesPage === "function") showCategoriesPage();
+      window.manualLoginTriggered = false;
+    } else {
+      console.log("🕒 Sesión restaurada, permaneciendo en landing.");
+    }
+  } else if (event === "SIGNED_OUT") {
+    state.isLoggedIn = false;
+    state.user = null;
+    if (typeof showLandingPage === "function") showLandingPage();
+  }
+});
+
 </script>
-<!-- === FIN SUPABASE INIT === -->
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
