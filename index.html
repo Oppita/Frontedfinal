@@ -3077,148 +3077,6 @@ function renderPrice(value) {
 
 
 
-<script>
-  // 🌐 URL del backend desplegado en Render
-  const API_URL = "https://pricezappbackendv2.onrender.com";
-
-  // ✅ Probar conexión automática al backend
-  async function checkBackendStatus() {
-    try {
-      const res = await fetch(API_URL);
-      if (res.ok) {
-        console.log("✅ Conexión exitosa con el backend Pricezapp");
-      } else {
-        console.warn("⚠️ El backend respondió, pero con error:", res.status);
-      }
-    } catch (err) {
-      console.error("❌ No se pudo conectar con el backend:", err);
-    }
-  }
-  checkBackendStatus();
-
-  // 🧑‍💻 Registro de usuario
-  async function registerUser(email, password) {
-    try {
-      const res = await fetch(`${API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("✅ Registro exitoso");
-        console.log("Usuario creado:", data);
-      } else {
-        alert("❌ Error al registrar: " + (data.detail || "Desconocido"));
-      }
-    } catch (err) {
-      console.error("Error en registro:", err);
-    }
-  }
-
-  // 🔐 Inicio de sesión
-  async function loginUser(email, password) {
-    try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.access_token) {
-        localStorage.setItem("token", data.access_token);
-        alert("✅ Sesión iniciada correctamente");
-      } else {
-        alert("❌ Credenciales inválidas");
-      }
-    } catch (err) {
-      console.error("Error al iniciar sesión:", err);
-    }
-  }
-
-  // 🚪 Cerrar sesión
-  function logoutUser() {
-    localStorage.removeItem("token");
-    alert("👋 Sesión cerrada");
-  }
-
-  // 💖 Agregar a favoritos (requiere login)
-  async function addFavorite(productId) {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("🔒 Inicia sesión primero.");
-
-    try {
-      const res = await fetch(`${API_URL}/favorites/`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ product_id: productId })
-      });
-
-      if (res.ok) alert("💖 Producto agregado a favoritos");
-      else alert("❌ Error al agregar favorito");
-    } catch (err) {
-      console.error("Error al agregar favorito:", err);
-    }
-  }
-
-  // 📦 Crear lista de productos
-  async function createList(name) {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("🔒 Inicia sesión primero.");
-
-    try {
-      const res = await fetch(`${API_URL}/lists/`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name })
-      });
-
-      if (res.ok) alert("🗂️ Lista creada con éxito");
-      else alert("❌ No se pudo crear la lista");
-    } catch (err) {
-      console.error("Error al crear lista:", err);
-    }
-  }
-
-  // 🔔 Crear alerta de precio
-  async function createPriceAlert(productId, targetPrice) {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("🔒 Inicia sesión primero.");
-
-    try {
-      const res = await fetch(`${API_URL}/alerts/`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ product_id: productId, target_price: targetPrice })
-      });
-
-      if (res.ok) alert("🔔 Alerta de precio creada");
-      else alert("❌ No se pudo crear la alerta");
-    } catch (err) {
-      console.error("Error al crear alerta:", err);
-    }
-  }
-
-  // 🧭 Ejemplo de uso manual desde consola:
-  // registerUser("test@mail.com", "123456");
-  // loginUser("test@mail.com", "123456");
-  // addFavorite(1);
-  // createList("Mis Ofertas");
-  // createPriceAlert(5, 25000);
-
-</script>
-
 
 
 <!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (versión final) -->
@@ -3619,6 +3477,81 @@ document.addEventListener("DOMContentLoaded", restoreUserSession);
 
 
 
+
+
+<!-- Supabase auto-save patch: wrap mutators to emit events and save to Supabase -->
+<script>
+(function(){
+  if (typeof window === 'undefined') return;
+  // Debounced save helper
+  window.__saveUserDataDebounce = window.__saveUserDataDebounce || null;
+  function scheduleSave(delay) {
+    delay = delay || 250;
+    if (window.__saveUserDataDebounce) clearTimeout(window.__saveUserDataDebounce);
+    window.__saveUserDataDebounce = setTimeout(function(){
+      try { if (typeof saveUserDataToSupabase === 'function') saveUserDataToSupabase(); } catch(e){ console.error('saveUserDataToSupabase failed', e); }
+    }, delay);
+  }
+
+  // Helper to dispatch update events
+  function dispatchEvent(name) {
+    try { document.dispatchEvent(new Event(name)); } catch(e){ /* old browsers */ 
+      var ev = document.createEvent('Event'); ev.initEvent(name, true, true); document.dispatchEvent(ev);
+    }
+  }
+
+  // Wrap named functions if they exist to schedule saves
+  var mutators = ["addFavorite", "addToCart", "askForList", "checkPriceAlerts", "clearAllAlerts", "closeListModal", "confirmListSelection", "createList", "createListFromModal", "createNewShoppingList", "createPriceAlert", "deleteShoppingList", "openAlertsPage", "populateExistingLists", "removeFromShoppingList", "renderAlertsPanel", "saveUserData", "saveUserDataToSupabase", "setPriceAlert", "showAlertsPage", "showCartPage", "showFavoritesPage", "showShoppingListDetail", "showShoppingListsPage", "sourceList", "toggleAlert", "toggleAlertsPanel", "toggleFavorite", "togglePurchased", "updateAlertsBadge", "updateCartQuantity"];
+  mutators.forEach(function(name){
+    try {
+      var orig = window[name];
+      if (typeof orig === 'function' && !orig.__supabase_wrapped) {
+        window[name] = function(){
+          var res = orig.apply(this, arguments);
+          try {
+            // Map function name to event(s)
+            var n = name.toLowerCase();
+            if (n.indexOf('fav') !== -1 || n.indexOf('favorite') !== -1) dispatchEvent('favoritesUpdated');
+            if (n.indexOf('cart') !== -1) dispatchEvent('cartUpdated');
+            if (n.indexOf('list') !== -1) dispatchEvent('listsUpdated');
+            if (n.indexOf('alert') !== -1) dispatchEvent('alertsUpdated');
+            // Always schedule a save
+            scheduleSave(300);
+          } catch(e){ console.warn('post-mutation hook failed', e); }
+          return res;
+        };
+        window[name].__supabase_wrapped = true;
+        console.log('Supabase patch: wrapped', name);
+      }
+    } catch(e){ /* ignore */ }
+  });
+
+  // Ensure saveUserDataToSupabase exists as a fallback (won't override if present)
+  if (typeof saveUserDataToSupabase !== 'function') {
+    window.saveUserDataToSupabase = async function(){
+      var userId = state && state.user && state.user.id;
+      if (!userId) { console.warn('saveUserDataToSupabase: no user'); return; }
+      try {
+        var payload = {
+          user_id: userId,
+          favorites: state.favorites || [],
+          lists: state.lists || state.shoppingLists || [],
+          alerts: state.alerts || state.priceAlerts || [],
+          cart: state.cart || state.shoppingCart || [],
+          updated_at: new Date().toISOString()
+        };
+        var res = await supabaseClient.from('user_data').upsert(payload, { onConflict: 'user_id' });
+        if (res.error) throw res.error;
+        console.log('💾 [fallback] Saved user data to Supabase for', userId);
+      } catch(e) { console.error('saveUserDataToSupabase fallback error', e); }
+    };
+  }
+
+  // Expose scheduleSave for manual use
+  window.scheduleSaveUserDataToSupabase = scheduleSave;
+
+})();
+</script>
 
 </body>
 </html>
