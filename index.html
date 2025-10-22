@@ -3492,7 +3492,34 @@ document.addEventListener("alertsUpdated", saveUserData);
 document.addEventListener("cartUpdated", saveUserData);
 
 // ✅ Llamar cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", restoreUserSession);
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("⏳ Esperando inicialización de Supabase...");
+  let retries = 0;
+  const checkReady = setInterval(async () => {
+    if (window.supabaseClient && typeof supabaseClient.auth.getSession === "function") {
+      clearInterval(checkReady);
+      console.log("✅ Supabase listo, restaurando sesión...");
+      try {
+        const { data } = await supabaseClient.auth.getSession();
+        if (data?.session?.user) {
+          console.log("🔁 Sesión restaurada correctamente:", data.session.user.email);
+          state.isLoggedIn = true;
+          state.user = data.session.user;
+          if (typeof showCategoriesPage === "function") showCategoriesPage();
+        } else {
+          console.log("🚪 No hay sesión activa (tras inicialización completa)");
+          if (typeof showLandingPage === "function") showLandingPage();
+        }
+      } catch (err) {
+        console.error("Error al restaurar sesión tardía:", err);
+      }
+    } else if (retries++ > 20) {
+      clearInterval(checkReady);
+      console.warn("⚠️ Supabase no se inicializó a tiempo, abortando restauración.");
+    }
+  }, 300);
+});
+
 </script>
 
 
@@ -3586,6 +3613,7 @@ document.addEventListener("DOMContentLoaded", restoreUserSession);
 
 </body>
 </html>
+
 
 
 
