@@ -3237,6 +3237,17 @@ async function saveUserDataToSupabase() {
   }
 }
 
+const session = await supabaseClient.auth.getSession();
+if (!session.data?.session) {
+  console.warn("⚠️ No hay sesión activa — no se puede guardar en Supabase");
+  return;
+}
+
+
+    
+
+
+    
 /* Hook saves to events — trigger these events in your app when data changes */
 document.addEventListener("favoritesUpdated", saveUserDataToSupabase);
 document.addEventListener("listsUpdated", saveUserDataToSupabase);
@@ -3570,6 +3581,7 @@ document.addEventListener("DOMContentLoaded", restoreUserSession);
 
 </body>
 </html>
+
 
 
 
