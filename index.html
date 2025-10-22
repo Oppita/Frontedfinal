@@ -3087,204 +3087,76 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-<!-- PARCHÉ MÍNIMO DE PERSISTENCIA SUPABASE (pegar JUSTO tras supabase.createClient(...)) -->
 <script>
-(function(){
-  if (!window.supabaseClient) return console.warn('Supabase client missing for persistence patch');
+(async () => {
+  if (!window.supabaseClient || !window.state) return console.warn("⚠️ Supabase o state no disponibles aún");
 
-  // namespaced helpers to avoid colisiones
-  const ns = window.__cp_ns = window.__cp_ns || {};
+  const table = "user_data";
 
-  // Debounce helper
-  ns._saveTimeout = null;
-  ns.debounceSave = function(delay = 300){
-    if (ns._saveTimeout) clearTimeout(ns._saveTimeout);
-    ns._saveTimeout = setTimeout(async () => {
-      try { await ns.saveUserDataToSupabase(); } catch(e){ console.error('cp save error', e); }
-    }, delay);
-  };
-
-  // Ensure there is a user_data row (id = auth.uid)
-  ns.ensureUserDataRow = async function(userId){
-    if (!userId) return;
+  // --- LOAD ---
+  async function loadUserData() {
+    const user = window.state.user;
+    if (!user) return;
     try {
       const { data, error } = await supabaseClient
-        .from('user_data')
-        .select('user_id')
-        .eq('user_id', userId)
+        .from(table)
+        .select('favorites, lists, alerts, cart')
+        .eq('user_id', user.id)
         .maybeSingle();
       if (error) throw error;
       if (!data) {
-        const { error: err2 } = await supabaseClient.from('user_data').insert([{ user_id: userId }]);
-        if (err2) throw err2;
-        console.log('✅ cp: user_data row created for', userId);
+        await supabaseClient.from(table).insert([{ user_id: user.id }]);
+        return;
       }
+      Object.assign(window.state, {
+        favorites: data.favorites || [],
+        shoppingLists: data.lists || [],
+        priceAlerts: data.alerts || [],
+        shoppingCart: data.cart || [],
+      });
+      console.log("📦 Datos cargados desde Supabase");
     } catch (e) {
-      console.error('cp.ensureUserDataRow error', e);
+      console.error("Error cargando datos:", e);
     }
-  };
+  }
 
-  // Load user data into your global state object (non-destructive)
-  ns.loadUserDataFromSupabase = async function(userId){
-    if (!userId) return;
+  // --- SAVE ---
+  async function saveUserData() {
+    const user = window.state.user;
+    if (!user) return;
     try {
-      await ns.ensureUserDataRow(userId);
-      const { data, error } = await supabaseClient
-        .from('user_data')
-        .select('favorites, lists, alerts, cart')
-        .eq('user_id', userId)
-        .single();
-      if (error) throw error;
-      // Merge into existing state carefully (preserve keys if present)
-      try {
-        if (data.favorites) window.state = window.state || {};
-        if (data.favorites) window.state.favorites = data.favorites || window.state.favorites || [];
-        if (data.lists) window.state.shoppingLists = data.lists || window.state.shoppingLists || [];
-        if (data.alerts) window.state.priceAlerts = data.alerts || window.state.priceAlerts || [];
-        if (data.cart) window.state.shoppingCart = data.cart || window.state.shoppingCart || [];
-      } catch(e){
-        console.warn('cp: failed to merge user_data into state', e);
-      }
-      // optional mirror to localStorage (non-destructive)
-      try { localStorage.setItem(`user_${userId}`, JSON.stringify(data)); } catch(e){}
-      console.log('📦 cp: Loaded user data from Supabase for', userId);
-      // emit events so UI refreshes (if app listens)
-      document.dispatchEvent(new Event('favoritesRestored'));
-      document.dispatchEvent(new Event('listsRestored'));
-      document.dispatchEvent(new Event('alertsRestored'));
-      document.dispatchEvent(new Event('cartRestored'));
-    } catch (e) {
-      console.error('cp.loadUserDataFromSupabase error', e);
-    }
-  };
-
-  // Save user data (upsert)
-  ns.saveUserDataToSupabase = async function(){
-    try {
-      const userId = window.state && window.state.user && window.state.user.id;
-      if (!userId) return console.warn('cp.save: no user id');
       const payload = {
-        user_id: userId,
+        user_id: user.id,
         favorites: window.state.favorites || [],
         lists: window.state.shoppingLists || [],
         alerts: window.state.priceAlerts || [],
         cart: window.state.shoppingCart || [],
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
-      const { error } = await supabaseClient.from('user_data').upsert([payload], { onConflict: 'user_id' });
+      const { error } = await supabaseClient
+        .from(table)
+        .upsert([payload], { onConflict: 'user_id' });
       if (error) throw error;
-      // mirror to localStorage (optional)
-      try { localStorage.setItem(`user_${userId}`, JSON.stringify(payload)); } catch(e){}
-      console.log('💾 cp: Saved user data to Supabase for', userId);
+      console.log("💾 Datos guardados en Supabase");
     } catch (e) {
-      console.error('cp.saveUserDataToSupabase error', e);
+      console.error("Error guardando datos:", e);
     }
-  };
+  }
 
-  // Wrap existing login handler: after manual login, ensure row + load remote data
-  (function wrapLogin(){
-    const orig = window.handleLogin || window.handleLoginSupabase || null;
-    if (!orig) {
-      // no original, but keep our handler minimal in case your app uses other flows
-      window.handleLoginAfter = async function(){
-        const userId = window.state && window.state.user && window.state.user.id;
-        if (userId) {
-          await ns.ensureUserDataRow(userId);
-          await ns.loadUserDataFromSupabase(userId);
-        }
-      };
-      return;
-    }
-    if (orig.__cp_wrapped) return;
-    window.handleLogin = async function(e){
-      // call original
-      const res = await orig.apply(this, arguments);
-      try {
-        const userId = window.state && window.state.user && window.state.user.id;
-        if (userId) {
-          await ns.ensureUserDataRow(userId);
-          await ns.loadUserDataFromSupabase(userId);
-        }
-      } catch(err){ console.error('cp post-login sync', err); }
-      return res;
-    };
-    window.handleLogin.__cp_wrapped = true;
-  })();
+  // --- HOOKS ---
+  document.addEventListener("favoritesUpdated", saveUserData);
+  document.addEventListener("listsUpdated", saveUserData);
+  document.addEventListener("alertsUpdated", saveUserData);
+  document.addEventListener("cartUpdated", saveUserData);
 
-  // Wrap logout: clear local mirror and keep remote data intact
-  (function wrapLogout(){
-    const orig = window.logout || null;
-    if (!orig) {
-      window.logout = async function(){
-        try {
-          const uid = window.state && window.state.user && window.state.user.id;
-          if (uid) localStorage.removeItem(`user_${uid}`);
-        } catch(e){}
-        // reset state minimally
-        if (window.state) {
-          window.state.isLoggedIn = false;
-          window.state.user = null;
-        }
-      };
-      return;
-    }
-    if (orig.__cp_wrapped) return;
-    window.logout = async function(){
-      try {
-        const uid = window.state && window.state.user && window.state.user.id;
-        if (uid) localStorage.removeItem(`user_${uid}`);
-      } catch(e){}
-      const res = await orig.apply(this, arguments);
-      return res;
-    };
-    window.logout.__cp_wrapped = true;
-  })();
-
-  // Listen for app events and debounce saves
-  ['favoritesUpdated','listsUpdated','alertsUpdated','cartUpdated'].forEach(ev=>{
-    document.addEventListener(ev, function(){ ns.debounceSave(400); });
-  });
-
-  // Also patch common mutator names (best-effort) if they exist: call debounce after they run
-  const maybeWrap = ['addToCart','toggleFavorite','removeFromShoppingList','createListFromModal','confirmListSelection','setPriceAlert','toggleAlert','updateCartQuantity','togglePurchased','deleteShoppingList'];
-  maybeWrap.forEach(name=>{
-    try {
-      const orig = window[name];
-      if (typeof orig === 'function' && !orig.__cp_wrapped) {
-        window[name] = function(){
-          const res = orig.apply(this, arguments);
-          try { ns.debounceSave(300); } catch(e){}
-          return res;
-        };
-        window[name].__cp_wrapped = true;
-        console.log('cp patch: wrapped', name);
-      }
-    } catch(e){}
-  });
-
-  // Try to run restore on load (non-intrusive)
-  document.addEventListener('DOMContentLoaded', async function(){
-    try {
-      const { data } = await supabaseClient.auth.getSession();
-      if (data?.session?.user) {
-        // Do not force navigation; just sync data into app state
-        window.state = window.state || {};
-        window.state.isLoggedIn = true;
-        window.state.user = data.session.user;
-        await ns.ensureUserDataRow(data.session.user.id);
-        await ns.loadUserDataFromSupabase(data.session.user.id);
-      }
-    } catch(e){
-      console.warn('cp restore error', e);
-    }
-  });
-
-  // expose for debugging
-  window.__cp_persistence = ns;
+  // Intentar carga inicial si hay usuario activo
+  const { data } = await supabaseClient.auth.getSession();
+  if (data?.session?.user) {
+    window.state.user = data.session.user;
+    await loadUserData();
+  }
 })();
 </script>
-<!-- FIN PARCHE -->
-
 
 
 
@@ -3768,4 +3640,5 @@ document.addEventListener("DOMContentLoaded", restoreUserSession);
 
 </body>
 </html>
+
 
