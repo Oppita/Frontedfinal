@@ -3087,76 +3087,6 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-<script>
-(async () => {
-  if (!window.supabaseClient || !window.state) return console.warn("⚠️ Supabase o state no disponibles aún");
-
-  const table = "user_data";
-
-  // --- LOAD ---
-  async function loadUserData() {
-    const user = window.state.user;
-    if (!user) return;
-    try {
-      const { data, error } = await supabaseClient
-        .from(table)
-        .select('favorites, lists, alerts, cart')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) {
-        await supabaseClient.from(table).insert([{ user_id: user.id }]);
-        return;
-      }
-      Object.assign(window.state, {
-        favorites: data.favorites || [],
-        shoppingLists: data.lists || [],
-        priceAlerts: data.alerts || [],
-        shoppingCart: data.cart || [],
-      });
-      console.log("📦 Datos cargados desde Supabase");
-    } catch (e) {
-      console.error("Error cargando datos:", e);
-    }
-  }
-
-  // --- SAVE ---
-  async function saveUserData() {
-    const user = window.state.user;
-    if (!user) return;
-    try {
-      const payload = {
-        user_id: user.id,
-        favorites: window.state.favorites || [],
-        lists: window.state.shoppingLists || [],
-        alerts: window.state.priceAlerts || [],
-        cart: window.state.shoppingCart || [],
-        updated_at: new Date().toISOString(),
-      };
-      const { error } = await supabaseClient
-        .from(table)
-        .upsert([payload], { onConflict: 'user_id' });
-      if (error) throw error;
-      console.log("💾 Datos guardados en Supabase");
-    } catch (e) {
-      console.error("Error guardando datos:", e);
-    }
-  }
-
-  // --- HOOKS ---
-  document.addEventListener("favoritesUpdated", saveUserData);
-  document.addEventListener("listsUpdated", saveUserData);
-  document.addEventListener("alertsUpdated", saveUserData);
-  document.addEventListener("cartUpdated", saveUserData);
-
-  // Intentar carga inicial si hay usuario activo
-  const { data } = await supabaseClient.auth.getSession();
-  if (data?.session?.user) {
-    window.state.user = data.session.user;
-    await loadUserData();
-  }
-})();
-</script>
 
 
 
@@ -3640,5 +3570,6 @@ document.addEventListener("DOMContentLoaded", restoreUserSession);
 
 </body>
 </html>
+
 
 
