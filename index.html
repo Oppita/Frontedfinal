@@ -608,7 +608,237 @@ const categories = {
       { id: 111, name: 'Espaghettis', icon: 'utensils', color: 'text-purple-500' },
       { id: 112, name: 'Fideos Cortos', icon: 'utensils', color: 'text-purple-500' },
       { id: 113, name: 'Pastas Rellenas', icon: 'utensils', color: 'text-purple-500' }
-    ]
+    ],
+      // Vinagres sub-subcategories
+                'Vinagres': [
+                    { id: 121, name: 'Vinagres Blancos', icon: '🍶', color: 'purple-600' },
+                    { id: 122, name: 'Vinagres de Manzana y Sidra de Manzana', icon: '🍎', color: 'purple-600' },
+                    { id: 123, name: 'Otros Vinagres', icon: '🍒', color: 'purple-600' },
+                    { id: 124, name: 'Vinagres Balsámicos', icon: '🍷', color: 'purple-600' },
+                    
+                ],
+                // Harinas sub-subcategories
+                'Harinas': [
+                    { id: 131, name: 'Harinas de Trigo', icon: '🌾', color: 'purple-600' },
+                    { id: 132, name: 'Harinas de Centeno', icon: '🌾', color: 'purple-600' },
+                    { id: 133, name: 'Harinas de Maíz', icon: '🌽', color: 'purple-600' },
+                    { id: 134, name: 'Harinas de Arroz', icon: '🍚', color: 'purple-600' },
+                    { id: 135, name: 'Harinas de Avena', icon: '🥣', color: 'purple-600' }
+                ],
+                // Aceites sub-subcategories
+                'Aceites': [
+                    { id: 141, name: 'Aceites de Oliva', icon: '🫒', color: 'purple-600' },
+                    { id: 142, name: 'Aceites de Girasol', icon: '🌻', color: 'purple-600' },
+                    { id: 143, name: 'Aceites de Sésamo', icon: ' сезам', color: 'purple-600' },
+                    { id: 144, name: 'Aceites de Coco', icon: '🥥', color: 'purple-600' },
+                    { id: 145, name: 'Aceites Vegetales', icon: '🥬', color: 'purple-600' }
+                ],
+                // Café sub-subcategories
+                'Café': [
+                    { id: 146, name: 'Café Molido', icon: '☕', color: 'purple-600' },
+                    { id: 147, name: 'Café en Grano', icon: '🌱', color: 'purple-600' },                
+                    { id: 149, name: 'Café Instantaneo', icon: '💧', color: 'purple-600' }
+                    
+                ],
+                // Azúcar sub-subcategories
+                'Azúcar': [
+                    { id: 151, name: 'Azúcar Blanca', icon: '白糖', color: 'purple-600' },
+                    { id: 152, name: 'Azúcar Mascabo', icon: '🟤', color: 'purple-600' },
+                    { id: 153, name: 'Azúcar Impalpable', icon: '❄️', color: 'purple-600' },
+                    { id: 154, name: 'Endulzantes', icon: '🧪', color: 'purple-600' },
+                    { id: 155, name: 'Azúcar Orgánica', icon: '🌿', color: 'purple-600' }
+                ],
+                // Sal sub-subcategories
+                'Sal': [
+                    { id: 156, name: 'Sal', icon: '🌊', color: 'blue-400' },
+                    { id: 157, name: 'Sal Especiales', icon: '🧂', color: 'gray-400' },
+                        ],
+                // Carnes Vacunas sub-subcategories
+                'Carnes Vacunas': [
+                    { id: 161, name: 'Cortes Premium', icon: '🥩', color: 'purple-500' },
+                    { id: 162, name: 'Cortes Económicos', icon: '💰', color: 'purple-500' },
+                    { id: 163, name: 'Carne Picada', icon: '🔪', color: 'purple-500' },
+                    { id: 164, name: 'Vacío y Asado', icon: '🔥', color: 'purple-500' },
+                    { id: 165, name: 'Orgánicos', icon: '🌿', color: 'purple-500' }
+                ],
+                // Gaseosas sub-subcategories
+                'Gaseosas': [
+                    { id: 166, name: 'Cola', icon: '🥤', color: 'purple-500' },
+                    { id: 167, name: 'Limón', icon: '🍋', color: 'purple-500' },
+                    { id: 168, name: 'Naranja', icon: '🍊', color: 'purple-500' },
+                    { id: 169, name: 'Pomelo', icon: ' grapefruit', color: 'purple-500' },
+                    { id: 170, name: 'Sin Azúcar', icon: '🚫🍬', color: 'purple-500' }
+                ],
+                // Limpieza sub-subcategories
+                'Lavandería': [
+                    { id: 171, name: 'Detergentes Líquidos', icon: '🧴', color: 'purple-500' },
+                    { id: 172, name: 'Detergentes en Polvo', icon: '🧺', color: 'purple-500' },
+                    { id: 173, name: 'Suavizantes', icon: '🌸', color: 'purple-500' },
+                    { id: 174, name: 'Blanqueadores', icon: '⚡', color: 'purple-500' },
+                    { id: 175, name: 'Quitamanchas', icon: '💦', color: 'purple-500' }
+                ],
+                // Lácteos sub-subcategories
+                'Leches': [
+                    { id: 176, name: 'Leche Entera', icon: '🥛', color: 'purple-500' },
+                    { id: 177, name: 'Leche Descremada y Semidescremada', icon: '🚰', color: 'purple-500' },
+                    { id: 179, name: 'Leche Deslactosada', icon: '📅', color: 'purple-500' },
+                    { id: 180, name: 'Leche en Polvo', icon: '🌿', color: 'purple-500' }
+                ],
+                // Aderezos sub-subcategories
+                'Mayonesas': [
+                    { id: 181, name: 'Mayonesa Clásica', icon: '🥄', color: 'purple-500' },
+                    { id: 182, name: 'Mayonesa Light', icon: '🌿', color: 'purple-500' },
+                    
+                ],
+                // Frutas y Verduras sub-subcategories
+                'Frutas': [
+                    { id: 186, name: 'Frescas', icon: '🍊', color: 'green-400' },
+                    { id: 187, name: 'Frutas de Estación', icon: '🍓', color: 'green-400' },
+                    { id: 188, name: 'Bananas', icon: '🍌', color: 'green-400' },
+                    { id: 189, name: 'Manzanas', icon: '🍎', color: 'green-400' },
+                    { id: 190, name: 'Exóticas', icon: '🌴', color: 'green-500' }
+                ],
+                // Panadería sub-subcategories
+                'Panes': [
+                    { id: 191, name: 'Pan de Molde', icon: '🍞', color: 'amber-500' },
+                    { id: 192, name: 'Baguette', icon: '🥖', color: 'amber-600' },
+                    { id: 193, name: 'Integral', icon: '🌾', color: 'amber-700' },
+                    { id: 194, name: 'Artesanal', icon: '👨‍🍳', color: 'amber-400' },
+                    { id: 195, name: 'Sin TACC', icon: '🚫🌾', color: 'green-500' }
+                ],
+                // Snacks sub-subcategories
+                'Papas Fritas': [
+                    { id: 196, name: 'Clásicas', icon: '🍟', color: 'orange-500' },
+                    { id: 197, name: 'Saborizadas', icon: '🌶️', color: 'red-500' },
+                    { id: 198, name: 'Light', icon: '🌿', color: 'green-400' },
+                    { id: 199, name: 'Premium', icon: '🌟', color: 'amber-500' },
+                    { id: 200, name: 'Orgánicas', icon: '🌱', color: 'green-600' }
+                ],
+                // Congelados sub-subcategories
+                'Pizzas': [
+                    { id: 201, name: 'Muzzarella', icon: '🧀', color: 'yellow-300' },
+                    { id: 202, name: 'Especial', icon: '🍕', color: 'red-400' },
+                    { id: 203, name: 'Napolitana', icon: '🇮🇹', color: 'green-500' },
+                    { id: 204, name: 'Fugazzeta', icon: '🧅', color: 'purple-500' },
+                    { id: 205, name: 'Gourmet', icon: '🌟', color: 'amber-500' }
+                ],// Cervezas sub-subcategories
+                'Cervezas': [
+                    { id: 206, name: 'Nacionales', icon: '🍺', color: 'orange-500' },
+                    { id: 207, name: 'Importadas', icon: '🍺', color: 'red-500' },
+                    { id: 208, name: 'Sin Alcohol', icon: '🍺', color: 'green-400' },
+                    { id: 2080, name: 'Artesanales', icon: '🍺', color: 'green-400' },
+                ],// Granos sub-subcategories
+                'Granos': [
+                    { id: 209, name: 'Frijoles', icon: '🍟', color: 'green-400' },
+                    { id: 210, name: 'Lentejas', icon: '🌶️', color: 'green-400' },
+                    { id: 211, name: 'Garbanzos', icon: '🌿', color: 'green-400' },
+                    { id: 212, name: 'Arvejas', icon: '🌿', color: 'green-400' },
+                    { id: 213, name: 'Otros', icon: '🌿', color: 'green-400' },
+                ],// Whisky sub-subcategories
+                'Licores': [
+                    { id: 214, name: 'Whisky', icon: '🍟', color: 'purple-600' },
+                { id: 215, name: 'Aguardientes', icon: '🍷', color: 'purple-600' },
+                    { id: 216, name: 'Ron', icon: '🍷', color: 'purple-600' },
+                    { id: 217, name: 'Ginebra', icon: '🍷', color: 'purple-600' },
+                    { id: 218, name: 'Vodka', icon: '🍷', color: 'purple-600' }
+                ],
+                // Pescados y Mariscos sub-subcategories
+                'Mariscos': [
+                    { id: 219, name: 'Camarones y Langostinos', icon: '🍟', color: 'purple-600' },
+                { id: 220, name: 'Almejas y Mejillones', icon: '🍷', color: 'purple-600' },
+                    { id: 221, name: 'Calamares y Pulpos', icon: '🍷', color: 'purple-600' },
+                    
+                ],// Pescados y Mariscos sub-subcategories
+                'Pescados': [
+                    { id: 222, name: 'Filetes y Lomo', icon: '🍷', color: 'purple-600' },
+                    { id: 223, name: 'Pescados Enteros', icon: '🍷', color: 'purple-600' }
+                ],
+                // Bebidas sub-subcategories
+                'Aguas': [
+                    { id: 223, name: 'Agua sin gas', icon: '🍷', color: 'purple-600' },
+                    { id: 224, name: 'Agua con gas', icon: '🍷', color: 'purple-600' },
+                    { id: 225, name: 'Aguas saborizadas', icon: '🍷', color: 'purple-600' },
+                    ],
+                    // Carnes sub-subcategories
+                'Carnes Frias y Embutidos': [
+                    { id: 226, name: 'Embutidos', icon: '🍷', color: 'purple-600' },
+                    { id: 227, name: 'Carnes Frias', icon: '🍷', color: 'purple-600' },
+                    
+                    ],
+                    // Carnes sub-subcategories
+                'Carnes de Cerdo': [
+                    { id: 228, name: 'Costillas', icon: '🍷', color: 'purple-600' },
+                    { id: 229, name: 'Carne de cerdo', icon: '🍷', color: 'purple-600' },
+                    
+                    ],
+                    // Lácteos sub-subcategories
+                'Yogures': [
+                    { id: 230, name: 'Yogures Naturales', icon: '🍶', color: 'purple-600' },
+                    { id: 231, name: 'Yogures Griegos', icon: '🍶', color: 'purple-600' },
+                    { id: 231, name: 'Otros Yogures', icon: '🍶', color: 'purple-600' },
+                    
+                ],
+// Lácteos sub-subcategories
+                'Quesos': [
+                    { id: 232, name: 'Queso Parmesano', icon: '🧀', color: 'purple-600' },
+                    { id: 233, name: 'Queso Mozzarella', icon: '🧀', color: 'purple-600' },
+                    { id: 234, name: 'Queso Nacionales, Campesinos y Semiduro', icon: '🧀', color: 'purple-600' },
+                    { id: 235, name: 'Queso Crema', icon: '🧀', color: 'purple-600' },
+                    { id: 236, name: 'Quesos Internacionales', icon: '🧀', color: 'purple-600' },
+                    { id: 237, name: 'Queso Pera', icon: '🧀', color: 'purple-600' },
+                    ],
+
+                  // Ketchups sub-subcategories 
+                  'Kétchups': [ 
+{ id: 238, name: 'Ketchups', icon: '🍅', color: 'purple-600' },
+
+],
+
+// Vinagretas sub-subcategories 
+                  'Vinagretas': [ 
+{ id: 239, name: 'Vinagretas', icon: '🥗', color: 'purple-600' },
+
+],
+
+// Vinagretas sub-subcategories 
+                  'Salsas': [ 
+{ id: 240, name: 'Salsas', icon: '🍶', color: 'purple-600' },
+
+
+
+
+],
+
+// Vinagretas sub-subcategories 
+                  'Mostazas': [ 
+{ id: 241, name: 'Mostazas', icon: '🍶', color: 'purple-600' },
+
+
+
+
+],
+
+// Aseo del Hogar sub-subcategories 
+                  'Detergentes, Jabones y Limpiadores': [ 
+{ id: 242, name: 'Jabón y Detergente en polvo', icon: '🍶', color: 'purple-600' },
+{ id: 243, name: 'Jabón y Detergente líquido', icon: '🍶', color: 'purple-600' },
+{ id: 244, name: 'Blanqueadores', icon: '🍶', color: 'purple-600' },
+{ id: 245, name: 'Jabón y Detergente en barra', icon: '🍶', color: 'purple-600' },
+{ id: 246, name: 'Quita manchas', icon: '🍶', color: 'purple-600' },
+
+],
+// Aseo dle Hogar sub-subcategories 
+                  'Implementos para limpieza': [
+{ id: 247, name: 'Paños Multiusos', icon: '🍶', color: 'purple-600' },
+{ id: 248, name: 'Esponjas y Esponjillas', icon: '🍶', color: 'purple-600' },
+{ id: 249, name: 'Guantes', icon: '🍶', color: 'purple-600' },                 
+{ id: 250, name: 'Cepillos', icon: '🍶', color: 'purple-600' }, 
+{ id: 251, name: 'Escobas, Recogedores y Trapeadores', icon: '🍶', color: 'purple-600' }, 
+{ id: 252, name: 'Betún', icon: '🍶', color: 'purple-600' }, 
+{ id: 252, name: 'Bolsas de Basura', icon: '🍶', color: 'purple-600' }, 
+
+
+]
   }
 };
         // Supermarket logos
@@ -1700,7 +1930,8 @@ const categories = {
                         { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +${renderPrice(200)}0' },
                         { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +${renderPrice(150)}0' },
                         { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' }
-                    ]
+                    ],
+                    
                 },
             ],
             // Azúcar products
@@ -4648,6 +4879,7 @@ window.logout = logout;
 window.saveUserDataToSupabase = saveUserDataToSupabase;
 window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </script>
+
 
 
 
