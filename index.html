@@ -500,7 +500,7 @@ const categories = {
   main: [
     { id: 1, name: 'Almacén', icon: 'package', color: 'text-purple-700' },
     { id: 2, name: 'Carnes', icon: 'beef', color: 'text-purple-700' },
-    { id: 3, name: 'Limpieza', icon: 'sparkles', color: 'text-purple-700' },
+    { id: 3, name: 'Aseo del Hogar', icon: 'sparkles', color: 'text-purple-700' },
     { id: 4, name: 'Aderezos', icon: 'salad', color: 'text-purple-700' },
     { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-purple-700' },
     { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-purple-700' },
@@ -538,7 +538,67 @@ const categories = {
       { id: 19, name: 'Cervezas', icon: 'beer', color: 'text-purple-600' },
       { id: 20, name: 'Vinos', icon: 'wine', color: 'text-purple-600' },
       { id: 21, name: 'Licores', icon: 'glass', color: 'text-purple-600' }
-    ]
+    ],
+      'Aseo del Hogar': [
+                    { id: 21, name: 'Detergentes, Jabones y Limpiadores', icon: '👕', color: 'purple-500' },
+                    { id: 22, name: 'Implementos para limpieza', icon: '🚽', color: 'purple-500' },
+                    { id: 23, name: 'Ambientadores e Insecticidas', icon: '🍽️', color: 'purple-500' },
+                    { id: 24, name: 'Servilletas, Papel Higiénico, Papeles y Toallas de cocina', icon: '🦠', color: 'purple-500' },
+                    { id: 25, name: 'Desechables, Velas y Carbon', icon: '🧻', color: 'purple-500' },
+                    { id: 25, name: 'Lavalozas, Desengrasantes y Suavizantes', icon: '🧻', color: 'purple-500' }
+                ],
+                'Lácteos': [
+                    { id: 31, name: 'Leches', icon: '🥛', color: 'purple-500' },
+                    { id: 32, name: 'Yogures', icon: '🍶', color: 'purple-500' },
+                    { id: 33, name: 'Quesos', icon: '🧀', color: 'purple-500' },
+                    { id: 34, name: 'Postres Lácteos', icon: '🍮', color: 'purple-500' },
+                    { id: 35, name: 'Mantequillas y Margarinas', icon: '🧈', color: 'purple-500' }
+                ],
+      'Aderezos': [
+                    { id: 41, name: 'Mayonesas', icon: '🥄', color: 'purple-500' },
+                    { id: 42, name: 'Kétchups', icon: '🍅', color: 'purple-500' },
+                    { id: 43, name: 'Mostazas', icon: '🟡', color: 'purple-500' },
+                    { id: 44, name: 'Salsas', icon: '🌶️', color: 'purple-500' },
+                    { id: 45, name: 'Vinagretas', icon: '🥗', color: 'purple-500' }
+                ],
+                'Frutas y Verduras': [
+                    { id: 51, name: 'Frutas', icon: '🍓', color: 'green-500' },
+                    { id: 52, name: 'Verduras', icon: '🥕', color: 'green-500' },
+                    { id: 53, name: 'Hortalizas', icon: '🥬', color: 'green-500' },
+                    { id: 54, name: 'Frutas Orgánicas', icon: '🍎', color: 'green-500' },
+                    { id: 55, name: 'Verduras Orgánicas', icon: '🥦', color: 'green-500' }
+                ],
+                'Panadería': [
+                    { id: 61, name: 'Panes', icon: '🍞', color: 'purple-500' },
+                    { id: 62, name: 'Facturas', icon: '🥐', color: 'purple-500' },
+                    { id: 63, name: 'Tostadas', icon: '🥖', color: 'purple-500' },
+                    { id: 64, name: 'Galletitas', icon: '🍪', color: 'purple-500' },
+                    { id: 65, name: 'Productos Sin TACC', icon: '🌾', color: 'purple-500' }
+                ],
+                'Snacks': [
+                    { id: 71, name: 'Papas Fritas', icon: '🍟', color: 'purple-500' },
+                    { id: 72, name: 'Galletitas Saladas', icon: '🧂', color: 'purple-500' },
+                    { id: 73, name: 'Golosinas', icon: '🍬', color: 'purple-500' },
+                    { id: 74, name: 'Frutos Secos', icon: '🥜', color: 'purple-500' },
+                    { id: 75, name: 'Barras de Cereal', icon: '🥣', color: 'purple-500' }
+                ],
+                'Congelados': [
+                    { id: 81, name: 'Pizzas', icon: '🍕', color: 'purple-500' },
+                    { id: 82, name: 'Vegetales', icon: '🥦', color: 'purple-500' },
+                    { id: 83, name: 'Pescados', icon: '🐟', color: 'purple-500' },
+                    { id: 84, name: 'Helados', icon: '🍦', color: 'purple-500' },
+                    { id: 85, name: 'Comidas Preparadas', icon: '🍱', color: 'purple-500' }
+                ],'Pescados y Mariscos': [
+                    { id: 86, name: 'Mariscos', icon: '🍕', color: 'purple-500' },                  
+                    { id: 88, name: 'Pescados', icon: '🐟', color: 'purple-500' }
+                    
+                ],
+                'Pollo': [
+                    { id: 86, name: 'Pechuga', icon: '🍕', color: 'purple-500' },
+                    { id: 87, name: 'Pollo Entero', icon: '🥦', color: 'purple-500' },
+                    { id: 88, name: 'Pescados', icon: '🐟', color: 'purple-500' }
+                    
+                ]
   },
   subsub: {
     'Arroz': [
@@ -4590,3 +4650,4 @@ window.logout = logout;
 window.saveUserDataToSupabase = saveUserDataToSupabase;
 window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </script>
+
