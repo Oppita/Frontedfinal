@@ -3079,479 +3079,396 @@ function renderPrice(value) {
 
 
 
-<!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (versión final) -->
+<!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (VERSIÓN COMPATIBLE) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://dhkjjgjmluqylxhfgbyx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Función de login
 async function handleLogin(e) {
-  window.manualLoginTriggered = true;
-  e.preventDefault();
-  const email = e.target.email.value.trim();
-  const password = e.target.password.value;
-  if (!email || !password) return alert("Por favor ingresa tu correo y contraseña.");
+    if (e) e.preventDefault();
+    window.manualLoginTriggered = true;
+    
+    const email = e?.target?.email?.value?.trim() || document.querySelector('#login-page input[name="email"]')?.value?.trim();
+    const password = e?.target?.password?.value || document.querySelector('#login-page input[name="password"]')?.value;
+    
+    if (!email || !password) {
+        alert("Por favor ingresa tu correo y contraseña.");
+        return;
+    }
 
-  try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    alert("✅ Inicio de sesión exitoso");
-    state.isLoggedIn = true;
-    state.user = data.user;
-     } catch (err) {
-    alert("Error al iniciar sesión: " + (err.message || err));
-  }
+    try {
+        console.log("🔐 Intentando login con:", email);
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+            email: email, 
+            password: password 
+        });
+        
+        if (error) {
+            console.error("❌ Error de login:", error.message);
+            alert("Error al iniciar sesión: " + error.message);
+            return;
+        }
+        
+        if (!data.user) {
+            alert("Credenciales incorrectas");
+            return;
+        }
+        
+        console.log("✅ Login exitoso:", data.user.email);
+        state.isLoggedIn = true;
+        state.user = data.user;
+        
+        // Cargar datos del usuario
+        await loadUserDataFromSupabase(data.user.id);
+        
+        // Redirigir a categorías
+        if (typeof showCategoriesPage === "function") {
+            showCategoriesPage();
+        }
+        
+    } catch (err) {
+        console.error("Error en login:", err);
+        alert("Error al iniciar sesión: " + (err.message || err));
+    }
 }
 
+// Función de registro
 async function handleRegister(e) {
-  e.preventDefault();
-  const email = e.target.email.value.trim();
-  const password = e.target.password.value;
-  const name = e.target.name.value.trim();
-  if (!email || !password || !name) return alert("Completa todos los campos");
-
-  try {
-    const { error } = await supabaseClient.auth.signUp({
-      email, password, options: { data: { name } }
-    });
-    if (error) throw error;
-    alert("Cuenta creada. Revisa tu correo para verificar.");
-    if (typeof showLoginPage === "function") showLoginPage();
-  } catch (err) {
-    alert("Error al crear cuenta: " + (err.message || err));
-  }
-}
-
-async function logout() {
-  await supabaseClient.auth.signOut();
-  state.isLoggedIn = false;
-  state.user = null;
-  if (typeof showLandingPage === "function") showLandingPage();
-}
-
-
-async function restoreSession() {
-  try {
-    const { data } = await supabaseClient.auth.getSession();
-    if (data?.session?.user) {
-      console.log("✅ Sesión restaurada automáticamente, cargando categorías...");
-      state.isLoggedIn = true;
-      state.user = data.session.user;
-      // 🔄 Cargar los datos guardados del usuario desde Supabase
-      await loadUserDataFromSupabase(state.user.id);
-      // 👇 Redirigir a la página de categorías principales
-      if (typeof showCategoriesPage === "function") showCategoriesPage();
-    } else {
-      console.log("🚪 No hay sesión activa. Mostrando landing page.");
-      if (typeof showLandingPage === "function") showLandingPage();
+    if (e) e.preventDefault();
+    
+    const name = e?.target?.name?.value?.trim() || document.querySelector('#register-page input[name="name"]')?.value?.trim();
+    const email = e?.target?.email?.value?.trim() || document.querySelector('#register-page input[name="email"]')?.value?.trim();
+    const password = e?.target?.password?.value || document.querySelector('#register-page input[name="password"]')?.value;
+    
+    if (!email || !password || !name) {
+        alert("Completa todos los campos");
+        return;
     }
-  } catch (err) {
-    console.error("Error al restaurar sesión:", err);
-  }
+
+    if (password.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres");
+        return;
+    }
+
+    try {
+        console.log("📝 Intentando registro con:", email);
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email, 
+            password: password, 
+            options: { data: { name: name } }
+        });
+        
+        if (error) {
+            console.error("❌ Error en registro:", error.message);
+            alert("Error al crear cuenta: " + error.message);
+            return;
+        }
+        
+        if (data.user) {
+            alert("Cuenta creada. Revisa tu correo para verificar.");
+            if (typeof showLoginPage === "function") showLoginPage();
+        } else {
+            alert("Error al crear la cuenta");
+        }
+        
+    } catch (err) {
+        console.error("Error en registro:", err);
+        alert("Error al crear cuenta: " + (err.message || err));
+    }
 }
 
+// Logout
+async function logout() {
+    try {
+        await supabaseClient.auth.signOut();
+        state.isLoggedIn = false;
+        state.user = null;
+        state.shoppingCart = [];
+        state.favorites = [];
+        state.priceAlerts = [];
+        state.shoppingLists = [];
+        
+        console.log("🚪 Sesión cerrada");
+        if (typeof showLandingPage === "function") showLandingPage();
+    } catch (err) {
+        console.error("Error en logout:", err);
+    }
+}
 
+/* --- SISTEMA DE PERSISTENCIA COMPATIBLE CON LA TABLA EXISTENTE --- */
 
-
-/* --- CLOUD SYNC FUNCTIONS --- */
+// Crear o verificar fila de usuario - USANDO NOMBRES COMPATIBLES
 async function ensureUserDataRow(userId) {
-  if (!userId) return;
-  try {
-    const { data, error } = await supabaseClient
-      .from("user_data")
-      .select("user_id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (error) throw error;
-    if (!data) {
-      await supabaseClient.from("user_data").insert([{ user_id: userId }]);
-      console.log("🆕 user_data row created for", userId);
+    if (!userId) return;
+    
+    try {
+        // Intentamos insertar, si ya existe fallará silenciosamente (código 23505)
+        const { error: insertError } = await supabaseClient
+            .from("user_data")
+            .insert([{ 
+                user_id: userId,
+                favorites: [],
+                lists: [],
+                alerts: [],
+                cart: []
+            }])
+            .select();
+            
+        if (insertError) {
+            // Si el error es de violación de clave única (la fila ya existe), es normal
+            if (insertError.code === '23505') {
+                console.log("✅ Fila de usuario ya existe:", userId);
+                return;
+            }
+            console.warn("⚠️ Error al crear fila de usuario:", insertError.message);
+        } else {
+            console.log("🆕 Fila de usuario creada:", userId);
+        }
+    } catch (err) {
+        console.error("ensureUserDataRow error:", err);
     }
-  } catch (err) {
-    console.error("ensureUserDataRow error:", err);
-  }
 }
 
+// Cargar datos desde Supabase - USANDO NOMBRES COMPATIBLES
 async function loadUserDataFromSupabase(userId) {
-  if (!userId) return;
-  try {
-    await ensureUserDataRow(userId);
-    const { data, error } = await supabaseClient
-      .from("user_data")
-      .select("favorites, lists, alerts, cart")
-      .eq("user_id", userId)
-      .single();
-    if (error) throw error;
-    state.favorites = data.favorites || [];
-    state.lists = data.lists || [];
-    state.alerts = data.alerts || [];
-    state.cart = data.cart || [];
-    // Sync localStorage too
-    try { localStorage.setItem(`user_${userId}`, JSON.stringify(data)); } catch(e){}
-    console.log("📦 Loaded user data from Supabase for", userId);
-    // Notify UI if your app listens to events
-    document.dispatchEvent(new Event("favoritesRestored"));
-    document.dispatchEvent(new Event("listsRestored"));
-    document.dispatchEvent(new Event("alertsRestored"));
-    document.dispatchEvent(new Event("cartRestored"));
-  } catch (err) {
-    console.error("loadUserDataFromSupabase error:", err);
-  }
+    if (!userId) {
+        console.log("❌ No hay user ID para cargar datos");
+        return;
+    }
+    
+    try {
+        console.log("📥 Cargando datos para usuario:", userId);
+        
+        // Primero nos aseguramos que exista la fila
+        await ensureUserDataRow(userId);
+        
+        // Luego intentamos cargar los datos - usando los nombres de columna CORRECTOS
+        const { data, error } = await supabaseClient
+            .from("user_data")
+            .select("favorites, lists, alerts, cart")
+            .eq("user_id", userId)
+            .single();
+            
+        if (error) {
+            console.error("❌ Error al cargar datos:", error);
+            
+            // Si no encuentra datos, usar arrays vacíos
+            if (error.code === 'PGRST116') {
+                console.log("ℹ️ No se encontraron datos, usando arrays vacíos");
+                state.favorites = [];
+                state.shoppingLists = [];
+                state.priceAlerts = [];
+                state.shoppingCart = [];
+                return;
+            }
+            
+            throw error;
+        }
+        
+        // Si tenemos datos, asignarlos al estado - MAPEANDO LOS NOMBRES CORRECTAMENTE
+        if (data) {
+            state.favorites = Array.isArray(data.favorites) ? data.favorites : [];
+            state.shoppingLists = Array.isArray(data.lists) ? data.lists : [];
+            state.priceAlerts = Array.isArray(data.alerts) ? data.alerts : [];
+            state.shoppingCart = Array.isArray(data.cart) ? data.cart : [];
+            
+            console.log("✅ Datos cargados correctamente:", {
+                favorites: state.favorites.length,
+                shoppingLists: state.shoppingLists.length,
+                priceAlerts: state.priceAlerts.length,
+                shoppingCart: state.shoppingCart.length
+            });
+            
+            // Actualizar UI
+            if (typeof updateAlertsBadge === 'function') {
+                updateAlertsBadge();
+            }
+        } else {
+            console.log("ℹ️ No hay datos, inicializando arrays vacíos");
+            state.favorites = [];
+            state.shoppingLists = [];
+            state.priceAlerts = [];
+            state.shoppingCart = [];
+        }
+        
+    } catch (err) {
+        console.error("❌ Error crítico en loadUserDataFromSupabase:", err);
+        // En caso de error crítico, usar arrays vacíos
+        state.favorites = [];
+        state.shoppingLists = [];
+        state.priceAlerts = [];
+        state.shoppingCart = [];
+    }
 }
 
+// Guardar datos en Supabase - USANDO NOMBRES COMPATIBLES
 async function saveUserDataToSupabase() {
-  if (!state?.user?.id) return;
-  try {
-    const payload = {
-      user_id: state.user.id,
-      favorites: state.favorites || [],
-      lists: state.lists || [],
-      alerts: state.alerts || [],
-      cart: state.cart || [],
-      updated_at: new Date().toISOString()
+    if (!state?.user?.id) {
+        console.log("⚠️ No hay usuario logueado, omitiendo guardado");
+        return;
+    }
+    
+    try {
+        // MAPEAR los nombres del estado a los nombres de columna en la tabla
+        const payload = {
+            user_id: state.user.id,
+            favorites: state.favorites || [],
+            lists: state.shoppingLists || [], // ← state.shoppingLists va a columna "lists"
+            alerts: state.priceAlerts || [],  // ← state.priceAlerts va a columna "alerts"  
+            cart: state.shoppingCart || [],   // ← state.shoppingCart va a columna "cart"
+            updated_at: new Date().toISOString()
+        };
+        
+        console.log("💾 Guardando datos para:", state.user.email, {
+            favorites: payload.favorites.length,
+            lists: payload.lists.length,
+            alerts: payload.alerts.length,
+            cart: payload.cart.length
+        });
+        
+        const { error } = await supabaseClient
+            .from("user_data")
+            .upsert([payload], { onConflict: 'user_id' });
+            
+        if (error) {
+            console.error("❌ Error al guardar datos:", error);
+            throw error;
+        }
+        
+        console.log("✅ Datos guardados exitosamente");
+        
+    } catch (err) {
+        console.error("❌ Error crítico en saveUserDataToSupabase:", err);
+    }
+}
+
+/* --- SISTEMA DE SINCRONIZACIÓN --- */
+let saveTimeout = null;
+function scheduleSave() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+        saveUserDataToSupabase();
+    }, 2000); // Debounce de 2 segundos
+}
+
+// Sincronizar funciones existentes
+function syncFunction(originalFunction, functionName) {
+    if (typeof originalFunction !== 'function') return originalFunction;
+    
+    return function(...args) {
+        const result = originalFunction.apply(this, args);
+        scheduleSave();
+        return result;
     };
-    const { error } = await supabaseClient
-      .from("user_data")
-      .upsert([payload], { onConflict: "user_id" });
-    if (error) throw error;
-    console.log("💾 Saved user data to Supabase for", state.user.id);
-    try { localStorage.setItem(`user_${state.user.id}`, JSON.stringify(payload)); } catch(e){}
-  } catch (err) {
-    console.error("saveUserDataToSupabase error:", err);
-  }
 }
 
-/* Hook saves to events — trigger these events in your app when data changes */
-document.addEventListener("favoritesUpdated", saveUserDataToSupabase);
-document.addEventListener("listsUpdated", saveUserDataToSupabase);
-document.addEventListener("alertsUpdated", saveUserDataToSupabase);
-document.addEventListener("cartUpdated", saveUserDataToSupabase);
-
-/* --- Restore session and sync on load --- */
-async function restoreAndSync() {
-  try {
-    if (!window.supabaseClient) return console.warn("Supabase client not initialized");
-    const { data } = await supabaseClient.auth.getSession();
-    if (data?.session?.user) {
-      state.isLoggedIn = true;
-      state.user = data.session.user;
-      console.log("🔁 Session active:", state.user.email);
-      // load from cloud
-      await loadUserDataFromSupabase(state.user.id);
-      // show categories (if desired by UX)
-      if (typeof showCategoriesPage === "function") showCategoriesPage();
-    } else {
-      if (typeof showLandingPage === "function") showLandingPage();
-    }
-  } catch (err) {
-    console.error("restoreAndSync error:", err);
-  }
+// Aplicar sincronización a funciones críticas
+function setupSyncForCriticalFunctions() {
+    const functionsToSync = [
+        'addToCart', 'toggleFavorite', 'toggleAlert', 'updateCartQuantity',
+        'createNewShoppingList', 'deleteShoppingList', 'removeFromShoppingList', 
+        'togglePurchased', 'setPriceAlert', 'clearAllAlerts'
+    ];
+    
+    functionsToSync.forEach(funcName => {
+        if (typeof window[funcName] === 'function' && !window[funcName].__synced) {
+            window[funcName] = syncFunction(window[funcName], funcName);
+            window[funcName].__synced = true;
+            console.log(`🔄 Sincronizada: ${funcName}`);
+        }
+    });
 }
 
-/* --- After manual login, sync cloud data too --- */
-const _origHandleLogin = window.handleLogin;
-window.handleLogin = async function(e) {
-  if (_origHandleLogin) await _origHandleLogin(e);
-  try {
-    if (state?.user?.id) {
-      await ensureUserDataRow(state.user.id);
-      await loadUserDataFromSupabase(state.user.id);
-      // notify UI in case needed
-      document.dispatchEvent(new Event("favoritesUpdated"));
-      document.dispatchEvent(new Event("listsUpdated"));
-      document.dispatchEvent(new Event("alertsUpdated"));
-      document.dispatchEvent(new Event("cartUpdated"));
+/* --- INICIALIZACIÓN --- */
+async function initializeApp() {
+    try {
+        console.log("🚀 Inicializando aplicación...");
+        
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error) {
+            console.error("❌ Error al obtener sesión:", error);
+            if (typeof showLandingPage === "function") showLandingPage();
+            return;
+        }
+        
+        if (data?.session?.user) {
+            console.log("✅ Sesión activa detectada:", data.session.user.email);
+            state.isLoggedIn = true;
+            state.user = data.session.user;
+            
+            // Cargar datos del usuario
+            await loadUserDataFromSupabase(data.session.user.id);
+            
+            // Configurar sincronización
+            setTimeout(setupSyncForCriticalFunctions, 1000);
+            
+            // Mostrar categorías
+            if (typeof showCategoriesPage === "function") {
+                setTimeout(() => showCategoriesPage(), 500);
+            }
+        } else {
+            console.log("🚪 No hay sesión activa");
+            if (typeof showLandingPage === "function") showLandingPage();
+        }
+    } catch (err) {
+        console.error("❌ Error en inicialización:", err);
+        if (typeof showLandingPage === "function") showLandingPage();
     }
-  } catch (err) {
-    console.error("post-login sync error:", err);
-  }
-};
+}
 
-/* --- Ensure logout keeps remote data but clears local cache --- */
-const _origLogout = window.logout;
-window.logout = async function() {
-  try {
-    if (state?.user?.id) localStorage.removeItem(`user_${state.user.id}`);
-  } catch(e){}
-  if (_origLogout) await _origLogout();
-};
-
-/* --- Run restore on DOMContentLoaded (small delay to ensure supabaseClient available) --- */
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => { restoreAndSync(); }, 150);
-});
-
-
-
-
-
-
-
-
+// Event listeners de auth
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  console.log("📡 Evento Supabase:", event);
-  if (event === "SIGNED_IN" && session) {
-    // ✅ Solo redirigimos si el usuario acaba de iniciar sesión manualmente
-    if (window.manualLoginTriggered) {
-      alert("✅ Inicio de sesión exitoso");
-      state.isLoggedIn = true;
-      state.user = session.user;
-      if (typeof showCategoriesPage === "function") showCategoriesPage();
-      window.manualLoginTriggered = false;
-    } else {
-      console.log("🕒 Sesión restaurada, permaneciendo en landing.");
+    console.log("📡 Evento de autenticación:", event);
+    
+    switch (event) {
+        case 'SIGNED_IN':
+            if (window.manualLoginTriggered) {
+                console.log("✅ Login manual exitoso");
+                state.isLoggedIn = true;
+                state.user = session.user;
+                loadUserDataFromSupabase(session.user.id).then(() => {
+                    setTimeout(setupSyncForCriticalFunctions, 500);
+                    if (typeof showCategoriesPage === "function") {
+                        showCategoriesPage();
+                    }
+                });
+                window.manualLoginTriggered = false;
+            }
+            break;
+            
+        case 'SIGNED_OUT':
+            console.log("🚪 Usuario cerró sesión");
+            state.isLoggedIn = false;
+            state.user = null;
+            state.shoppingCart = [];
+            state.favorites = [];
+            state.priceAlerts = [];
+            state.shoppingLists = [];
+            if (typeof showLandingPage === "function") showLandingPage();
+            break;
     }
-  } else if (event === "SIGNED_OUT") {
-    state.isLoggedIn = false;
-    state.user = null;
-    if (typeof showLandingPage === "function") showLandingPage();
-  }
 });
 
+// Inicializar aplicación
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("🎬 DOM cargado - iniciando aplicación");
+    setTimeout(initializeApp, 300);
+});
+
+// Configurar sincronización después de que se carguen las funciones
+setTimeout(setupSyncForCriticalFunctions, 2000);
+
+// Exportar funciones globalmente
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.logout = logout;
+window.saveUserDataToSupabase = saveUserDataToSupabase;
+window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </script>
 
-
-<!-- ✅ SESIÓN PERSISTENTE Y SINCRONIZACIÓN DE DATOS POR USUARIO -->
-<script>
-// ======= Funciones de almacenamiento =======
-function saveUserData() {
-  if (!state?.user?.id) return;
-  const userKey = `user_${state.user.id}`;
-  const data = {
-    favorites: state.favorites || [],
-    lists: state.lists || [],
-    alerts: state.alerts || [],
-    cart: state.cart || []
-  };
-  localStorage.setItem(userKey, JSON.stringify(data));
-  console.log("💾 Datos guardados para", userKey);
-}
-
-function loadUserData(userId) {
-  const userKey = `user_${userId}`;
-  const stored = localStorage.getItem(userKey);
-  if (stored) {
-    try {
-      const data = JSON.parse(stored);
-      state.favorites = data.favorites || [];
-      state.lists = data.lists || [];
-      state.alerts = data.alerts || [];
-      state.cart = data.cart || [];
-      console.log("📦 Datos restaurados para", userKey);
-    } catch (e) {
-      console.warn("Error al cargar datos locales:", e);
-    }
-  }
-}
-
-function clearUserData(userId) {
-  if (!userId) return;
-  const userKey = `user_${userId}`;
-  localStorage.removeItem(userKey);
-  console.log("🧹 Datos locales eliminados para", userKey);
-}
-
-// ======= Persistencia de sesión =======
-
-(async function persistentSession() {
-  try {
-    const { data } = await supabaseClient.auth.getSession();
-    if (data?.session?.user) {
-      console.log("🔁 Sesión restaurada (manteniendo landing).");
-      state.isLoggedIn = true;
-      state.user = data.session.user;
-      loadUserData(data.session.user.id);
-      // 🚫 No redirigir automáticamente, se queda en landing
-    } else {
-      console.log("🚪 No hay sesión activa");
-      if (typeof showLandingPage === "function") showLandingPage();
-    }
-  } catch (err) {
-    console.error("Error al verificar sesión persistente:", err);
-  }
-})();
-
-
-// ======= Eventos =======
-document.addEventListener("favoritesUpdated", saveUserData);
-document.addEventListener("listsUpdated", saveUserData);
-document.addEventListener("alertsUpdated", saveUserData);
-document.addEventListener("cartUpdated", saveUserData);
-
-// ======= Logout =======
-async function logout() {
-  if (state?.user?.id) clearUserData(state.user.id);
-  await supabaseClient.auth.signOut();
-  state.isLoggedIn = false;
-  state.user = null;
-  if (typeof showLandingPage === "function") showLandingPage();
-}
-</script>
-
-<!-- ✅ SESIÓN PERSISTENTE + SINCRONIZACIÓN COMPLETA -->
-<script>
-async function restoreUserSession() {
-  try {
-    const { data } = await supabaseClient.auth.getSession();
-    if (data?.session?.user) {
-      console.log("🔁 Sesión activa detectada:", data.session.user.email);
-      state.isLoggedIn = true;
-      state.user = data.session.user;
-      // 🔹 Restaurar datos del usuario
-      loadUserData(data.session.user.id);
-      // 🔹 Redirigir automáticamente a categorías
-      if (typeof showCategoriesPage === "function") showCategoriesPage();
-    } else {
-      console.log("🚪 No hay sesión activa. Mostrando landing...");
-      if (typeof showLandingPage === "function") showLandingPage();
-    }
-  } catch (err) {
-    console.error("Error al restaurar sesión:", err);
-  }
-}
-
-// ✅ Cargar datos de usuario guardados localmente
-function loadUserData(userId) {
-  const key = `user_${userId}`;
-  const stored = localStorage.getItem(key);
-  if (!stored) return console.log("ℹ️ No hay datos guardados para el usuario:", userId);
-  try {
-    const data = JSON.parse(stored);
-    state.favorites = data.favorites || [];
-    state.lists = data.lists || [];
-    state.alerts = data.alerts || [];
-    state.cart = data.cart || [];
-    console.log("📦 Datos del usuario restaurados correctamente.");
-  } catch (err) {
-    console.error("Error al cargar datos del usuario:", err);
-  }
-}
-
-// ✅ Guardar datos del usuario actual
-function saveUserData() {
-  if (!state?.user?.id) return;
-  const key = `user_${state.user.id}`;
-  const data = {
-    favorites: state.favorites || [],
-    lists: state.lists || [],
-    alerts: state.alerts || [],
-    cart: state.cart || [],
-  };
-  localStorage.setItem(key, JSON.stringify(data));
-  console.log("💾 Datos guardados localmente para", key);
-}
-
-// ✅ Borrar datos al cerrar sesión
-async function logout() {
-  if (state?.user?.id) {
-    localStorage.removeItem(`user_${state.user.id}`);
-    console.log("🧹 Datos locales eliminados.");
-  }
-  await supabaseClient.auth.signOut();
-  state.isLoggedIn = false;
-  state.user = null;
-  if (typeof showLandingPage === "function") showLandingPage();
-}
-
-// ✅ Vincular eventos de guardado
-document.addEventListener("favoritesUpdated", saveUserData);
-document.addEventListener("listsUpdated", saveUserData);
-document.addEventListener("alertsUpdated", saveUserData);
-document.addEventListener("cartUpdated", saveUserData);
-
-// ✅ Llamar cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", restoreUserSession);
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Supabase auto-save patch: wrap mutators to emit events and save to Supabase -->
-<script>
-(function(){
-  if (typeof window === 'undefined') return;
-  // Debounced save helper
-  window.__saveUserDataDebounce = window.__saveUserDataDebounce || null;
-  function scheduleSave(delay) {
-    delay = delay || 250;
-    if (window.__saveUserDataDebounce) clearTimeout(window.__saveUserDataDebounce);
-    window.__saveUserDataDebounce = setTimeout(function(){
-      try { if (typeof saveUserDataToSupabase === 'function') saveUserDataToSupabase(); } catch(e){ console.error('saveUserDataToSupabase failed', e); }
-    }, delay);
-  }
-
-  // Helper to dispatch update events
-  function dispatchEvent(name) {
-    try { document.dispatchEvent(new Event(name)); } catch(e){ /* old browsers */ 
-      var ev = document.createEvent('Event'); ev.initEvent(name, true, true); document.dispatchEvent(ev);
-    }
-  }
-
-  // Wrap named functions if they exist to schedule saves
-  var mutators = ["addFavorite", "addToCart", "askForList", "checkPriceAlerts", "clearAllAlerts", "closeListModal", "confirmListSelection", "createList", "createListFromModal", "createNewShoppingList", "createPriceAlert", "deleteShoppingList", "openAlertsPage", "populateExistingLists", "removeFromShoppingList", "renderAlertsPanel", "saveUserData", "saveUserDataToSupabase", "setPriceAlert", "showAlertsPage", "showCartPage", "showFavoritesPage", "showShoppingListDetail", "showShoppingListsPage", "sourceList", "toggleAlert", "toggleAlertsPanel", "toggleFavorite", "togglePurchased", "updateAlertsBadge", "updateCartQuantity"];
-  mutators.forEach(function(name){
-    try {
-      var orig = window[name];
-      if (typeof orig === 'function' && !orig.__supabase_wrapped) {
-        window[name] = function(){
-          var res = orig.apply(this, arguments);
-          try {
-            // Map function name to event(s)
-            var n = name.toLowerCase();
-            if (n.indexOf('fav') !== -1 || n.indexOf('favorite') !== -1) dispatchEvent('favoritesUpdated');
-            if (n.indexOf('cart') !== -1) dispatchEvent('cartUpdated');
-            if (n.indexOf('list') !== -1) dispatchEvent('listsUpdated');
-            if (n.indexOf('alert') !== -1) dispatchEvent('alertsUpdated');
-            // Always schedule a save
-            scheduleSave(300);
-          } catch(e){ console.warn('post-mutation hook failed', e); }
-          return res;
-        };
-        window[name].__supabase_wrapped = true;
-        console.log('Supabase patch: wrapped', name);
-      }
-    } catch(e){ /* ignore */ }
-  });
-
-  // Ensure saveUserDataToSupabase exists as a fallback (won't override if present)
-  if (typeof saveUserDataToSupabase !== 'function') {
-    window.saveUserDataToSupabase = async function(){
-      var userId = state && state.user && state.user.id;
-      if (!userId) { console.warn('saveUserDataToSupabase: no user'); return; }
-      try {
-        var payload = {
-          user_id: userId,
-          favorites: state.favorites || [],
-          lists: state.lists || state.shoppingLists || [],
-          alerts: state.alerts || state.priceAlerts || [],
-          cart: state.cart || state.shoppingCart || [],
-          updated_at: new Date().toISOString()
-        };
-        var res = await supabaseClient.from('user_data').upsert(payload, { onConflict: 'user_id' });
-        if (res.error) throw res.error;
-        console.log('💾 [fallback] Saved user data to Supabase for', userId);
-      } catch(e) { console.error('saveUserDataToSupabase fallback error', e); }
-    };
-  }
-
-  // Expose scheduleSave for manual use
-  window.scheduleSaveUserDataToSupabase = scheduleSave;
-
-})();
-</script>
 
 </body>
 </html>
