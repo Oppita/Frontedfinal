@@ -476,19 +476,6 @@
             </div>
         </div>
     </div>
-
-<!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (versión final) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://dhkjjgjmluqylxhfgbyx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
-window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-console.log("✅ Supabase Client inicializado correctamente");
-</script>
-
-
-
-    
     <script>
         // State management
         let state = {
@@ -3093,8 +3080,12 @@ function renderPrice(value) {
 
 
 <!-- ✅ AUTENTICACIÓN SUPABASE INTEGRADA (versión final) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://dhkjjgjmluqylxhfgbyx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoa2pqZ2ptbHVxeWx4aGZnYnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2Njk0NzQsImV4cCI6MjA3NjI0NTQ3NH0.SPcAlZmHUO5olk4y6aTXZkpSZ3yYGBmVfo1-CO_BKSs";
+window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    
 async function handleLogin(e) {
   window.manualLoginTriggered = true;
   e.preventDefault();
@@ -3210,49 +3201,27 @@ async function loadUserDataFromSupabase(userId) {
 }
 
 async function saveUserDataToSupabase() {
+  if (!state?.user?.id) return;
   try {
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (!session) {
-      console.warn("⚠️ No hay sesión activa — no se puede guardar en Supabase");
-      return;
-    }
-
-    const userId = session.user.id;
     const payload = {
-      user_id: userId,
+      user_id: state.user.id,
       favorites: state.favorites || [],
       lists: state.lists || [],
       alerts: state.alerts || [],
       cart: state.cart || [],
       updated_at: new Date().toISOString()
     };
-
-    const { error } = await window.supabaseClient
+    const { error } = await supabaseClient
       .from("user_data")
       .upsert([payload], { onConflict: "user_id" });
-
     if (error) throw error;
-
-    console.log(`💾 Saved user data to Supabase for ${userId}`);
-
-    // respaldo local (opcional)
-    try {
-      localStorage.setItem(`user_${userId}`, JSON.stringify(payload));
-    } catch (e) {
-      console.warn("⚠️ No se pudo guardar localmente:", e);
-    }
-
+    console.log("💾 Saved user data to Supabase for", state.user.id);
+    try { localStorage.setItem(`user_${state.user.id}`, JSON.stringify(payload)); } catch(e){}
   } catch (err) {
-    console.error("❌ saveUserDataToSupabase error:", err);
+    console.error("saveUserDataToSupabase error:", err);
   }
 }
 
-
-
-    
-
-
-    
 /* Hook saves to events — trigger these events in your app when data changes */
 document.addEventListener("favoritesUpdated", saveUserDataToSupabase);
 document.addEventListener("listsUpdated", saveUserDataToSupabase);
@@ -3492,34 +3461,7 @@ document.addEventListener("alertsUpdated", saveUserData);
 document.addEventListener("cartUpdated", saveUserData);
 
 // ✅ Llamar cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("⏳ Esperando inicialización de Supabase...");
-  let retries = 0;
-  const checkReady = setInterval(async () => {
-    if (window.supabaseClient && typeof supabaseClient.auth.getSession === "function") {
-      clearInterval(checkReady);
-      console.log("✅ Supabase listo, restaurando sesión...");
-      try {
-        const { data } = await supabaseClient.auth.getSession();
-        if (data?.session?.user) {
-          console.log("🔁 Sesión restaurada correctamente:", data.session.user.email);
-          state.isLoggedIn = true;
-          state.user = data.session.user;
-          if (typeof showCategoriesPage === "function") showCategoriesPage();
-        } else {
-          console.log("🚪 No hay sesión activa (tras inicialización completa)");
-          if (typeof showLandingPage === "function") showLandingPage();
-        }
-      } catch (err) {
-        console.error("Error al restaurar sesión tardía:", err);
-      }
-    } else if (retries++ > 20) {
-      clearInterval(checkReady);
-      console.warn("⚠️ Supabase no se inicializó a tiempo, abortando restauración.");
-    }
-  }, 300);
-});
-
+document.addEventListener("DOMContentLoaded", restoreUserSession);
 </script>
 
 
@@ -3613,10 +3555,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
-
-
-
-
-
-
