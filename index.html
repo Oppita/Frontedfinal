@@ -1,5 +1,4 @@
 
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -113,6 +112,42 @@
 }
 /* --- end card styles --- */
 </style>
+<style>
+/* 🌈 Botones Modernos */
+.btn-purple {
+  background: linear-gradient(135deg, #5e17eb, #7a2bff);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0.8rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px #6a00ff55;
+}
+.btn-purple:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #a066ffbb;
+  background: linear-gradient(135deg, #7a2bff, #5e17eb);
+}
+
+.btn-green {
+  background: linear-gradient(135deg, #00d884, #00ffa9);
+  color: #001f10;
+  font-weight: 700;
+  border-radius: 0.8rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 12px #00ffbf66;
+}
+.btn-green:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 22px #00ffbfaa;
+}
+
+/* 🌌 Fondo global moderno */
+.bg-modern {
+  background: radial-gradient(circle at center, #3a00a6 0%, #24004a 80%);
+}
+</style>
+
+
 </head>
 <body class="bg-gradient-to-br from-[#2b006e] via-[#35008a] to-[#180036] min-h-screen">
     <!-- Notification Container -->
@@ -137,12 +172,13 @@
 
     <!-- Botones -->
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button onclick="showRegisterPage()" class="bg-white text-[#35008a] px-10 py-4 rounded-xl font-semibold text-xl hover:bg-purple-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-            <i data-lucide="rocket"></i> Registrarse Gratis
-        </button>
-        <button onclick="showLoginPage()" class="bg-green-500 text-white px-10 py-4 rounded-xl font-semibold text-xl hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-            <i data-lucide="user"></i> Iniciar Sesión
-        </button>
+        <button onclick="showRegisterPage()" class="btn-purple px-10 py-4 text-xl flex items-center gap-2">
+  <i data-lucide="rocket"></i> Registrarse Gratis
+</button>
+
+<button onclick="showLoginPage()" class="btn-green px-10 py-4 text-xl flex items-center gap-2">
+  <i data-lucide="user"></i> Iniciar Sesión
+</button>
     </div>
 </div>
 
@@ -21503,4 +21539,3 @@ window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </body>
 </html>
 
- -->
