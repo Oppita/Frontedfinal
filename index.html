@@ -287,16 +287,7 @@
             </header>
 
             <!-- Panel de Alertas -->
-<div id="cp-alerts-panel" class="hidden fixed right-4 top-20 w-80 max-h-[70vh] overflow-auto bg-white border rounded-lg shadow-lg z-50">
-    <h3 class="text-lg font-bold px-4 py-2 border-b">Alertas de Precio</h3>
-    <div id="cp-alerts-list" class="p-4 space-y-2 text-sm text-gray-700">
-        <!-- Aquí se renderizan las alertas con JS -->
-    </div>
-    <div class="flex gap-2 border-t p-2">
-        <button onclick="openAlertsPage()" class="flex-1 bg-[#35008a] text-white py-2 rounded-lg">Ver todas</button>
-        <button onclick="clearAllAlerts()" class="bg-red-500 text-white py-2 px-4 rounded-lg">Limpiar</button>
-    </div>
-</div>
+
             <div class="max-w-7xl mx-auto px-4 py-8">
                 <!-- Global Search Bar -->
                 <div class="mb-8">
@@ -326,14 +317,43 @@
         </div>
         <!-- Subcategories Page -->
         <div id="subcategories-page" class="hidden min-h-screen bg-[#35008a]">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]" id="subcategory-title">Subcategorías de </h1>
-                </div>
-            </header>
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>
+<h1 id="subcategory-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
             <div class="max-w-7xl mx-auto px-4 py-8">
                 <h2 class="text-3xl font-bold text-gray-50 mb-8 text-center">Selecciona una subcategoría</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="subcategories-container">
@@ -343,14 +363,43 @@
         </div>
         <!-- Sub-subcategories Page -->
         <div id="subsubcategories-page" class="hidden min-h-screen bg-[#35008a]">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showSubcategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]" id="subsubcategory-title">Sub-subcategorías de </h1>
-                </div>
-            </header>
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>
+<h1 id="subsubcategory-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
             <div class="max-w-7xl mx-auto px-4 py-8">
                 <h2 class="text-3xl font-bold text-gray-50 mb-8 text-center">Selecciona una sub-subcategoría</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="subsubcategories-container">
@@ -360,14 +409,44 @@
         </div>
         <!-- Products Page -->
         <div id="products-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showSubsubcategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]" id="products-title">Productos en </h1>
-                </div>
-            </header>
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>
+ <h1 id="products-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1> 
+
             <div class="max-w-7xl mx-auto px-4 py-8">
                 <div class="mb-8">
                     <input type="text" placeholder="Buscar productos..." id="search-input" class="w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#35008a]">
@@ -450,15 +529,31 @@
         </div>
         <!-- Cart Page -->
         <div id="cart-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-10 h-10 drop-shadow-[0_0_10px_#00ffccaa]">
-      <h1 class="text-2xl font-bold text-[#00ffcc]">Tu Carrito</h1>
+    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
     </div>
-    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver a comprar</button>
   </div>
+  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
 </header>
+
 
             <div class="max-w-4xl mx-auto px-4 py-8" id="cart-content">
                 <!-- Cart content will be populated by JavaScript -->
@@ -469,12 +564,13 @@
             <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-10 h-10 drop-shadow-[0_0_10px_#00ffccaa]">
+      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
       <h1 class="text-2xl font-bold text-[#00ffcc]">Favoritos</h1>
     </div>
     <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
   </div>
 </header>
+
 
             <div class="max-w-7xl mx-auto px-4 py-8" id="favorites-content">
                 <!-- Favorites content will be populated by JavaScript -->
@@ -482,17 +578,32 @@
         </div>
         <!-- Shopping Lists Page -->
         <div id="shopping-lists-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]">Mis Listas de Compras</h1>
-                    <button onclick="createNewShoppingList()" class="bg-green-500 text-white px-4 py-2 rounded-lg">
-                        + Nueva Lista
-                    </button>
-                </div>
-            </header>
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
+</header>
+
+
             <div class="max-w-4xl mx-auto px-4 py-8" id="shopping-lists-content">
                 <!-- Shopping lists will be populated by JavaScript -->
             </div>
@@ -501,30 +612,50 @@
         <div id="shopping-list-detail-page" class="hidden min-h-screen bg-gray-50">
             <header class="bg-white shadow-lg sticky top-0 z-40">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showShoppingListsPage()" class="text-gray-600">
-                        ← Volver
+                    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
                     </button>
                     <h1 class="text-2xl font-bold text-[#35008a]" id="list-detail-title">Lista de Compras</h1>
                     <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-4 py-2 rounded-lg">
                         Agregar Productos
                     </button>
+                    
                 </div>
+
             </header>
             <div class="max-w-4xl mx-auto px-4 py-8" id="shopping-list-detail-content">
                 <!-- Shopping list detail will be populated by JavaScript -->
             </div>
+            
         </div>
     </div>
 <!-- Alerts Page -->
 <div id="alerts-page" class="hidden min-h-screen bg-gray-50">
-  <header class="bg-white shadow-lg sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <button onclick="showCategoriesPage()" class="text-gray-600">
-        ← Volver
+  <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
       </button>
-      <h1 class="text-2xl font-bold text-[#35008a]">Alertas</h1>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
     </div>
-  </header>
+  </div>
+  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
+</header>
+
+
   <div class="max-w-7xl mx-auto px-4 py-8" id="alerts-content">
     <!-- Alerts content will be populated by JavaScript -->
   </div>
@@ -21544,8 +21675,18 @@ window.saveUserDataToSupabase = saveUserDataToSupabase;
 window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </script>
 
+<div id="cp-alerts-panel" class="hidden fixed right-4 top-20 w-80 max-h-[70vh] overflow-auto bg-white border rounded-lg shadow-lg z-50">
+    <h3 class="text-lg font-bold px-4 py-2 border-b">Alertas de Precio</h3>
+    <div id="cp-alerts-list" class="p-4 space-y-2 text-sm text-gray-700">
+        <!-- Aquí se renderizan las alertas con JS -->
+    </div>
+    <div class="flex gap-2 border-t p-2">
+        <button onclick="openAlertsPage()" class="flex-1 bg-[#35008a] text-white py-2 rounded-lg">Ver todas</button>
+        <button onclick="clearAllAlerts()" class="bg-red-500 text-white py-2 px-4 rounded-lg">Limpiar</button>
+    </div>
+</div>
 
 </body>
 </html>
 
- -->
+
