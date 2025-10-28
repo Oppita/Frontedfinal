@@ -1,4 +1,5 @@
 
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -257,9 +258,13 @@
         <!-- Categories Page -->
         <div id="categories-page" class="hidden min-h-screen bg-[#35008a]">
             
-            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+            <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="1761301602-removebg-preview.png" alt="Logo" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </div>
+
                     <div class="flex items-center gap-4 text-white">
                         <button onclick="showShoppingListsPage()" class="p-2 hover:bg-purple-600 rounded-lg">
                           <i data-lucide="list"></i>
@@ -445,28 +450,32 @@
         </div>
         <!-- Cart Page -->
         <div id="cart-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="text-gray-600">
-                        ← Volver a comprar
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]">Tu Carrito</h1>
-                </div>
-            </header>
+            <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-10 h-10 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="text-2xl font-bold text-[#00ffcc]">Tu Carrito</h1>
+    </div>
+    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver a comprar</button>
+  </div>
+</header>
+
             <div class="max-w-4xl mx-auto px-4 py-8" id="cart-content">
                 <!-- Cart content will be populated by JavaScript -->
             </div>
         </div>
         <!-- Favorites Page -->
         <div id="favorites-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]">Favoritos</h1>
-                </div>
-            </header>
+            <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-10 h-10 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="text-2xl font-bold text-[#00ffcc]">Favoritos</h1>
+    </div>
+    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
+  </div>
+</header>
+
             <div class="max-w-7xl mx-auto px-4 py-8" id="favorites-content">
                 <!-- Favorites content will be populated by JavaScript -->
             </div>
@@ -21539,3 +21548,4 @@ window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </body>
 </html>
 
+ -->
