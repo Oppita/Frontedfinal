@@ -51,6 +51,24 @@
       transition: width 0.3s ease;
     }
 
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #00ffe080); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 25px #00ffffaa); }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+
+@keyframes pulse-strong {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px #00ffffaa) brightness(1.1); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 60px #00ffffee) brightness(1.4); }
+}
+.animate-pulse-strong {
+  animation: pulse-strong 3.5s ease-in-out infinite;
+}
+
     /* Estilo para el h1 */
     .title {
       font-family: 'Neue Metana Mono', serif; /* Usar Neue Metana Mono con fallback a serif */
@@ -96,32 +114,43 @@
 /* --- end card styles --- */
 </style>
 </head>
-<body class="bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 min-h-screen">
+<body class="bg-gradient-to-br from-[#2b006e] via-[#35008a] to-[#180036] min-h-screen">
     <!-- Notification Container -->
     <div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 hidden">
         <span id="notification-message"></span>
     </div>
     <!-- Main App Container -->
     <div id="app" class="min-h-screen">
-        <!-- Landing Page -->
-        
-        <div id="landing-page" class="min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 flex flex-col items-center justify-center p-4 text-center">
-            <h1 class="title text-white text-6xl md:text-7xl font-bold mb-6 tracking-tight">PRICEZAPP</h1>
-            <p class="text-white text-2xl md:text-3xl mb-10 font-medium">La forma más inteligente de ahorrar en tus compras</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="showRegisterPage()" class="bg-white text-purple-700 px-10 py-4 rounded-xl font-semibold text-xl hover:bg-purple-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-                    <i data-lucide="rocket"></i> Registrarse Gratis
-                </button>
-                <button onclick="showLoginPage()" class="bg-green-500 text-white px-10 py-4 rounded-xl font-semibold text-xl hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-                    <i data-lucide="user"></i> Iniciar Sesión
-                </button>
-            </div>
-        </div>
+        <!-- ✅ LANDING PAGE MODERNA CON LOGO Y NUEVO FONDO -->
+<div id="landing-page" class="min-h-screen flex flex-col items-center justify-center p-4 text-center relative overflow-hidden" style="background: radial-gradient(circle at center, #3a00a6 0%, #24004a 80%);">
+    
+    <!-- Logo centrado arriba -->
+    <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-52 h-52 mb-8 drop-shadow-[0_0_20px_#00ffe0aa] animate-pulse-slow">
+
+    <!-- Título -->
+    <h1 class="title text-white text-6xl md:text-7xl font-bold mb-4 tracking-tight">PRICEZAPP</h1>
+
+    <!-- Subtítulo -->
+    <p class="text-white text-2xl md:text-3xl mb-10 font-medium">
+        La forma más inteligente de ahorrar en tus compras
+    </p>
+
+    <!-- Botones -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="showRegisterPage()" class="bg-white text-[#35008a] px-10 py-4 rounded-xl font-semibold text-xl hover:bg-purple-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+            <i data-lucide="rocket"></i> Registrarse Gratis
+        </button>
+        <button onclick="showLoginPage()" class="bg-green-500 text-white px-10 py-4 rounded-xl font-semibold text-xl hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+            <i data-lucide="user"></i> Iniciar Sesión
+        </button>
+    </div>
+</div>
+
 
         <!-- Register Page -->
-        <div id="register-page" class="hidden min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 flex items-center justify-center p-4">
+        <div id="register-page" class="hidden min-h-screen bg-gradient-to-br from-[#2b006e] via-[#35008a] to-[#180036] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
-        <h2 class="text-4xl font-bold text-purple-700 mb-6 text-center flex items-center justify-center gap-2">
+        <h2 class="text-4xl font-bold text-[#35008a] mb-6 text-center flex items-center justify-center gap-2">
           <i data-lucide="user-plus"></i> Crear cuenta
         </h2>
         <form onsubmit="handleRegister(event)" class="space-y-6">
@@ -129,26 +158,26 @@
                 <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                   <i data-lucide="user"></i> Nombre completo
                 </label>
-                <input type="text" name="name" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm" required>
+                <input type="text" name="name" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
             </div>
             <div>
                 <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                   <i data-lucide="mail"></i> Email
                 </label>
-                <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm" required>
+                <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
             </div>
             <div>
                 <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                   <i data-lucide="lock"></i> Contraseña
                 </label>
-                <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm" required>
+                <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
             </div>
-            <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-semibold hover:bg-purple-800 transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
+            <button type="submit" class="w-full bg-[#35008a] text-white py-4 rounded-xl font-semibold hover:bg-[#2b006e] transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="rocket"></i> Registrarse
             </button>
             <p class="mt-6 text-center text-gray-600">
                 ¿Ya tienes cuenta? 
-                <button type="button" onclick="showLoginPage()" class="text-purple-700 font-semibold ml-1 hover:underline">
+                <button type="button" onclick="showLoginPage()" class="text-[#35008a] font-semibold ml-1 hover:underline">
                     Iniciar sesión
                 </button>
             </p>
@@ -158,9 +187,9 @@
 
 
         <!-- Login Page -->
-        <div id="login-page" class="hidden min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 flex items-center justify-center p-4">
+        <div id="login-page" class="hidden min-h-screen bg-gradient-to-br from-[#2b006e] via-[#35008a] to-[#180036] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
-        <h2 class="text-4xl font-bold text-purple-700 mb-6 text-center flex items-center justify-center gap-2">
+        <h2 class="text-4xl font-bold text-[#35008a] mb-6 text-center flex items-center justify-center gap-2">
           <i data-lucide="log-in"></i> Iniciar Sesión
         </h2>
         <form onsubmit="handleLogin(event)" class="space-y-6">
@@ -168,20 +197,20 @@
                 <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                   <i data-lucide="mail"></i> Email
                 </label>
-                <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm" required>
+                <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
             </div>
             <div>
                 <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                   <i data-lucide="lock"></i> Contraseña
                 </label>
-                <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm" required>
+                <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
             </div>
-            <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-semibold hover:bg-purple-800 transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
+            <button type="submit" class="w-full bg-[#35008a] text-white py-4 rounded-xl font-semibold hover:bg-[#2b006e] transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="arrow-right-circle"></i> Iniciar Sesión
             </button>
             <p class="mt-6 text-center text-gray-600">
                 ¿No tienes cuenta? 
-                <button type="button" onclick="showRegisterPage()" class="text-purple-700 font-semibold ml-1 hover:underline">
+                <button type="button" onclick="showRegisterPage()" class="text-[#35008a] font-semibold ml-1 hover:underline">
                     Registrarse
                 </button>
             </p>
@@ -190,9 +219,9 @@
 </div>
 
         <!-- Categories Page -->
-        <div id="categories-page" class="hidden min-h-screen bg-purple-700">
+        <div id="categories-page" class="hidden min-h-screen bg-[#35008a]">
             
-            <header class="bg-purple-700 shadow-lg sticky top-0 z-40">
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                     <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
                     <div class="flex items-center gap-4 text-white">
@@ -209,7 +238,7 @@
                         <button onclick="showCartPage()" class="p-2 hover:bg-purple-600 rounded-lg">
                           <i data-lucide="shopping-cart"></i>
                         </button>
-                        <button onclick="logout()" class="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                        <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
                           Cerrar sesión
                         </button>
                     </div>
@@ -223,7 +252,7 @@
         <!-- Aquí se renderizan las alertas con JS -->
     </div>
     <div class="flex gap-2 border-t p-2">
-        <button onclick="openAlertsPage()" class="flex-1 bg-purple-700 text-white py-2 rounded-lg">Ver todas</button>
+        <button onclick="openAlertsPage()" class="flex-1 bg-[#35008a] text-white py-2 rounded-lg">Ver todas</button>
         <button onclick="clearAllAlerts()" class="bg-red-500 text-white py-2 px-4 rounded-lg">Limpiar</button>
     </div>
 </div>
@@ -234,7 +263,7 @@
                         type="text" 
                         placeholder="Buscar productos en todas las categorías..." 
                         id="global-search" 
-                        class="w-full max-w-2xl px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm"
+                        class="w-full max-w-2xl px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm"
                     >
                 </div>
                 <h2 class="text-3xl font-bold text-gray-50 mb-8 text-center">Categorías Principales</h2>
@@ -255,13 +284,13 @@
             </div>
         </div>
         <!-- Subcategories Page -->
-        <div id="subcategories-page" class="hidden min-h-screen bg-purple-700">
+        <div id="subcategories-page" class="hidden min-h-screen bg-[#35008a]">
             <header class="bg-white shadow-lg sticky top-0 z-40">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                     <button onclick="showCategoriesPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="subcategory-title">Subcategorías de </h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]" id="subcategory-title">Subcategorías de </h1>
                 </div>
             </header>
             <div class="max-w-7xl mx-auto px-4 py-8">
@@ -272,13 +301,13 @@
             </div>
         </div>
         <!-- Sub-subcategories Page -->
-        <div id="subsubcategories-page" class="hidden min-h-screen bg-purple-700">
+        <div id="subsubcategories-page" class="hidden min-h-screen bg-[#35008a]">
             <header class="bg-white shadow-lg sticky top-0 z-40">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                     <button onclick="showSubcategoriesPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="subsubcategory-title">Sub-subcategorías de </h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]" id="subsubcategory-title">Sub-subcategorías de </h1>
                 </div>
             </header>
             <div class="max-w-7xl mx-auto px-4 py-8">
@@ -295,12 +324,12 @@
                     <button onclick="showSubsubcategoriesPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="products-title">Productos en </h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]" id="products-title">Productos en </h1>
                 </div>
             </header>
             <div class="max-w-7xl mx-auto px-4 py-8">
                 <div class="mb-8">
-                    <input type="text" placeholder="Buscar productos..." id="search-input" class="w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="text" placeholder="Buscar productos..." id="search-input" class="w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#35008a]">
                 </div>
                 
 <!-- FILTERS & SORT PANEL (INJECTED) -->
@@ -361,7 +390,7 @@
                     <button onclick="showProductsPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="product-name-title">Precios de </h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]" id="product-name-title">Precios de </h1>
                     <div class="flex items-center gap-2">
                         <button id="favorite-toggle" class="p-2">
                             🤍
@@ -385,7 +414,7 @@
                     <button onclick="showCategoriesPage()" class="text-gray-600">
                         ← Volver a comprar
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700">Tu Carrito</h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]">Tu Carrito</h1>
                 </div>
             </header>
             <div class="max-w-4xl mx-auto px-4 py-8" id="cart-content">
@@ -399,7 +428,7 @@
                     <button onclick="showCategoriesPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700">Favoritos</h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]">Favoritos</h1>
                 </div>
             </header>
             <div class="max-w-7xl mx-auto px-4 py-8" id="favorites-content">
@@ -413,7 +442,7 @@
                     <button onclick="showCategoriesPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700">Mis Listas de Compras</h1>
+                    <h1 class="text-2xl font-bold text-[#35008a]">Mis Listas de Compras</h1>
                     <button onclick="createNewShoppingList()" class="bg-green-500 text-white px-4 py-2 rounded-lg">
                         + Nueva Lista
                     </button>
@@ -430,8 +459,8 @@
                     <button onclick="showShoppingListsPage()" class="text-gray-600">
                         ← Volver
                     </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="list-detail-title">Lista de Compras</h1>
-                    <button onclick="showCategoriesPage()" class="bg-purple-700 text-white px-4 py-2 rounded-lg">
+                    <h1 class="text-2xl font-bold text-[#35008a]" id="list-detail-title">Lista de Compras</h1>
+                    <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-4 py-2 rounded-lg">
                         Agregar Productos
                     </button>
                 </div>
@@ -448,7 +477,7 @@
       <button onclick="showCategoriesPage()" class="text-gray-600">
         ← Volver
       </button>
-      <h1 class="text-2xl font-bold text-purple-700">Alertas</h1>
+      <h1 class="text-2xl font-bold text-[#35008a]">Alertas</h1>
     </div>
   </header>
   <div class="max-w-7xl mx-auto px-4 py-8" id="alerts-content">
@@ -458,7 +487,7 @@
     <!-- Modal para seleccionar o crear lista -->
     <div id="select-list-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
-            <h2 class="text-xl font-bold text-purple-700 mb-4">Selecciona o crea una lista</h2>
+            <h2 class="text-xl font-bold text-[#35008a] mb-4">Selecciona o crea una lista</h2>
             <!-- Seleccionar lista existente -->
             <label class="block text-gray-700 mb-2">Tus listas:</label>
             <select id="existing-lists" class="w-full mb-4 px-4 py-2 border rounded-lg">
@@ -472,7 +501,7 @@
             </div>
             <div class="flex justify-end gap-2">
                 <button onclick="closeListModal()" class="px-4 py-2 rounded-lg border">Cancelar</button>
-                <button onclick="confirmListSelection()" class="bg-purple-700 text-white px-4 py-2 rounded-lg">Aceptar</button>
+                <button onclick="confirmListSelection()" class="bg-[#35008a] text-white px-4 py-2 rounded-lg">Aceptar</button>
             </div>
         </div>
     </div>
@@ -498,18 +527,18 @@
         // Category structure (Lucide migrado completo)
 const categories = {
   main: [
-    { id: 1, name: 'Almacén', icon: 'package', color: 'text-purple-700' },
-    { id: 2, name: 'Carnes', icon: 'beef', color: 'text-purple-700' },
-    { id: 3, name: 'Aseo del Hogar', icon: 'sparkles', color: 'text-purple-700' },
-        { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-purple-700' },
-    { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-purple-700' },
-    { id: 7, name: 'Frutas y Verduras', icon: 'apple', color: 'text-purple-700' },
-    { id: 8, name: 'Panadería', icon: 'croissant', color: 'text-purple-700' },
-    { id: 9, name: 'Snacks', icon: 'popcorn', color: 'text-purple-700' },
-    { id: 10, name: 'Pescados y Mariscos', icon: 'fish', color: 'text-purple-700' },
-    { id: 11, name: 'Pollo', icon: 'drumstick', color: 'text-purple-700' },
-    { id: 12, name: 'Tecnología y Electrodomésticos', icon: 'tv', color: 'text-purple-700' },
-    { id: 12, name: 'Cereales', icon: 'bean', color: 'text-purple-700' }
+    { id: 1, name: 'Almacén', icon: 'package', color: 'text-[#35008a]' },
+    { id: 2, name: 'Carnes', icon: 'beef', color: 'text-[#35008a]' },
+    { id: 3, name: 'Aseo del Hogar', icon: 'sparkles', color: 'text-[#35008a]' },
+        { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-[#35008a]' },
+    { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-[#35008a]' },
+    { id: 7, name: 'Frutas y Verduras', icon: 'apple', color: 'text-[#35008a]' },
+    { id: 8, name: 'Panadería', icon: 'croissant', color: 'text-[#35008a]' },
+    { id: 9, name: 'Snacks', icon: 'popcorn', color: 'text-[#35008a]' },
+    { id: 10, name: 'Pescados y Mariscos', icon: 'fish', color: 'text-[#35008a]' },
+    { id: 11, name: 'Pollo', icon: 'drumstick', color: 'text-[#35008a]' },
+    { id: 12, name: 'Tecnología y Electrodomésticos', icon: 'tv', color: 'text-[#35008a]' },
+    { id: 12, name: 'Cereales', icon: 'bean', color: 'text-[#35008a]' }
 
   ],
   sub: {
@@ -19312,7 +19341,7 @@ image: 'https://carulla.vtexassets.com/arquivos/ids/21505106/UVA-PICADA-682432_a
                             </div>
                             <div class="flex flex-col items-end gap-2">
                                 <button class="add-to-cart-mini bg-green-500 text-white px-3 py-1 rounded-lg">Agregar</button>
-                                <button class="view-prices-mini bg-purple-700 text-white px-3 py-1 rounded-lg">Ver</button>
+                                <button class="view-prices-mini bg-[#35008a] text-white px-3 py-1 rounded-lg">Ver</button>
                             </div>
                         </div>
                     </div>
@@ -19467,7 +19496,7 @@ renderFeaturedProducts();
                                         <p class="text-xs text-purple-600 mt-1">Precio por ${product.unit}: ${renderPrice(product.pricePerUnit)}</p>
                                     </div>
                                     <div class="flex gap-2">
-                                        <button class="view-prices-btn flex-1 bg-purple-700 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-800 transition duration-300 text-sm">
+                                        <button class="view-prices-btn flex-1 bg-[#35008a] text-white py-2 px-3 rounded-lg font-semibold hover:bg-[#2b006e] transition duration-300 text-sm">
                                             Ver supermercados
                                         </button>
                                         <button class="add-to-cart-btn bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300">
@@ -19635,7 +19664,7 @@ lucide.createIcons();
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <button class="view-prices-btn flex-1 bg-purple-700 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-800 transition duration-300 text-sm">
+                            <button class="view-prices-btn flex-1 bg-[#35008a] text-white py-2 px-3 rounded-lg font-semibold hover:bg-[#2b006e] transition duration-300 text-sm">
                                 Ver supermercados
                             </button>
                             <button class="add-to-cart-btn bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300">
@@ -19734,7 +19763,7 @@ lucide.createIcons();
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <button class="view-prices-btn flex-1 bg-purple-700 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-800 transition duration-300 text-sm">
+                                <button class="view-prices-btn flex-1 bg-[#35008a] text-white py-2 px-3 rounded-lg font-semibold hover:bg-[#2b006e] transition duration-300 text-sm">
                                     Ver supermercados
                                 </button>
                                 <button class="add-to-cart-btn bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300">
@@ -19825,7 +19854,7 @@ lucide.createIcons();
                         <!-- Price Alert Section -->
                         <div class="border-t pt-4">
                             <h3 class="text-lg font-semibold mb-2">🔔 Alerta de precio automática</h3>
-                            <button id="set-price-alert" class="bg-purple-700 text-white px-4 py-2 rounded-lg w-full">
+                            <button id="set-price-alert" class="bg-[#35008a] text-white px-4 py-2 rounded-lg w-full">
                                 Activar alerta (precio actual: ${renderPrice(lowestPrice)})
                             </button>
                             <p class="text-xs text-gray-500 mt-2">Te avisaremos si el precio baja respecto a este valor</p>
@@ -19901,7 +19930,7 @@ lucide.createIcons();
                             <p class="text-xs text-gray-500">${supermarket.delivery}</p>
                         </div>
                     </div>
-                    <button class="add-to-cart-supermarket mt-4 bg-purple-700 text-white px-4 py-2 rounded-lg text-sm w-full" data-supermarket="${supermarket.name}" data-price="${supermarket.price.toFixed(2)}">
+                    <button class="add-to-cart-supermarket mt-4 bg-[#35008a] text-white px-4 py-2 rounded-lg text-sm w-full" data-supermarket="${supermarket.name}" data-price="${supermarket.price.toFixed(2)}">
                         Agregar al carrito
                     </button>
                 `;
@@ -19924,7 +19953,7 @@ lucide.createIcons();
                 cartContent.innerHTML = `
                     <div class="text-center py-12">
                         <h2 class="text-2xl font-bold text-gray-700 mb-4">Tu carrito está vacío</h2>
-                        <button onclick="showCategoriesPage()" class="bg-purple-700 text-white px-6 py-3 rounded-lg">
+                        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
                             Ir a comprar
                         </button>
                     </div>
@@ -19992,7 +20021,7 @@ lucide.createIcons();
                 favoritesContent.innerHTML = `
                     <div class="text-center py-12">
                         <h2 class="text-2xl font-bold text-gray-700 mb-4">No tienes favoritos</h2>
-                        <button onclick="showCategoriesPage()" class="bg-purple-700 text-white px-6 py-3 rounded-lg">
+                        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
                             Explorar productos
                         </button>
                     </div>
@@ -20054,7 +20083,7 @@ lucide.createIcons();
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button class="view-prices-btn flex-1 bg-purple-700 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-800 transition duration-300 text-sm">
+                                    <button class="view-prices-btn flex-1 bg-[#35008a] text-white py-2 px-3 rounded-lg font-semibold hover:bg-[#2b006e] transition duration-300 text-sm">
                                         Ver supermercados
                                     </button>
                                     <button class="add-to-cart-btn bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300">
@@ -20136,7 +20165,7 @@ lucide.createIcons();
                             <span class="text-sm text-gray-500">${purchasedCount}/${totalCount} productos</span>
                         </div>
                         <div class="mt-4 flex gap-2">
-                            <button class="view-list-btn bg-purple-700 text-white px-4 py-2 rounded-lg">
+                            <button class="view-list-btn bg-[#35008a] text-white px-4 py-2 rounded-lg">
                                 Ver lista
                             </button>
                             <button class="delete-list-btn bg-red-500 text-white px-4 py-2 rounded-lg">
@@ -20174,7 +20203,7 @@ lucide.createIcons();
                     <div class="text-center py-12">
                         <h2 class="text-2xl font-bold text-gray-700 mb-4">Esta lista está vacía</h2>
                         <p class="text-gray-500 mb-6">Agrega productos desde la página de categorías</p>
-                        <button onclick="showCategoriesPage()" class="bg-purple-700 text-white px-6 py-3 rounded-lg">
+                        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
                             Ir a comprar
                         </button>
                     </div>
@@ -20496,7 +20525,7 @@ lucide.createIcons();
                 alertsContent.innerHTML = `
                     <div class="text-center py-12">
                         <h2 class="text-2xl font-bold text-gray-700 mb-4">No tienes alertas</h2>
-                        <button onclick="showCategoriesPage()" class="bg-purple-700 text-white px-6 py-3 rounded-lg">
+                        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
                             Explorar productos
                         </button>
                     </div>
