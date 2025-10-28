@@ -51,6 +51,14 @@
       transition: width 0.3s ease;
     }
 
+    @keyframes pulse-slow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #00ffe080); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 25px #00ffffaa); }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
     /* Estilo para el h1 */
     .title {
       font-family: 'Neue Metana Mono', serif; /* Usar Neue Metana Mono con fallback a serif */
@@ -103,20 +111,31 @@
     </div>
     <!-- Main App Container -->
     <div id="app" class="min-h-screen">
-        <!-- Landing Page -->
-        
-        <div id="landing-page" class="min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 flex flex-col items-center justify-center p-4 text-center">
-            <h1 class="title text-white text-6xl md:text-7xl font-bold mb-6 tracking-tight">PRICEZAPP</h1>
-            <p class="text-white text-2xl md:text-3xl mb-10 font-medium">La forma más inteligente de ahorrar en tus compras</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="showRegisterPage()" class="bg-white text-purple-700 px-10 py-4 rounded-xl font-semibold text-xl hover:bg-purple-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-                    <i data-lucide="rocket"></i> Registrarse Gratis
-                </button>
-                <button onclick="showLoginPage()" class="bg-green-500 text-white px-10 py-4 rounded-xl font-semibold text-xl hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-                    <i data-lucide="user"></i> Iniciar Sesión
-                </button>
-            </div>
-        </div>
+        <!-- ✅ LANDING PAGE MODERNA CON LOGO Y NUEVO FONDO -->
+<div id="landing-page" class="min-h-screen flex flex-col items-center justify-center p-4 text-center relative overflow-hidden" style="background: radial-gradient(circle at center, #3a00a6 0%, #24004a 80%);">
+    
+    <!-- Logo centrado arriba -->
+    <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-52 h-52 mb-6 drop-shadow-[0_0_20px_#00ffe0aa] animate-pulse-slow">
+
+    <!-- Título -->
+    <h1 class="title text-white text-6xl md:text-7xl font-bold mb-4 tracking-tight">PRICEZAPP</h1>
+
+    <!-- Subtítulo -->
+    <p class="text-white text-2xl md:text-3xl mb-10 font-medium">
+        La forma más inteligente de ahorrar en tus compras
+    </p>
+
+    <!-- Botones -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button onclick="showRegisterPage()" class="bg-white text-purple-700 px-10 py-4 rounded-xl font-semibold text-xl hover:bg-purple-100 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+            <i data-lucide="rocket"></i> Registrarse Gratis
+        </button>
+        <button onclick="showLoginPage()" class="bg-green-500 text-white px-10 py-4 rounded-xl font-semibold text-xl hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+            <i data-lucide="user"></i> Iniciar Sesión
+        </button>
+    </div>
+</div>
+
 
         <!-- Register Page -->
         <div id="register-page" class="hidden min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 flex items-center justify-center p-4">
@@ -256,12 +275,27 @@
         </div>
         <!-- Subcategories Page -->
         <div id="subcategories-page" class="hidden min-h-screen bg-purple-700">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
+            <header class="bg-purple-700 shadow-lg sticky top-0 z-40">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="text-gray-600">
-                        ← Volver
-                    </button>
-                    <h1 class="text-2xl font-bold text-purple-700" id="subcategory-title">Subcategorías de </h1>
+                    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+                    <div class="flex items-center gap-4 text-white">
+                        <button onclick="showShoppingListsPage()" class="p-2 hover:bg-purple-600 rounded-lg">
+                          <i data-lucide="list"></i>
+                        </button>
+                        <button onclick="showFavoritesPage()" class="p-2 hover:bg-purple-600 rounded-lg">
+                          <i data-lucide="heart"></i>
+                        </button>
+                        <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-purple-600 rounded-lg">
+                          <i data-lucide="bell"></i>
+                          <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </button>
+                        <button onclick="showCartPage()" class="p-2 hover:bg-purple-600 rounded-lg">
+                          <i data-lucide="shopping-cart"></i>
+                        </button>
+                        <button onclick="logout()" class="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                          Cerrar sesión
+                        </button>
+                    </div>
                 </div>
             </header>
             <div class="max-w-7xl mx-auto px-4 py-8">
@@ -888,10 +922,9 @@ const categories = {
             'Éxito': 'https://github.com/Oppita/Imagenes-Compara-precios/blob/main/Logo%20exito.png?raw=true',
             'HiperMarFish': 'https://images.rappi.com/marketplace/hipermar_fish_1611073131820.jpg?d=70x70&e=webp&q=50',
             'La Fazenda': 'https://images.rappi.com/marketplace/Fazenda_1611280099718.jpg',
-            'Calypso': 'data:image/png;base64,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',
+            ':Calypso': 'data:image/png;base64,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',
             'Oxxo': 'https://prodcdnmobisoft.oxxodomicilios.com/app/assets/images/oxxo-logo@3x.png',
              'Makro': 'https://images.rappi.com/marketplace/store_type_1759762731552.jpg',
-             'Rappi': 'data:image/png;base64,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',
         };
         // Products data with specific supermarket prices
         const products = {
@@ -9552,7 +9585,7 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Doria',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 4530.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         { name: 'Zapatoca', price: 5500.00, rating: 4.7, delivery: 'Gratis +$1800' },
@@ -9567,7 +9600,7 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Barilla',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 12200.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         { name: 'Éxito', price: 15900.00, rating: 4.7, delivery: 'Gratis +$1800' },
@@ -9584,7 +9617,7 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Barilla',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 12800.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         { name: 'Éxito', price: 14900.00, rating: 4.7, delivery: 'Gratis +$1800' },
@@ -9601,13 +9634,9 @@ const categories = {
                     rating: 4.7,
                     brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 9800.00, previousPrice: 6600.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 8300.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 10170.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 8790.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Makro', price: 9095.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Éxito', price: 9020.00, previousPrice: 9490.00, rating: 4.7, delivery: 'Gratis +$1800' },
-
+                        { name: 'Carulla', price: 6860.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6022, 
@@ -9618,10 +9647,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Il Castello',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 14000.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 13850.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 14000.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6023, 
@@ -9632,13 +9662,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Doria',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 11100.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 13150.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Zapatoca', price: 11200.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 9490.00, rating: 4.7, delivery: 'Gratis +$1800' }
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6024, 
@@ -9649,28 +9677,26 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pastas El Dorado',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 9600.00, previousPrice: 8160.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 9080.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 9290.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 8160.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6025, 
-                    name: 'Pastas LA MUÑECA spaghetti (200 gr)', 
+                    name: 'Pastas LA MUNECA spaghetti (200 gr)', 
                     image: 'https://github.com/Oppita/Espaguetthis/blob/main/Pastas%20LA%20MUNECA%20spaghetti%20(200%20gr).webp?raw=true',
                     category: 'Almacen', 
                     subcategory: 'Pastas', 
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'La Muñeca',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1520.00, previousPrice: 1900.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 1790.00,  rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 1630.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Éxito', price: 1800.00, rating: 4.5, delivery: 'Gratis +$1500' },
-
+                        { name: 'Carulla', price: 1900.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6026, 
@@ -9681,31 +9707,26 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Doria',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 4410.00, previousPrice: 3300.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 3700.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 4190.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 4310.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Éxito', price: 4010.00, previousPrice: 4230.00, rating: 4.7, delivery: 'Gratis +$1800' }
-
+                        { name: 'Carulla', price: 3300.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6027, 
-                    name: 'Pastas LA MUÑECA spaghetti sabor a mantequilla (250 gr)', 
+                    name: 'Pastas LA MUNECA spaghetti sabor a mantequilla (250 gr)', 
                     image: 'https://github.com/Oppita/Espaguetthis/blob/main/Pastas%20LA%20MUNECA%20spaghetti%20sabor%20a%20mantequilla%20(250%20gr).webp?raw=true',
                     category: 'Almacen', 
                     subcategory: 'Pastas', 
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'La Muñeca',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 2392.00, previousPrice: 2990.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 2500.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 2530.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                         { name: 'Éxito', price: 2860.00, rating: 4.5, delivery: 'Gratis +$1500' },
-
+                        { name: 'Carulla', price: 2990.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6028, 
@@ -9716,11 +9737,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Ekono',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1130.00, previousPrice: 1120.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1130.00,  rating: 4.7, delivery: 'Gratis +$1800' },
-                        
+                        { name: 'Carulla', price: 1120.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6029, 
@@ -9731,10 +9752,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pastas El Dorado',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 8700.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 8210.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 8700.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6030, 
@@ -9745,11 +9767,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pan',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 6700.00, previousPrice: 5200.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 5950.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 6400.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 5200.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6031, 
@@ -9760,11 +9782,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Comarico',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1970.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1750.00, previousPrice: 1890.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 1740.00,  rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 1970.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6032, 
@@ -9775,10 +9797,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Ekono',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 4550.00, previousPrice: 4510.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 4550.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 4510.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6033, 
@@ -9791,8 +9814,9 @@ const categories = {
                     rating: 4.7,
                     brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1810.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1810.00,  rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 1790.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6034, 
@@ -9803,11 +9827,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'La Nieve',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1500.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Makro', price: 1420.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1410.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 1500.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6035, 
@@ -9818,26 +9842,26 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'La Nieve',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 2700.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Makro', price: 2606.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 2590.00, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 2700.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6036, 
-                    name: 'Pastas LA MUÑECA larga bucatini (250 gr)', 
+                    name: 'Pastas LA MUNECA larga bucatini (250 gr)', 
                     image: 'https://github.com/Oppita/Espaguetthis/blob/main/Pastas%20LA%20MUNECA%20larga%20bucatini%20(250%20gr).webp?raw=true',
                     category: 'Almacen', 
                     subcategory: 'Pastas', 
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'La Muñeca',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1760.00, previousPrice: 2200.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 2050.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                         { name: 'Jumbo', price: 2390.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 2200.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6037, 
@@ -9848,13 +9872,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pan',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 3470.00, previousPrice: 3500.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 3300.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 3500.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Éxito', price: 3450.00, rating: 4.5, delivery: 'Gratis +$1500' },
-
+                        { name: 'Carulla', price: 3500.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6038, 
@@ -9865,10 +9887,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Comarico',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 3100.00, previousPrice: 2800.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 2680.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 2800.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6039, 
@@ -9879,12 +9902,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Conzazoni',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 5700.00, previousPrice: 3990.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 4950.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 5290.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Éxito', price: 5400.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 3990.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6040, 
@@ -9895,11 +9917,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pugliese',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1760.00, previousPrice: 1360.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 1650.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1700.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 1360.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6041, 
@@ -9910,11 +9932,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pan',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 1900.00, previousPrice: 1930.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 1700.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 1870.00, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 1930.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6042, 
@@ -9925,12 +9947,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Pastas El Dorado',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 13650.00, previousPrice: 11390.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 14490.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 13650.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                         { name: 'Éxito', price: 13250.00, rating: 4.5, delivery: 'Gratis +$1500' }
+                        { name: 'Carulla', price: 11390.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6043, 
@@ -9941,10 +9962,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'Comarico',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 4060.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 3940.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 4060.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 },{ 
                     id: 6044, 
@@ -9955,12 +9977,11 @@ const categories = {
                     subsubcategory: 'Espaghettis', 
                     description: 'Espaghettis.',
                     rating: 4.7,
-                    brand: 'San Remo',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 2800.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 2500.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 2750.00, rating: 4.5, delivery: 'Gratis +$1500' },
- { name: 'Éxito', price: 2760.00, rating: 4.5, delivery: 'Gratis +$1500' },
+                        { name: 'Carulla', price: 2800.00, previousPrice: 8800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Zapatoca', price: 238.00, previousPrice: 247.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Olimpica', price: 233.50, previousPrice: 242.00, rating: 4.5, delivery: 'Gratis +$1500' }
                     ]
                 }
             ],
@@ -12028,12 +12049,10 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Colmans',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 6500.00, previousPrice: 7400.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' },
-                        { name: 'Olimpica', price: 4472.00, previousPrice: 5590.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' },
-                        { name: 'Jumbo', price: 6590.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' },
-                         { name: 'Éxito', price: 5590.00, previousPrice: 6820.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' }
+                        
                     ]
                 }, { 
                     id: 10001, 
@@ -12044,26 +12063,23 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Colmans',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 4000.00, previousPrice: 2720.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Jumbo', price: 4190.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 3920.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 2720.00, previousPrice: 3400.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
                     id: 10002, 
-                     name: 'Vinagre LA CORUÑA blanco (500 ml) ',                  
+                     name: 'Vinagre LA CORUNA blanco (500 ml) ',                  
                     image: 'https://carulla.vtexassets.com/arquivos/ids/22405103/Vinagre-Blanco-La-Coruna-X500-341721_a.jpg?v=638918996083430000',
                     category: 'Almacen', 
                     subcategory: 'Vinagres', 
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'La Coruña',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 4600.00, previousPrice: 3680.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                         { name: 'Éxito', price: 4420.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 3680.00, previousPrice: 4600.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12075,10 +12091,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Bary',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 7700.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 7430.00, previousPrice: 7850.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 7700.00, previousPrice: 0.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12090,12 +12105,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'San Jorge',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 5520.00, previousPrice: 3600.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                         { name: 'Olimpica', price: 5240.00, previousPrice: 3600.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                         { name: 'Éxito', price: 5370.00, rating: 4.7, delivery: 'Gratis +$1800' },
-
+                        { name: 'Carulla', price: 3600.00, previousPrice: 4800.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12107,11 +12119,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Fruco',
+                    brand: 'Monticello',
                     supermarkets: [
                         { name: 'Carulla', price: 5550.00, previousPrice: 7400.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Zapatoca', price: 5900.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                         { name: 'Jumbo', price: 7110.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12123,10 +12133,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Chang',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 11000.00, previousPrice: 10900.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 10800.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 10900.00, previousPrice: 7400.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12138,12 +12147,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Barrentos',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 2536.00, previousPrice: 2480.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                          { name: 'Olimpica', price: 2500.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                           { name: 'Éxito', price: 2200.00, previousPrice: 3290.00, rating: 4.7, delivery: 'Gratis +$1800' },
-
+                        { name: 'Carulla', price: 2480.00, previousPrice: 3100.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                  },{ 
@@ -12155,12 +12161,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'Superfuds',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 38800.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 32920.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Olimpica', price: 36900.00, rating: 4.7, delivery: 'Gratis +$1800' },
-
+                        { name: 'Carulla', price: 38800.00, previousPrice: 0.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ],
                 },{ 
@@ -12172,10 +12175,9 @@ const categories = {
                     subsubcategory: 'Vinagres Naturales', 
                     description: 'Vinagre.',
                     rating: 4.7,
-                    brand: 'La Coruña',
+                    brand: 'Monticello',
                     supermarkets: [
-                        { name: 'Carulla', price: 9760.00, rating: 4.7, delivery: 'Gratis +$1800' },
-                        { name: 'Éxito', price: 9760.00, rating: 4.7, delivery: 'Gratis +$1800' },
+                        { name: 'Carulla', price: 9760.00, previousPrice: 0.00, rating: 4.7, delivery: 'Gratis +$1800' },
                         
                     ]
                 },
@@ -21474,4 +21476,4 @@ window.loadUserDataFromSupabase = loadUserDataFromSupabase;
 </body>
 </html>
 
- -->
+
