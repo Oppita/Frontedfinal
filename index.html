@@ -531,7 +531,20 @@
         <div id="cart-page" class="hidden min-h-screen bg-gray-50">
             <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
     <div class="flex items-center gap-4 text-white">
       <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
         <i data-lucide="list"></i>
@@ -539,7 +552,7 @@
       <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
         <i data-lucide="heart"></i>
       </button>
-      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
         <i data-lucide="bell"></i>
         <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
       </button>
@@ -551,8 +564,9 @@
       </button>
     </div>
   </div>
-  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
 </header>
+<h1 id="cart-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
+
 
 
             <div class="max-w-4xl mx-auto px-4 py-8" id="cart-content">
@@ -561,16 +575,43 @@
         </div>
         <!-- Favorites Page -->
         <div id="favorites-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-[#24004a] shadow-lg sticky top-0 z-40">
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="1761301602-removebg-preview.png" alt="PriceZapp Logo" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
-      <h1 class="text-2xl font-bold text-[#00ffcc]">Favoritos</h1>
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
     </div>
-    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
   </div>
 </header>
-
+<h1 id="favorites-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
 
             <div class="max-w-7xl mx-auto px-4 py-8" id="favorites-content">
                 <!-- Favorites content will be populated by JavaScript -->
@@ -580,7 +621,20 @@
         <div id="shopping-lists-page" class="hidden min-h-screen bg-gray-50">
             <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-10 h-10 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
     <div class="flex items-center gap-4 text-white">
       <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
         <i data-lucide="list"></i>
@@ -588,7 +642,7 @@
       <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
         <i data-lucide="heart"></i>
       </button>
-      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
         <i data-lucide="bell"></i>
         <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
       </button>
@@ -600,8 +654,8 @@
       </button>
     </div>
   </div>
-  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
 </header>
+<h1 id="list-detail-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
 
 
             <div class="max-w-4xl mx-auto px-4 py-8" id="shopping-lists-content">
@@ -610,18 +664,43 @@
         </div>
         <!-- Shopping List Detail Page -->
         <div id="shopping-list-detail-page" class="hidden min-h-screen bg-gray-50">
-            <header class="bg-white shadow-lg sticky top-0 z-40">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
-                    </button>
-                    <h1 class="text-2xl font-bold text-[#35008a]" id="list-detail-title">Lista de Compras</h1>
-                    <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-4 py-2 rounded-lg">
-                        Agregar Productos
-                    </button>
-                    
-                </div>
+            <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
 
-            </header>
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
+    <div class="flex items-center gap-4 text-white">
+      <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+        <i data-lucide="list"></i>
+      </button>
+      <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+        <i data-lucide="heart"></i>
+      </button>
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+        <i data-lucide="bell"></i>
+        <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+        <i data-lucide="shopping-cart"></i>
+      </button>
+      <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>
+<h1 id="list-detail-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
             <div class="max-w-4xl mx-auto px-4 py-8" id="shopping-list-detail-content">
                 <!-- Shopping list detail will be populated by JavaScript -->
             </div>
@@ -632,7 +711,20 @@
 <div id="alerts-page" class="hidden min-h-screen bg-gray-50">
   <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="title text-2xl font-bold text-green-500">PRICEZAPP</h1>
+
+    <!-- 🔙 Botón Volver -->
+    <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+      <i data-lucide="arrow-left"></i>
+      <span class="hidden sm:inline">Volver</span>
+    </button>
+
+    <!-- 🛒 Logo + Nombre (click = volver a Categorías) -->
+    <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+      <img src="1761301602-removebg-preview.png" alt="Logo PriceZapp" class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]">
+      <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+    </button>
+
+    <!-- 🧭 Iconos de acción -->
     <div class="flex items-center gap-4 text-white">
       <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
         <i data-lucide="list"></i>
@@ -640,7 +732,7 @@
       <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
         <i data-lucide="heart"></i>
       </button>
-      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas">
+      <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
         <i data-lucide="bell"></i>
         <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
       </button>
@@ -652,8 +744,9 @@
       </button>
     </div>
   </div>
-  <button onclick="showCategoriesPage()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">← Volver</button>
 </header>
+<h1 id="alerts-title" class="text-2xl font-bold text-green-400 text-center mt-6"></h1>
+
 
 
   <div class="max-w-7xl mx-auto px-4 py-8" id="alerts-content">
