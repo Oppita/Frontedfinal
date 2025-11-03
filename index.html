@@ -230,28 +230,46 @@
           <i data-lucide="log-in"></i> Iniciar Sesión
         </h2>
         <form onsubmit="handleLogin(event)" class="space-y-6">
-            <div>
-                <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <i data-lucide="mail"></i> Email
-                </label>
-                <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
-            </div>
-            <div>
-                <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  <i data-lucide="lock"></i> Contraseña
-                </label>
-                <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
-            </div>
-            <button type="submit" class="w-full bg-[#35008a] text-white py-4 rounded-xl font-semibold hover:bg-[#2b006e] transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
-                <i data-lucide="arrow-right-circle"></i> Iniciar Sesión
-            </button>
-            <p class="mt-6 text-center text-gray-600">
-                ¿No tienes cuenta? 
-                <button type="button" onclick="showRegisterPage()" class="text-[#35008a] font-semibold ml-1 hover:underline">
-                    Registrarse
-                </button>
-            </p>
-        </form>
+  <div>
+    <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
+      <i data-lucide="mail"></i> Email
+    </label>
+    <input type="email" name="email" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
+  </div>
+  <div>
+    <label class="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
+      <i data-lucide="lock"></i> Contraseña
+    </label>
+    <input type="password" name="password" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35008a] shadow-sm" required>
+  </div>
+
+  <!-- Botón clásico de login -->
+  <button type="submit" class="w-full bg-[#35008a] text-white py-4 rounded-xl font-semibold hover:bg-[#2b006e] transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
+    <i data-lucide="arrow-right-circle"></i> Iniciar Sesión
+  </button>
+
+  <!-- Separador visual -->
+  <div class="flex items-center my-4">
+    <div class="flex-grow h-px bg-gray-300"></div>
+    <span class="px-3 text-gray-500 text-sm">o continúa con</span>
+    <div class="flex-grow h-px bg-gray-300"></div>
+  </div>
+
+  <!-- Botón Google -->
+  <button id="google-login" type="button"
+    class="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition duration-300 flex items-center justify-center gap-3 shadow-sm">
+    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+    <span>Continuar con Google</span>
+  </button>
+
+  <p class="mt-6 text-center text-gray-600">
+    ¿No tienes cuenta?
+    <button type="button" onclick="showRegisterPage()" class="text-[#35008a] font-semibold ml-1 hover:underline">
+      Registrarse
+    </button>
+  </p>
+</form>
+
     </div>
 </div>
 
@@ -19725,6 +19743,7 @@ image: 'https://carulla.vtexassets.com/arquivos/ids/21505106/UVA-PICADA-682432_a
         }
         function showLoginPage() {
             showPage('login-page');
+            setupOAuthButtons();
         }
         function showCategoriesPage() {
     state.currentProductList = null;
@@ -21760,6 +21779,54 @@ function scheduleSave() {
     }, 2000); // Debounce de 2 segundos
 }
 
+// --- 🔹 LOGIN CON GOOGLE Y APPLE (OAuth) ---
+// Se ejecuta cuando el DOM esté listo
+document.addEventListener("DOMContentLoaded", () => {
+
+  // 🔹 Login con Google
+  const googleBtn = document.getElementById("google-login");
+  if (googleBtn) {
+    googleBtn.addEventListener("click", async () => {
+      console.log("🔹 Iniciando sesión con Google...");
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin, // vuelve a tu app tras login
+          },
+        });
+        if (error) throw error;
+        console.log("✅ Redirigiendo a Google para autenticación...");
+      } catch (err) {
+        console.error("❌ Error al iniciar sesión con Google:", err.message);
+        alert("Error al conectar con Google: " + err.message);
+      }
+    });
+  }
+
+  // 🔹 Login con Apple
+  const appleBtn = document.getElementById("apple-login");
+  if (appleBtn) {
+    appleBtn.addEventListener("click", async () => {
+      console.log("🍎 Iniciando sesión con Apple...");
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "apple",
+          options: {
+            redirectTo: window.location.origin,
+          },
+        });
+        if (error) throw error;
+        console.log("✅ Redirigiendo a Apple para autenticación...");
+      } catch (err) {
+        console.error("❌ Error al iniciar sesión con Apple:", err.message);
+        alert("Error al conectar con Apple: " + err.message);
+      }
+    });
+  }
+});
+
+
 // Sincronizar funciones existentes
 function syncFunction(originalFunction, functionName) {
     if (typeof originalFunction !== 'function') return originalFunction;
@@ -21822,6 +21889,50 @@ function handleGoBack() {
       showCategoriesPage();
   }
 }
+
+
+
+// 🔁 Reasigna los listeners de Google y Apple cuando se muestra el login
+function setupOAuthButtons() {
+  const googleBtn = document.getElementById("google-login");
+  if (googleBtn && !googleBtn.dataset.listenerAdded) {
+    googleBtn.dataset.listenerAdded = "true";
+    googleBtn.addEventListener("click", async () => {
+      console.log("🔹 Iniciando sesión con Google...");
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        console.log("✅ Redirigiendo a Google para autenticación...");
+      } catch (err) {
+        console.error("❌ Error al iniciar sesión con Google:", err.message);
+        alert("Error al conectar con Google: " + err.message);
+      }
+    });
+  }
+
+  const appleBtn = document.getElementById("apple-login");
+  if (appleBtn && !appleBtn.dataset.listenerAdded) {
+    appleBtn.dataset.listenerAdded = "true";
+    appleBtn.addEventListener("click", async () => {
+      console.log("🍎 Iniciando sesión con Apple...");
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "apple",
+          options: { redirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        console.log("✅ Redirigiendo a Apple para autenticación...");
+      } catch (err) {
+        console.error("❌ Error al iniciar sesión con Apple:", err.message);
+        alert("Error al conectar con Apple: " + err.message);
+      }
+    });
+  }
+}
+
 
 
 
