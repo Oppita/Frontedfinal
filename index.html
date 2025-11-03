@@ -817,6 +817,8 @@
             </div>
         </div>
     </div>
+
+
     <script>
         // State management
         let state = {
@@ -20723,32 +20725,45 @@ lucide.createIcons();
             nameInput.value = "";
             showNotification("Lista creada correctamente");
         }
-        function confirmListSelection() {
-            const select = document.getElementById("existing-lists");
-            const listId = select ? select.value || state.currentListId : state.currentListId;
-            if (!listId) {
-                showNotification("Debes seleccionar o crear una lista");
-                return;
-            }
-            state.currentListId = listId;
-            // if we have a pending product, add it
-            if (window.pendingProductForList) {
-                const list = state.shoppingLists.find(l => l.id == listId);
-                if (!list) {
-                    showNotification("Lista no encontrada");
-                    closeListModal();
-                    return;
-                }
-                const exists = list.items.find(item => item.id === window.pendingProductForList.id);
-                if (exists) {
-                    showNotification("Producto ya está en la lista");
-                } else {
-                    list.items.push({ ...window.pendingProductForList, purchased: false });
-                    showNotification("Producto añadido a la lista");
-                }
-            }
-            closeListModal();
-        }
+        // Función para confirmar selección de lista en el modal
+function confirmListSelection() {
+    console.log("confirmListSelection() llamada"); // ← DEBE APARECER
+
+    const selectedListId = document.getElementById('existing-lists').value;
+    const productId = state.selectedProduct?.id;
+
+    console.log("Lista seleccionada:", selectedListId, "Producto:", productId);
+
+    if (!selectedListId || !productId) {
+        alert("Selecciona una lista y un producto.");
+        return;
+    }
+
+    const list = state.shoppingLists.find(l => l.id === selectedListId);
+    if (!list) {
+        console.error("Lista no encontrada:", selectedListId);
+        return;
+    }
+
+    if (!list.items) list.items = [];
+
+    if (!list.items.some(item => item.id === productId)) {
+        list.items.push({ id: productId, quantity: 1, purchased: false });
+        
+        console.log("agregado"); // ← DEBE APARECER
+    } else {
+        console.log("Producto ya está en la lista");
+    }
+
+    closeListModal(); // Asegúrate de que esta función exista
+    renderShoppingLists(); // ← Actualiza la UI
+
+    // scheduleSave() se llama automáticamente por el sync
+}
+// Forzar guardado inmediato (solo para pruebas)
+saveUserDataToSupabase().then(() => {
+    console.log("guardado (forzado)");
+});
         // New function for automatic price alerts
         function setPriceAlert(product) {
             const lowestPrice = Math.min(...product.supermarkets.map(s => s.price));
@@ -21561,10 +21576,10 @@ async function ensureUserDataRow(userId) {
   try {
     console.log("🧩 Verificando fila de usuario:", userId);
 
-    // Buscar fila existente de forma segura (usa maybeSingle para evitar 409/400)
+    // Buscar fila existente correctamente
     const { data, error } = await supabaseClient
       .from("user_data")
-      .select("id")
+      .select("user_id") // ✅ columna existente
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -21671,6 +21686,7 @@ async function loadUserDataFromSupabase(userId) {
 
 
 // Guardar datos en Supabase - USANDO NOMBRES COMPATIBLES
+// Guardar datos en Supabase - USANDO NOMBRES COMPATIBLES
 async function saveUserDataToSupabase() {
     if (!state?.user?.id) {
         console.log("⚠️ No hay usuario logueado, omitiendo guardado");
@@ -21704,7 +21720,7 @@ async function saveUserDataToSupabase() {
             throw error;
         }
         
-        console.log("✅ Datos guardados exitosamente");
+        console.log("guardado");  // ⬅️ NUEVO: Log solicitado para confirmar guardado
         
     } catch (err) {
         console.error("❌ Error crítico en saveUserDataToSupabase:", err);
@@ -21732,11 +21748,14 @@ function syncFunction(originalFunction, functionName) {
 }
 
 // Aplicar sincronización a funciones críticas
+// Aplicar sincronización a funciones críticas
 function setupSyncForCriticalFunctions() {
     const functionsToSync = [
         'addToCart', 'toggleFavorite', 'toggleAlert', 'updateCartQuantity',
         'createNewShoppingList', 'deleteShoppingList', 'removeFromShoppingList', 
-        'togglePurchased', 'setPriceAlert', 'clearAllAlerts'
+        'togglePurchased', 'setPriceAlert', 'clearAllAlerts',
+        'confirmListSelection',  // ⬅️ NUEVO: Sincroniza la adición de productos a listas
+        'addToShoppingList'      // ⬅️ NUEVO: Por si usas un alias o función interna similar
     ];
     
     functionsToSync.forEach(funcName => {
@@ -21867,6 +21886,27 @@ window.handleRegister = handleRegister;
 window.logout = logout;
 window.saveUserDataToSupabase = saveUserDataToSupabase;
 window.loadUserDataFromSupabase = loadUserDataFromSupabase;
+
+
+
+// --- ✅ Vincular correctamente funciones globales para listas ---
+window.handleAddToList = handleAddToList;
+window.addToShoppingList = addToShoppingList;
+window.askForList = askForList;
+window.closeListModal = closeListModal;
+window.populateExistingLists = populateExistingLists;
+window.createListFromModal = createListFromModal;
+window.confirmListSelection = confirmListSelection;
+window.showShoppingListsPage = showShoppingListsPage;
+window.showShoppingListDetail = showShoppingListDetail;
+window.deleteShoppingList = deleteShoppingList;
+window.togglePurchased = togglePurchased;
+window.removeFromShoppingList = removeFromShoppingList;
+
+
+
+
+
 </script>
 
 <div id="cp-alerts-panel" class="hidden fixed right-4 top-20 w-80 max-h-[70vh] overflow-auto bg-white border rounded-lg shadow-lg z-50">
