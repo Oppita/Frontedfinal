@@ -20211,27 +20211,51 @@ lucide.createIcons();
             document.getElementById('set-price-alert').onclick = () => {
                 setPriceAlert(state.selectedProduct);
             };
-            // Add to shopping list functionality
-            document.getElementById('add-to-shopping-list').onclick = () => {
-                const listSelect = document.getElementById('shopping-list-select');
-                const listId = listSelect.value;
-                if (!listId) {
-                    // No list selected — open modal to create/select one and keep selected product pending
-                    askForList(state.selectedProduct);
-                    return;
-                }
-                const existingItem = state.shoppingLists.find(list => list.id === listId).items.find(item => item.id === state.selectedProduct.id);
-                if (existingItem) {
-                    showNotification('Producto ya está en la lista');
-                    return;
-                }
-                const list = state.shoppingLists.find(l => l.id === listId);
-                list.items.push({
-                    ...state.selectedProduct,
-                    purchased: false
-                });
-                showNotification(`Producto añadido a ${list.name}`);
-            };
+           // --- Agregar producto a lista (versión segura y sincronizada) ---
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "add-to-shopping-list") {
+    console.log("🧩 Botón 'Agregar a lista' presionado");
+
+    if (!state.isLoggedIn) {
+      showLoginPage();
+      return;
+    }
+
+    const listSelect = document.getElementById("shopping-list-select");
+    const listId = listSelect?.value;
+
+    if (!listId) {
+      console.log("⚠️ No hay lista seleccionada, abriendo modal...");
+      askForList(state.selectedProduct);
+      return;
+    }
+
+    const list = state.shoppingLists.find((l) => l.id === listId);
+    if (!list) {
+      console.warn("⚠️ Lista no encontrada:", listId);
+      showNotification("Lista no encontrada");
+      return;
+    }
+
+    if (!list.items) list.items = [];
+
+    const exists = list.items.some((item) => item.id === state.selectedProduct.id);
+    if (exists) {
+      console.log("⚠️ Producto ya está en la lista");
+      showNotification("Producto ya está en la lista");
+      return;
+    }
+
+    // ✅ Agregar producto
+    list.items.push({ ...state.selectedProduct, purchased: false });
+    console.log("✅ Producto agregado a la lista:", list.name);
+    showNotification(`Producto añadido a ${list.name}`);
+
+    // 🔄 Guardar automáticamente en Supabase
+    scheduleSave();
+  }
+});
+
             // Populate prices (sorted by price)
             pricesContainer.innerHTML = '';
             sortedSupermarkets.forEach((supermarket) => {
