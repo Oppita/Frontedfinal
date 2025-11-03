@@ -20610,10 +20610,13 @@ document.addEventListener("click", (e) => {
                     `;
                 });
                 itemsHtml += '</div>';
-                detailContent.innerHTML = itemsHtml;
-// ✅ Agregar comparador al final del detalle
+
+// ✅ Agregar comparador automático justo al final del detalle
 const comparisonHtml = renderListComparison(list);
-detailContent.insertAdjacentHTML('beforeend', comparisonHtml);
+
+// ✅ Reemplazar TODO el contenido del detalle en orden
+detailContent.innerHTML = itemsHtml + comparisonHtml;
+
 
 
             }
@@ -20626,30 +20629,38 @@ detailContent.insertAdjacentHTML('beforeend', comparisonHtml);
 function renderListComparison(list) {
   if (!list || !list.items?.length) return "";
 
-  // Calcular totales por supermercado
+  // Calcular totales por supermercado y detectar faltantes
   const totals = {};
+  const missing = {}; // productos no disponibles en cada supermercado
   list.items.forEach(item => {
+    const available = new Set(item.supermarkets.map(s => s.name));
     item.supermarkets?.forEach(s => {
       if (!totals[s.name]) totals[s.name] = 0;
       totals[s.name] += s.price;
     });
+    // detectar supermercados donde no está disponible
+    Object.keys(totals).forEach(name => {
+      if (!available.has(name)) {
+        if (!missing[name]) missing[name] = [];
+        missing[name].push(item);
+      }
+    });
   });
 
-  // Convertir a array ordenado por precio total ascendente
+  // Ordenar por precio total ascendente
   const sorted = Object.entries(totals)
     .map(([name, total]) => ({ name, total }))
     .sort((a, b) => a.total - b.total);
 
-  // Calcular ahorro respecto al más barato
-  const cheapest = sorted[0].total;
+  const cheapest = sorted[0]?.total || 0;
   const formatted = sorted.map((s, i) => ({
     ...s,
     rank: i + 1,
     diff: s.total - cheapest,
-    pct: ((s.total / cheapest) * 100).toFixed(1)
+    pct: cheapest ? ((s.total / cheapest) * 100).toFixed(1) : 100
   }));
 
-  // Renderizar HTML moderno y animado
+  // Renderizar HTML
   const html = `
     <div class="mt-10 bg-white rounded-2xl shadow-lg p-6 transition-all duration-700 hover:shadow-2xl animate-fade-in">
       <h2 class="text-2xl font-bold text-[#35008a] mb-6 flex items-center gap-2">
@@ -20663,12 +20674,25 @@ function renderListComparison(list) {
           </div>
           <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div class="h-2 bg-green-500 transition-all duration-700 ease-out" 
-                 style="width:${Math.min((cheapest / f.total) * 100, 100)}%">
-            </div>
+                 style="width:${Math.min((cheapest / f.total) * 100, 100)}%"></div>
           </div>
           ${f.rank > 1 ? `<p class="text-sm text-gray-600 mt-1">+ $${f.diff.toLocaleString()} vs ${formatted[0].name}</p>` : ""}
+
+          ${missing[f.name]?.length ? `
+            <div class="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+              <p class="font-semibold text-yellow-800">⚠️ ${missing[f.name].length} productos no disponibles</p>
+              <ul class="text-sm text-gray-700 list-disc ml-5 mt-1">
+                ${missing[f.name].map(item => `
+                  <li>${item.name} 
+                    ${suggestAlternative(item, f.name)}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          ` : ""}
         </div>
       `).join('')}
+
       <p class="mt-6 text-center text-green-700 font-semibold">
         💰 Si compras todo en <b>${formatted[0].name}</b>, ahorras hasta 
         $${(formatted[formatted.length - 1].diff).toLocaleString()} comparado con el más caro.
@@ -20677,6 +20701,29 @@ function renderListComparison(list) {
   `;
 
   return html;
+}
+
+// 🔍 Sugerir alternativa en el mismo supermercado
+function suggestAlternative(item, supermarketName) {
+  // Busca otro producto similar en ese supermercado
+  const allProducts = window.products || []; // usa tu lista global
+  const similar = allProducts
+    .filter(p => p.supermarkets?.some(s => s.name === supermarketName))
+    .filter(p => p.name.toLowerCase().includes(item.name.split(" ")[0].toLowerCase()))
+    .sort((a, b) => {
+      const aPrice = a.supermarkets.find(s => s.name === supermarketName)?.price || Infinity;
+      const bPrice = b.supermarkets.find(s => s.name === supermarketName)?.price || Infinity;
+      return aPrice - bPrice;
+    })[0];
+
+  if (!similar) return `<span class="text-gray-500">— sin alternativa disponible</span>`;
+
+  const altSuper = similar.supermarkets.find(s => s.name === supermarketName);
+  return `
+    <br><span class="text-sm text-green-700">
+      👉 Alternativa: <b>${similar.name}</b> ($${altSuper.price.toLocaleString()})
+    </span>
+  `;
 }
 
         function createNewShoppingList() {
