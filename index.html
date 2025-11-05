@@ -69,6 +69,16 @@
   animation: pulse-strong 3.5s ease-in-out infinite;
 }
 
+
+
+
+
+
+
+
+
+
+
     /* Estilo para el h1 */
     .title {
       font-family: 'Neue Metana Mono', serif; /* Usar Neue Metana Mono con fallback a serif */
@@ -146,6 +156,16 @@
 .bg-modern {
   background: radial-gradient(circle at center, #3a00a6 0%, #24004a 80%);
 }
+
+
+
+
+
+
+
+
+
+
 </style>
 
 
@@ -859,33 +879,37 @@
         // Category structure (Lucide migrado completo)
 const categories = {
   main: [
-    { id: 1, name: 'Almacén', icon: 'package', color: 'text-[#35008a]' },
-    { id: 2, name: 'Carnes', icon: 'beef', color: 'text-[#35008a]' },
-    { id: 3, name: 'Aseo del Hogar', icon: 'sparkles', color: 'text-[#35008a]' },
-        { id: 5, name: 'Lácteos', icon: 'milk', color: 'text-[#35008a]' },
-    { id: 6, name: 'Bebidas', icon: 'cup-soda', color: 'text-[#35008a]' },
-    { id: 7, name: 'Frutas y Verduras', icon: 'apple', color: 'text-[#35008a]' },
-    { id: 8, name: 'Panadería', icon: 'croissant', color: 'text-[#35008a]' },
-    { id: 9, name: 'Snacks', icon: 'popcorn', color: 'text-[#35008a]' },
-    { id: 10, name: 'Pescados y Mariscos', icon: 'fish', color: 'text-[#35008a]' },
-    { id: 11, name: 'Pollo', icon: 'drumstick', color: 'text-[#35008a]' },
-    { id: 12, name: 'Tecnología y Electrodomésticos', icon: 'tv', color: 'text-[#35008a]' },
-    { id: 12, name: 'Cereales', icon: 'bean', color: 'text-[#35008a]' }
+   { id: 1, name: 'Almacén', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MDY2MCwiZXhwIjoxNzkzODI2NjYwfQ.7SRxSdaFKCiXmptgCcNoBy51Tn_mRExg3jGzExEUGpI' },
+    { id: 2, name: 'Carnes', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Gemini_Generated_Image_c1967hc1967hc196-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvR2VtaW5pX0dlbmVyYXRlZF9JbWFnZV9jMTk2N2hjMTk2N2hjMTk2LXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkwOTYxLCJleHAiOjE3OTM4MjY5NjF9.jFuOwz4w7AJZdKgxe-o5hDA7-Sg2eNNijcawbSNsy1M' },
+    { id: 3, name: 'Aseo del Hogar', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZC1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTEzNCwiZXhwIjoxNzkzODI3MTM0fQ.G2l1LL2YQL3eWbGPCwtJ_VjWg_lbyJlYR1GL4StfFVo' },
+    { id: 4, name: 'Lácteos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed__1_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZF9fMV8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTE0NTYsImV4cCI6MTc5MzgyNzQ1Nn0.8THBDO2CnWE4QIDWaIdBDaYVBKS2xMxByTi4jBv-vGE' },
+    { id: 5, name: 'Bebidas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/image__1_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaW1hZ2VfXzFfLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkxNDMzLCJleHAiOjE3OTM4Mjc0MzN9.BjFUyySr3OcU44cqGCzirt5OgUtVF82R7_SG8HKAxik' },
+    { id: 6, name: 'Frutas y Verduras', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed-removebg-preview%20(1).png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZC1yZW1vdmViZy1wcmV2aWV3ICgxKS5wbmciLCJpYXQiOjE3NjIyOTE2NDIsImV4cCI6MTc5MzgyNzY0Mn0.1Vm-7cetjmGh2LYRKnd3ON_2mpwWHKGmlIJNYiCFqOk' },
+    { id: 7, name: 'Panadería', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/1762291736-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMTc2MjI5MTczNi1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTgwMSwiZXhwIjoxNzkzODI3ODAxfQ.DjwWFKrZMLx2IM9kpNzGOLv_xcJuqKNeGr_uHs6Q_kw' },
+    { id: 8, name: 'Snacks', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/1762291846-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMTc2MjI5MTg0Ni1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTkyMiwiZXhwIjoxNzkzODI3OTIyfQ.B7u1hnN2TOEdAnkLVN64MQaeK_cdBAQAxWFlgXJDZD4' },
+    { id: 9, name: 'Pescados y Mariscos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/image__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaW1hZ2VfXzJfLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkyMDM4LCJleHAiOjE3OTM4MjgwMzh9.bmTRarIT9JgB-CJHDMd4dcW7771qq9hKBocftBGwteM' },
+    { id: 10, name: 'Pollo', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZF9fMl8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTIxMzIsImV4cCI6MTc5MzgyODEzMn0.5t2u8VcEcoLb5jPCmipy3t7_sRNYubAXgrPcfmdDcEA' },
+    { id: 11, name: 'Tecnología y Electrodomésticos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/descarga.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZGVzY2FyZ2EuanBnIiwiaWF0IjoxNzYyMjkyMjkyLCJleHAiOjE3OTM4MjgyOTJ9.mRf2ByY0zlzTsVc6Jh5Rj4aUWa4z8ydNunQxhNnkVL8' },
+    { id: 12, name: 'Cereales', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/descarga__1_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZGVzY2FyZ2FfXzFfLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkyNDIyLCJleHAiOjE3OTM4Mjg0MjJ9.iLlPOEJZ8u8c47SnKHHhssOTocSioveegJ3r_USyC1c' },
 
   ],
   sub: {
     'Almacén': [
-      { id: 1, name: 'Arroz', icon: 'circle-dot', color: 'text-purple-600' },
-      { id: 2, name: 'Pastas', icon: 'utensils', color: 'text-purple-600' },
-      { id: 3, name: 'Aceites', icon: 'flask-conical', color: 'text-purple-600' },
-      { id: 4, name: 'Vinagres', icon: 'flask-conical', color: 'text-purple-600' },
-      { id: 5, name: 'Harinas', icon: 'sandwich', color: 'text-purple-600' },
-      { id: 6, name: 'Café', icon: 'coffee', color: 'text-purple-600' },
-      { id: 7, name: 'Azúcar', icon: 'candy', color: 'text-purple-600' },
-      { id: 8, name: 'Sal', icon: 'bolt', color: 'text-purple-600' },
-      { id: 9, name: 'Granos', icon: 'bean', color: 'text-purple-600' },
-      { id: 10, name: 'Condimentos y Especias', icon: 'sprout', color: 'text-purple-600' },
-      { id: 1000000, name: 'Salsas y Aderezos', icon: 'salad', color: 'text-purple-600' }
+      { id: 1, name: 'Arroz', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/descarga__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9kZXNjYXJnYV9fMl8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTY4OTQsImV4cCI6MTc5MzgzMjg5NH0.5wJSIWPsz3SmhPlB1-1dAkshuPf_igRhpAgs8D_7-7Q' },
+      { id: 2, name: 'Pastas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/pasta-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9wYXN0YS1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjM0NjMwNywiZXhwIjoxNzkzODgyMzA3fQ.dpqRV7PimKdBU0oUZ-5aZ0_MSbwMdI7kpzcgfxFWYqA' },
+       { id: 3, name: 'Aceites', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/Gemini_Generated_Image_az2i6saz2i6saz2i-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9HZW1pbmlfR2VuZXJhdGVkX0ltYWdlX2F6Mmk2c2F6Mmk2c2F6MmktcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIzNDY1NjMsImV4cCI6MTc5Mzg4MjU2M30.HDF2ilj65jyo9EwhbSaQ_Qx1x8Ij2GxZlOkdgHaT9JQ' },
+       { id: 3, name: 'Vinagres', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/descarga__4_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9kZXNjYXJnYV9fNF8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIzNDY2OTIsImV4cCI6MTc5Mzg4MjY5Mn0.5LMShq0i7ant1VnIS8EcdgiWY_fib0JGSREaEBBqxyk' },
+       { id: 3, name: 'Harinas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/harinas-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9oYXJpbmFzLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMzQ2ODQzLCJleHAiOjE3OTM4ODI4NDN9.KkJq6CVXFIYbXWcRQF_LMg_2sDwEYQozNrcMSAAyOAQ' },
+       { id: 3, name: 'Café', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/cafe-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9jYWZlLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMzQ3MTM1LCJleHAiOjE3OTM4ODMxMzV9.0TAhuegx6wCOSXzyVR3oOrwHW-KBp9h9REBTn12axto' },
+       { id: 3, name: 'Azúcar', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/Gemini_Generated_Image_iip6myiip6myiip6-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9HZW1pbmlfR2VuZXJhdGVkX0ltYWdlX2lpcDZteWlpcDZteWlpcDYtcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIzNDczNTksImV4cCI6MTc5Mzg4MzM1OX0.y6KHQ0juXVUsdPiEa2RtAFIFu5pr_sUw6KQ1EOjm7-4' },
+       { id: 3, name: 'Sal', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/Gemini_Generated_Image_sstpyhsstpyhsstp-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9HZW1pbmlfR2VuZXJhdGVkX0ltYWdlX3NzdHB5aHNzdHB5aHNzdHAtcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIzNDc4NTcsImV4cCI6MTc5Mzg4Mzg1N30.tbMk-ORte3ZjFJfyGFxomt3hmicaQhHrO7Q5AARWQM4' },
+       { id: 3, name: 'Pasta', image: '' },
+       { id: 3, name: 'Pasta', image: '' },
+       { id: 3, name: 'Pasta', image: '' },
+       { id: 3, name: 'Pasta', image: '' },
+       { id: 3, name: 'Pasta', image: '' },
+       { id: 3, name: 'Pasta', image: '' },
+
     ],
     'Carnes': [
       { id: 11, name: 'Carnes de Res', icon: 'beef', color: 'text-purple-600' },
@@ -19924,61 +19948,115 @@ renderFeaturedProducts();
             showPage('categories-page');
         }
         function showSubcategoriesPage() {
-            if (!state.isLoggedIn) {
-                showLoginPage();
-                return;
-            }
-            const currentSubcategories = categories.sub[state.selectedCategory.main] || [];
-            const container = document.getElementById('subcategories-container');
-            const title = document.getElementById('subcategory-title');
-            title.textContent = `Subcategorías de ${state.selectedCategory.main}`;
-            container.innerHTML = '';
-            
-currentSubcategories.forEach(subcategory => {
-    const subcategoryCard = document.createElement('button');
-    subcategoryCard.className = 'card-base';
-    subcategoryCard.innerHTML = `
-        <i data-lucide="${getLucideIcon(subcategory.name)}" class="card-icon"></i>
-        <p class="card-text">${subcategory.name}</p>
-    `;
-    subcategoryCard.onclick = () => {
-        state.selectedCategory.sub = subcategory.name;
-        showSubsubcategoriesPage();
-    };
-    container.appendChild(subcategoryCard);
-});
-lucide.createIcons();
+  if (!state.isLoggedIn) {
+    showLoginPage();
+    return;
+  }
 
-            showPage('subcategories-page');
-        }
-        function showSubsubcategoriesPage() {
-            if (!state.isLoggedIn) {
-                showLoginPage();
-                return;
-            }
-            const currentSubsubcategories = categories.subsub[state.selectedCategory.sub] || [];
-            const container = document.getElementById('subsubcategories-container');
-            const title = document.getElementById('subsubcategory-title');
-            title.textContent = `Sub-subcategorías de ${state.selectedCategory.sub}`;
-            container.innerHTML = '';
-            
-currentSubsubcategories.forEach(subsubcategory => {
-    const subsubcategoryCard = document.createElement('button');
-    subsubcategoryCard.className = 'card-base';
-    subsubcategoryCard.innerHTML = `
-        <i data-lucide="${getLucideIcon(subsubcategory.name)}" class="card-icon"></i>
-        <p class="card-text">${subsubcategory.name}</p>
-    `;
-    subsubcategoryCard.onclick = () => {
-        state.selectedCategory.subsub = subsubcategory.name;
-        showProductsPage();
-    };
-    container.appendChild(subsubcategoryCard);
-});
-lucide.createIcons();
+  // Obtener subcategorías según la categoría principal seleccionada
+  const currentSubcategories = categories.sub[state.selectedCategory.main] || [];
+  const container = document.getElementById('subcategories-container');
+  const title = document.getElementById('subcategory-title');
 
-            showPage('subsubcategories-page');
-        }
+  title.textContent = `Subcategorías de ${state.selectedCategory.main}`;
+  container.innerHTML = '';
+
+  // Si no hay subcategorías
+  if (currentSubcategories.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-gray-500 py-10">
+        <p>No hay subcategorías disponibles aún.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Crear tarjetas visuales
+  currentSubcategories.forEach(subcategory => {
+    const div = document.createElement('div');
+    div.className = `
+      bg-white rounded-2xl p-4 shadow-md hover:shadow-xl 
+      flex flex-col items-center justify-center 
+      transition-all duration-300 hover:-translate-y-1 cursor-pointer
+    `;
+
+    // ✅ En lugar de ir directo a productos, ahora va a sub-subcategorías
+    div.onclick = () => {
+      state.selectedCategory.sub = subcategory.name;
+      showSubsubcategoriesPage();
+    };
+
+    div.innerHTML = `
+      ${
+        subcategory.image
+          ? `<img src="${subcategory.image}" alt="${subcategory.name}" class="w-40 h-40 object-contain drop-shadow-md hover:scale-110 transition-transform duration-300">`
+          : `<i data-lucide="${subcategory.icon || 'box'}" class="w-10 h-10 text-purple-600"></i>`
+      }
+      <p class="mt-2 text-[#35008a] font-semibold text-center">${subcategory.name}</p>
+    `;
+
+    container.appendChild(div);
+  });
+
+  lucide.createIcons();
+  showPage('subcategories-page');
+}
+
+
+
+         function showSubsubcategoriesPage() {
+  if (!state.isLoggedIn) {
+    showLoginPage();
+    return;
+  }
+
+  const currentSubsubcategories = categories.subsub[state.selectedCategory.sub] || [];
+  const container = document.getElementById('subsubcategories-container');
+  const title = document.getElementById('subsubcategory-title');
+  title.textContent = `Subcategorías de ${state.selectedCategory.sub}`;
+  container.innerHTML = '';
+
+  if (currentSubsubcategories.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-gray-500 py-10">
+        <p>No hay subcategorías disponibles aún.</p>
+      </div>
+    `;
+    return;
+  }
+
+  currentSubsubcategories.forEach(subsubcategory => {
+    const div = document.createElement('div');
+    div.className = `
+      bg-white rounded-2xl p-4 shadow-md hover:shadow-xl 
+      flex flex-col items-center justify-center 
+      transition-all duration-300 hover:-translate-y-1 cursor-pointer
+    `;
+
+    div.onclick = () => {
+      state.selectedCategory.subsub = subsubcategory.name;
+      showProductsPage();
+    };
+
+    // ✅ Mostrar imagen 3D si existe, o ícono como respaldo
+    div.innerHTML = `
+      ${
+        subsubcategory.image
+          ? `<img src="${subsubcategory.image}" alt="${subsubcategory.name}" class="w-40 h-40 object-contain drop-shadow-md hover:scale-110 transition-transform duration-300">`
+          : `<i data-lucide="${subsubcategory.icon || 'box'}" class="w-10 h-10 text-purple-600"></i>`
+      }
+      <p class="mt-2 text-[#35008a] font-semibold text-center">${subsubcategory.name}</p>
+    `;
+
+    container.appendChild(div);
+  });
+
+  // ✅ Actualiza íconos y muestra la página
+  lucide.createIcons();
+  showPage('subsubcategories-page');
+}
+
+
         function showProductsPage() {
             if (!state.isLoggedIn) {
                 showLoginPage();
@@ -21568,22 +21646,30 @@ function renderCategories(retries = 0) {
   }
 
   categories.main.forEach(cat => {
-    const div = document.createElement('div');
-    div.className = 'card-base categoria';
-    div.onclick = () => {
-      state.selectedCategory.main = cat.name;
-      showSubcategoriesPage();
-    };
-    div.innerHTML = `
-      <i data-lucide="${getLucideIcon(cat.name)}" class="card-icon"></i>
-      <p class="card-text">${cat.name}</p>
-    `;
-    container.appendChild(div);
-  });
+  const div = document.createElement('div');
+  div.className = `
+    bg-white rounded-2xl p-5 shadow-md hover:shadow-2xl 
+    transform transition-all duration-300 hover:-translate-y-2 
+    flex flex-col items-center justify-center cursor-pointer
+  `;
+  
+  div.onclick = () => {
+    state.selectedCategory.main = cat.name;
+    showSubcategoriesPage();
+  };
 
-  if (window.lucide && typeof lucide.createIcons === 'function') {
-    try { lucide.createIcons(); } catch(e) {}
-  }
+  div.innerHTML = `
+    <img 
+      src="${cat.image}" 
+      alt="${cat.name}" 
+      class="w-40 h-40 object-contain drop-shadow-md transition-transform duration-300 hover:scale-110"
+    >
+    <p class="mt-3 font-semibold text-[#35008a] text-center">${cat.name}</p>
+  `;
+
+  container.appendChild(div);
+});
+
 }
 
 
