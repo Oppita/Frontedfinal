@@ -880,16 +880,14 @@
 const categories = {
   main: [
    { id: 1, name: 'Almacén', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MDY2MCwiZXhwIjoxNzkzODI2NjYwfQ.7SRxSdaFKCiXmptgCcNoBy51Tn_mRExg3jGzExEUGpI' },
-    { id: 2, name: 'Carnes', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Gemini_Generated_Image_c1967hc1967hc196-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvR2VtaW5pX0dlbmVyYXRlZF9JbWFnZV9jMTk2N2hjMTk2N2hjMTk2LXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkwOTYxLCJleHAiOjE3OTM4MjY5NjF9.jFuOwz4w7AJZdKgxe-o5hDA7-Sg2eNNijcawbSNsy1M' },
+    { id: 2, name: 'Proteínas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Gemini_Generated_Image_c1967hc1967hc196-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvR2VtaW5pX0dlbmVyYXRlZF9JbWFnZV9jMTk2N2hjMTk2N2hjMTk2LXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkwOTYxLCJleHAiOjE3OTM4MjY5NjF9.jFuOwz4w7AJZdKgxe-o5hDA7-Sg2eNNijcawbSNsy1M' },
     { id: 3, name: 'Aseo del Hogar', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZC1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTEzNCwiZXhwIjoxNzkzODI3MTM0fQ.G2l1LL2YQL3eWbGPCwtJ_VjWg_lbyJlYR1GL4StfFVo' },
     { id: 4, name: 'Lácteos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed__1_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZF9fMV8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTE0NTYsImV4cCI6MTc5MzgyNzQ1Nn0.8THBDO2CnWE4QIDWaIdBDaYVBKS2xMxByTi4jBv-vGE' },
     { id: 5, name: 'Bebidas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/gaseosas-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9nYXNlb3Nhcy1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjQ1NzU3MSwiZXhwIjoxNzkzOTkzNTcxfQ.uCyn6xVQS1sPgCwNM8bffwNR7hw44LMun23J42_IohA' },
     { id: 6, name: 'Frutas y Verduras', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed-removebg-preview%20(1).png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZC1yZW1vdmViZy1wcmV2aWV3ICgxKS5wbmciLCJpYXQiOjE3NjIyOTE2NDIsImV4cCI6MTc5MzgyNzY0Mn0.1Vm-7cetjmGh2LYRKnd3ON_2mpwWHKGmlIJNYiCFqOk' },
     { id: 7, name: 'Panadería', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/1762291736-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMTc2MjI5MTczNi1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTgwMSwiZXhwIjoxNzkzODI3ODAxfQ.DjwWFKrZMLx2IM9kpNzGOLv_xcJuqKNeGr_uHs6Q_kw' },
     { id: 8, name: 'Snacks', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/1762291846-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMTc2MjI5MTg0Ni1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjI5MTkyMiwiZXhwIjoxNzkzODI3OTIyfQ.B7u1hnN2TOEdAnkLVN64MQaeK_cdBAQAxWFlgXJDZD4' },
-    { id: 9, name: 'Pescados y Mariscos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/image__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvaW1hZ2VfXzJfLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkyMDM4LCJleHAiOjE3OTM4MjgwMzh9.bmTRarIT9JgB-CJHDMd4dcW7771qq9hKBocftBGwteM' },
-    { id: 10, name: 'Pollo', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZF9fMl8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTIxMzIsImV4cCI6MTc5MzgyODEzMn0.5t2u8VcEcoLb5jPCmipy3t7_sRNYubAXgrPcfmdDcEA' },
-    { id: 11, name: 'Tecnología y Electrodomésticos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/descarga.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZGVzY2FyZ2EuanBnIiwiaWF0IjoxNzYyMjkyMjkyLCJleHAiOjE3OTM4MjgyOTJ9.mRf2ByY0zlzTsVc6Jh5Rj4aUWa4z8ydNunQxhNnkVL8' },
+     { id: 11, name: 'Tecnología y Electrodomésticos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/descarga.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZGVzY2FyZ2EuanBnIiwiaWF0IjoxNzYyMjkyMjkyLCJleHAiOjE3OTM4MjgyOTJ9.mRf2ByY0zlzTsVc6Jh5Rj4aUWa4z8ydNunQxhNnkVL8' },
     { id: 12, name: 'Cereales', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/descarga__1_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZGVzY2FyZ2FfXzFfLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkyNDIyLCJleHAiOjE3OTM4Mjg0MjJ9.iLlPOEJZ8u8c47SnKHHhssOTocSioveegJ3r_USyC1c' },
 
   ],
@@ -909,9 +907,14 @@ const categories = {
        
 
     ],
-    'Carnes': [
+    'Proteínas': [
       { id: 11, name: 'Carne de res', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Gemini_Generated_Image_c1967hc1967hc196-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvR2VtaW5pX0dlbmVyYXRlZF9JbWFnZV9jMTk2N2hjMTk2N2hjMTk2LXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMjkwOTYxLCJleHAiOjE3OTM4MjY5NjF9.jFuOwz4w7AJZdKgxe-o5hDA7-Sg2eNNijcawbSNsy1M' },
       { id: 12, name: 'Carnes de Cerdo', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/chuleton-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9jaHVsZXRvbi1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjQ1NjkyNywiZXhwIjoxNzkzOTkyOTI3fQ.ogYDL2foNJD8flwfGOnwvPW4GI38121EvEMFJY2x0KM' },
+{ id: 86, name: 'Mariscos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/camarao-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9jYW1hcmFvLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyNDYyMzQ0LCJleHAiOjE3OTM5OTgzNDR9.T-0tNCQ6q54he096wF0udm1CrD1IDCFsINqjfvMqKN4' },                
+                    { id: 88, name: 'Pescados', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/fish-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9maXNoLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyNDYyMTk0LCJleHAiOjE3OTM5OTgxOTR9.UUwCILaK3yPdxUUrvfRxWVh8pjnAAHjvPmx7l5DvHz4' },
+                     { id: 87, name: 'Pollo', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/Gemini_Generated_Image_ahs271ahs271ahs2-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9HZW1pbmlfR2VuZXJhdGVkX0ltYWdlX2FoczI3MWFoczI3MWFoczItcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjI0NjI1MjgsImV4cCI6MTc5Mzk5ODUyOH0.lwt8Mbjkm0zN324zI3qT_w-cCZ1w0o4FdHxItMmvQrQ' },
+              
+    
       { id: 13, name: 'Charcutería', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/chorizo-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9jaG9yaXpvLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyNDU3MDAzLCJleHAiOjE3OTM5OTMwMDN9.YndUjHycSbGOkcF0onW6lUZRipcsyA0SiNlWsUZR-ic' },
     ],
     'Bebidas': [
@@ -963,10 +966,8 @@ const categories = {
                     { id: 83, name: 'Pescados', image: '' },
                     { id: 84, name: 'Helados', image: '' },
                     { id: 85, name: 'Comidas Preparadas', image: '' },
-                ],'Pescados y Mariscos': [
-                    { id: 86, name: 'Mariscos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/camarao-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9jYW1hcmFvLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyNDYyMzQ0LCJleHAiOjE3OTM5OTgzNDR9.T-0tNCQ6q54he096wF0udm1CrD1IDCFsINqjfvMqKN4' },                
-                    { id: 88, name: 'Pescados', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/fish-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9maXNoLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyNDYyMTk0LCJleHAiOjE3OTM5OTgxOTR9.UUwCILaK3yPdxUUrvfRxWVh8pjnAAHjvPmx7l5DvHz4' },
-                    
+                
+                                    
                 ],
                 'Pollo': [
                     { id: 86, name: 'Presas', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/unnamed__2_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvdW5uYW1lZF9fMl8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIyOTIxMzIsImV4cCI6MTc5MzgyODEzMn0.5t2u8VcEcoLb5jPCmipy3t7_sRNYubAXgrPcfmdDcEA' },
@@ -1002,17 +1003,17 @@ const categories = {
 
                     // Vinagres sub-subcategories
                 'Vinagres': [
-                    { id: 121, name: 'Vinagres Blancos', image: '' },
-                    { id: 122, name: 'Vinagres de Manzana y Sidra de Manzana', image: '' },
-                    { id: 123, name: 'Otros Vinagres', image: '' },
-                    { id: 124, name: 'Vinagres Balsámicos', image: '' },
+                    { id: 121, name: 'Vinagres Blancos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/descarga__4_-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9kZXNjYXJnYV9fNF8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjIzNDY2OTIsImV4cCI6MTc5Mzg4MjY5Mn0.5LMShq0i7ant1VnIS8EcdgiWY_fib0JGSREaEBBqxyk' },
+                    { id: 122, name: 'Vinagres de Manzana y Sidra de Manzana', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/sidra-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9zaWRyYS1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjUyNjgwMSwiZXhwIjoxNzk0MDYyODAxfQ.o7j-Ujf9BB24MHFflDlyqPX0lK4Qle4QfBWiBkafGC8' },
+                    { id: 123, name: 'Otros Vinagres', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/otrino-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9vdHJpbm8tcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NjI1MjcxNDQsImV4cCI6MTc5NDA2MzE0NH0.O6xnZi8e-13RRFMC_BmPo0oiSBxDO1Cq0Nu8_QL9W8A' },
+                    { id: 124, name: 'Vinagres Balsámicos', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/balsa-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9iYWxzYS1yZW1vdmViZy1wcmV2aWV3LnBuZyIsImlhdCI6MTc2MjUyNzAyNSwiZXhwIjoxNzk0MDYzMDI1fQ.MDf6piXsbBebr8AHFvtFJd6HSojZSMW3KvJ-BShk1sE' },
                     
                 ],
 
                     
                 // Harinas sub-subcategories
                 'Harinas': [
-                    { id: 131, name: 'Harinas de Trigo', image: '' },
+                    { id: 131, name: 'Harinas de Trigo', image: 'https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/Almacen/harinas-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iN2Y5NDRkNS05OWU3LTQ1ZDEtOTM2Mi1iMDU0MzYzYjdhZmYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvQWxtYWNlbi9oYXJpbmFzLXJlbW92ZWJnLXByZXZpZXcucG5nIiwiaWF0IjoxNzYyMzQ2ODQzLCJleHAiOjE3OTM4ODI4NDN9.KkJq6CVXFIYbXWcRQF_LMg_2sDwEYQozNrcMSAAyOAQ' },
                     { id: 132, name: 'Harinas de Centeno', image: '' },
                     { id: 133, name: 'Harinas de Maíz', image: '' },
                     { id: 134, name: 'Harinas de Arroz',image: '' },
@@ -1237,7 +1238,7 @@ const categories = {
 
 
 // Presas sub-subcategories 
-                 'Presas': [
+                 'Pollo': [
 { id: 280, name: 'Pechuga', icon: 'drumpstick', color: 'purple-600' },
 { id: 281, name: 'Pierna Pernil', icon: 'drumpstick', color: 'purple-600' },
 { id: 282, name: 'Muslos', icon: 'drumpstick', color: 'purple-600' },
