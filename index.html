@@ -353,6 +353,98 @@
 
             </div>
         </div>
+
+
+
+
+        <!-- Profile Page -->
+<div id="profile-page" class="hidden min-h-screen bg-[#35008a] text-white">
+  <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+      <!-- 🔙 Botón Volver -->
+      <button onclick="handleGoBack()" class="text-white hover:bg-[#4a0ab8] px-3 py-2 rounded-lg transition flex items-center gap-1">
+        <i data-lucide="arrow-left"></i>
+        <span class="hidden sm:inline">Volver</span>
+      </button>
+
+      <!-- 🟢 Logo + Nombre centrado -->
+      <button onclick="showCategoriesPage()" class="flex items-center gap-3 text-green-400 hover:opacity-90 transition">
+        <img
+          src="https://dhkjjgjmluqylxhfgbyx.supabase.co/storage/v1/object/sign/images/1761301602-removebg-preview.png"
+          alt="Logo PriceZapp"
+          class="w-20 h-20 drop-shadow-[0_0_10px_#00ffccaa]"
+        >
+        <h1 class="title text-2xl font-bold text-[#00ffcc] tracking-tight">PRICEZAPP</h1>
+      </button>
+
+      <!-- 🧭 Iconos de acción -->
+      <div class="flex items-center gap-4 text-white">
+        <button onclick="showShoppingListsPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Mis listas">
+          <i data-lucide="list"></i>
+        </button>
+        <button onclick="showFavoritesPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Favoritos">
+          <i data-lucide="heart"></i>
+        </button>
+        <button onclick="toggleAlertsPanel()" class="p-2 relative hover:bg-[#4a0ab8] rounded-lg transition" title="Alertas de precio">
+          <i data-lucide="bell"></i>
+          <span id="alerts-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+        </button>
+        <button onclick="showCartPage()" class="p-2 hover:bg-[#4a0ab8] rounded-lg transition" title="Carrito">
+          <i data-lucide="shopping-cart"></i>
+        </button>
+        <button onclick="logout()" class="bg-white text-[#35008a] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 🧍 Contenido principal del perfil -->
+  <div class="max-w-5xl mx-auto px-4 py-10 text-center">
+
+    <!-- Avatar -->
+    <div class="flex flex-col items-center mb-6">
+      <img
+        id="profile-avatar"
+        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        alt="Avatar del usuario"
+        class="w-32 h-32 rounded-full border-4 border-[#00ffcc] shadow-lg mb-4"
+      >
+      <h2 id="profile-username" class="text-3xl font-bold text-[#00ffcc]">Usuario Ejemplo</h2>
+      <p class="text-gray-200 mt-1">Miembro desde 2025</p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex justify-center gap-6 mb-10">
+      <button onclick="editProfile()" class="bg-[#00ffcc] text-[#35008a] px-6 py-3 rounded-xl font-semibold hover:bg-[#00e0b5] transition flex items-center gap-2">
+        <i data-lucide="edit-3"></i> Editar Perfil
+      </button>
+      <button onclick="openSettings()" class="bg-white text-[#35008a] px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition flex items-center gap-2">
+        <i data-lucide="settings"></i> Configuración
+      </button>
+    </div>
+
+    <!-- Resumen de actividad -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+      <div class="bg-[#4a0ab8] rounded-2xl p-6 shadow-md hover:scale-105 transition-transform">
+        <h3 class="text-lg font-semibold text-[#00ffcc] mb-2">Alertas Activas</h3>
+        <p id="profile-alerts-count" class="text-4xl font-bold text-white">3</p>
+      </div>
+      <div class="bg-[#4a0ab8] rounded-2xl p-6 shadow-md hover:scale-105 transition-transform">
+        <h3 class="text-lg font-semibold text-[#00ffcc] mb-2">Productos Guardados</h3>
+        <p id="profile-favorites-count" class="text-4xl font-bold text-white">12</p>
+      </div>
+      <div class="bg-[#4a0ab8] rounded-2xl p-6 shadow-md hover:scale-105 transition-transform">
+        <h3 class="text-lg font-semibold text-[#00ffcc] mb-2">Historial de Búsquedas</h3>
+        <p id="profile-searches-count" class="text-4xl font-bold text-white">8</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        
         <!-- Subcategories Page -->
         <div id="subcategories-page" class="hidden min-h-screen bg-[#35008a]">
             <header class="bg-[#35008a] shadow-lg sticky top-0 z-40">
@@ -1237,7 +1329,9 @@ const categories = {
             'Oxxo': 'https://prodcdnmobisoft.oxxodomicilios.com/app/assets/images/oxxo-logo@3x.png',
              'Makro': 'https://images.rappi.com/marketplace/store_type_1759762731552.jpg',
              'Rappi': 'data:image/png;base64,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',
-       'Falabella': 'https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltabc2a9c42c4d5b36/falabella.com-256x256.png '
+       'Falabella': 'https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltabc2a9c42c4d5b36/falabella.com-256x256.png ',
+        'Euro Supermercado': 'data:image/jpeg;base64,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 '
+       
                };
         // Products data with specific supermarket prices
         const products = {
@@ -2336,173 +2430,174 @@ const categories = {
              ],
             // Café products
             'Café Molido': [
-                { 
-                    id: 3000, 
-                    name: 'Café CAFE QUINDIO gourmet tostado y molido (454 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20gourmet%20tostado%20y%20molido%20(454%20gr).webp?raw=true',
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +${renderPrice(200)}0' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +${renderPrice(150)}0' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +${renderPrice(180)}0' }
-                    ]
-                },
-                { 
-                    id: 3001, 
-                    name: 'Café CAFE QUINDIO gourmet (250 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20gourmet%20(250%20gr).webp?raw=true',               
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3002, 
-                    name: 'Café CAFE QUINDIO descafeinado (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20descafeinado%20(340%20gr).webp?raw=true',                   
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3003, 
-                    name: 'CAFE JUAN VALDEZ TOSTADO MOLIDO (283 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/CAFE%20JUAN%20VALDEZ%20TOSTADO%20MOLIDO%20(283%20gr).webp?raw=true',                  
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3004, 
-                    name: 'Café CAFE QUINDIO molido especial (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20molido%20especial%20(340%20gr).webp?raw=true',                  
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3005, 
-                    name: 'Café CAFE QUINDIO orgánico molido (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20org%C3%A1nico%20molido%20(340%20gr).webp?raw=true',                  
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3006, 
-                    name: 'Café LUXURY PARAISO CAFE HANDPICKED imperio (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20imperio%20(340%20gr).webp?raw=true',                 
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3007, 
-                    name: 'Café LUXURY PARAISO CAFE HANDPICKED dulce pecado (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20dulce%20pecado%20(340%20gr).webp?raw=true',                  
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                   supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3008, 
-                    name: 'Café CAFE QUINDIO tostado notas vainilla dulce (250 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20tostado%20notas%20vainilla%20dulce%20(250%20gr).webp?raw=true',                  
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                   supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3009, 
-                    name: 'Café LUXURY PARAISO CAFE HANDPICKED sagrado (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20sagrado%20(340%20gr).webp?raw=true',               
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
-                    id: 3010, 
-                    name: 'Café CAFE QUINDIO tostado y molido (340 gr)', 
-                    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20tostado%20y%20molido%20(340%20gr).webp?raw=true',               
-                    category: 'Almacén', 
-                    subcategory: 'Café', 
-                    subsubcategory: 'Café Molido', 
-                    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
-                    rating: 4.8,
-                    brand: 'La Virginia',
-                    supermarkets: [
-                        { name: 'Carulla', price: 289.90, previousPrice: 300.00, rating: 4.3, delivery: 'Gratis +$2000' },
-                        { name: 'Olimpica', price: 285.00, previousPrice: 295.00, rating: 4.5, delivery: 'Gratis +$1500' },
-                        { name: 'Jumbo', price: 292.50, previousPrice: 305.00, rating: 4.7, delivery: 'Gratis +$1800' }
-                    ]
-                },{ 
+  { 
+    id: 3000, 
+    name: 'Café CAFE QUINDIO gourmet tostado y molido (454 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20gourmet%20tostado%20y%20molido%20(454%20gr).webp?raw=true',
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 41800, previousPrice: 43400, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 33960, previousPrice: 42450, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Jumbo', price: 42850, previousPrice: 42850, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Makro', price: 38887, previousPrice: 38887, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Éxito', price: 45850, previousPrice: 45850, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3001, 
+    name: 'Café CAFE QUINDIO gourmet (250 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20gourmet%20(250%20gr).webp?raw=true',               
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café molido suave, ideal para cafeteras de filtro y espresso.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 27500, previousPrice: 27500, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 21960, previousPrice: 27450, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Jumbo', price: 27450, previousPrice: 27450, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Makro', price: 22995, previousPrice: 22995, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Éxito', price: 27150, previousPrice: 31300, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3002, 
+    name: 'Café CAFE QUINDIO descafeinado (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20descafeinado%20(340%20gr).webp?raw=true',                   
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café molido descafeinado, ideal para quienes buscan menos cafeína sin perder sabor.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 45200, previousPrice: 45200, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Éxito', price: 47850, previousPrice: 47850, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Jumbo', price: 45390, previousPrice: 45390, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Makro', price: 41902, previousPrice: 41902, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3003, 
+    name: 'CAFE JUAN VALDEZ TOSTADO MOLIDO (283 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/CAFE%20JUAN%20VALDEZ%20TOSTADO%20MOLIDO%20(283%20gr).webp?raw=true',                  
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café colombiano premium de molienda fina con aroma intenso.',
+    rating: 4.8,
+    brand: 'JUAN VALDEZ',
+    supermarkets: [
+      { name: 'Carulla', price: 43500, previousPrice: 44000, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 36960, previousPrice: 46200, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Éxito', price: 43500, previousPrice: 44300, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Zapatoca', price: 36950, previousPrice: 36950, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3004, 
+    name: 'Café CAFE QUINDIO molido especial (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20molido%20especial%20(340%20gr).webp?raw=true',                  
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café molido de tueste medio, balanceado y con notas de cacao.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 42100, previousPrice: 42100, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 31000, previousPrice: 38750, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Éxito', price: 40050.5, previousPrice: 40950, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3005, 
+    name: 'Café CAFE QUINDIO orgánico molido (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20org%C3%A1nico%20molido%20(340%20gr).webp?raw=true',                  
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café orgánico certificado, libre de pesticidas y cultivado de forma sostenible.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 44800, previousPrice: 44800, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 30160, previousPrice: 37700, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Jumbo', price: 37690, previousPrice: 37690, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Éxito', price: 42650, previousPrice: 42650, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3006, 
+    name: 'Café LUXURY PARAISO CAFE HANDPICKED imperio (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20imperio%20(340%20gr).webp?raw=true',                 
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café artesanal de origen único con notas dulces y cuerpo redondo.',
+    rating: 4.8,
+    brand: 'Paraiso',
+    supermarkets: [
+      { name: 'Éxito', price: 31100, previousPrice: 31100, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Euro Supermercado', price: 34450, previousPrice: 34450, rating: 4.5, delivery: 'Gratis +$1500' }
+    ]
+  },
+  { 
+    id: 3007, 
+    name: 'Café LUXURY PARAISO CAFE HANDPICKED dulce pecado (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20dulce%20pecado%20(340%20gr).webp?raw=true',                  
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café con notas dulces y aroma intenso, tueste medio premium.',
+    rating: 4.8,
+    brand: 'Paraiso',
+    supermarkets: [
+      { name: 'Carulla', price: 30800, previousPrice: 30800, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Éxito', price: 35800, previousPrice: 35800, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Euro Supermercado', price: 33990, previousPrice: 33990, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3008, 
+    name: 'Café CAFE QUINDIO tostado notas vainilla dulce (250 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20QUINDIO%20tostado%20notas%20vainilla%20dulce%20(250%20gr).webp?raw=true',                  
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café molido con delicadas notas de vainilla y dulzura natural.',
+    rating: 4.8,
+    brand: 'Café Quindio',
+    supermarkets: [
+      { name: 'Carulla', price: 35100, previousPrice: 35900, rating: 4.3, delivery: 'Gratis +$2000' },
+      { name: 'Olimpica', price: 36120, previousPrice: 36120, rating: 4.5, delivery: 'Gratis +$1500' },
+      { name: 'Jumbo', price: 30590, previousPrice: 30590, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Éxito', price: 32450, previousPrice: 35850, rating: 4.7, delivery: 'Gratis +$1800' },
+      { name: 'Euro Supermercado', price: 37990, previousPrice: 37990, rating: 4.7, delivery: 'Gratis +$1800' }
+    ]
+  },
+  { 
+    id: 3009, 
+    name: 'Café LUXURY PARAISO CAFE HANDPICKED sagrado (340 gr)', 
+    image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20LUXURY%20PARAISO%20CAFE%20HANDPICKED%20sagrado%20(340%20gr).webp?raw=true',               
+    category: 'Almacén', 
+    subcategory: 'Café', 
+    subsubcategory: 'Café Molido', 
+    description: 'Café artesanal intenso, con cuerpo robusto y sabor profundo.',
+    rating: 4.8,
+    brand: 'Paraiso',
+    supermarkets: [
+      { name: 'Carulla', price: 46400, previousPrice: 46400, rating: 4.3, delivery: 'Gratis +$2000' }
+    ]
+  },
+
+{ 
                     id: 3011, 
                     name: 'Café CAFE OPORTO excelso premium (250 gr)', 
                     image: 'https://github.com/Oppita/Precios-Caf-/blob/main/Caf%C3%A9%20CAFE%20OPORTO%20excelso%20premium%20(250%20gr).webp?raw=true',               
@@ -6627,7 +6722,7 @@ const categories = {
                 },{ 
                     id: 8007, 
                     name: 'Whisky GLENLIVET single malt 12 años (700 ml)', 
-                    image: 'hhttps://github.com/Oppita/Whisky/blob/main/Whisky%20GLENLIVET%20single%20malt%2012%20a%C3%B1os%20(700%20ml).webp?raw=true',
+                    image: 'https://github.com/Oppita/Whisky/blob/main/Whisky%20GLENLIVET%20single%20malt%2012%20a%C3%B1os%20(700%20ml).webp?raw=true',
                     category: 'Bebidas', 
                     subcategory: 'Licores', 
                     subsubcategory: 'Whisky', 
@@ -19644,16 +19739,32 @@ image: 'https://carulla.vtexassets.com/arquivos/ids/21505106/UVA-PICADA-682432_a
             
         };
         // Helper: Extract quantity and unit from product name
-        function extractQuantity(productName) {
-            const match = productName.match(/(\d+(?:\.\d+)?)\s*(ml|gr|g|kg|l)/i);
-            if (!match) return { quantity: 1, unit: 'unidad' };
-            let quantity = parseFloat(match[1]);
-            const unit = match[2].toLowerCase();
-            // Normalize to grams or ml
-            if (unit === 'kg') quantity *= 1000;
-            if (unit === 'l') quantity *= 1000;
-            return { quantity, unit: unit === 'kg' || unit === 'l' ? (unit === 'kg' ? 'gr' : 'ml') : unit };
-        }
+        function extractQuantity(name) {
+  // Si el nombre no existe o no es texto, devolvemos valores por defecto
+  if (!name || typeof name !== "string") {
+    return { quantity: 1, unit: "unidad" };
+  }
+
+  // Buscamos un número y unidad en el nombre del producto (ej: "Café 250 gr")
+  const regex = /(\d+(?:[.,]\d+)?)\s*(kg|gr|ml|l|unidades|und|unidad|g|lt|L)/i;
+  const match = name.match(regex);
+
+  if (match) {
+    let quantity = parseFloat(match[1].replace(",", "."));
+    let unit = match[2].toLowerCase();
+
+    // Normalizamos algunas abreviaciones
+    if (unit === "g") unit = "gr";
+    if (unit === "lt") unit = "l";
+    if (unit === "und") unit = "unidad";
+
+    return { quantity, unit };
+  }
+
+  // Si no se encuentra cantidad, devolvemos 1 unidad por defecto
+  return { quantity: 1, unit: "unidad" };
+}
+
         // Get all products (for global search)
         function getAllProducts() {
             let allProducts = [];
@@ -19776,6 +19887,14 @@ image: 'https://carulla.vtexassets.com/arquivos/ids/21505106/UVA-PICADA-682432_a
             showPage('login-page');
             setupOAuthButtons();
         }
+
+function showProfilePage() {
+  showPage('profile-page');
+  lucide.createIcons();
+}
+
+
+
         function showCategoriesPage() {
     state.currentProductList = null;
             if (!state.isLoggedIn) {
@@ -20645,85 +20764,102 @@ document.addEventListener("click", (e) => {
             }
             showPage('shopping-lists-page');
         }
-        function showShoppingListDetail(listId) {
-            state.currentListId = listId;
-            const list = state.shoppingLists.find(l => l.id === listId);
-            const detailContent = document.getElementById('shopping-list-detail-content');
-            const title = document.getElementById('list-detail-title');
-            title.textContent = list.name;
-            if (list.items.length === 0) {
-                detailContent.innerHTML = `
-                    <div class="text-center py-12">
-                        <h2 class="text-2xl font-bold text-gray-700 mb-4">Esta lista está vacía</h2>
-                        <p class="text-gray-500 mb-6">Agrega productos desde la página de categorías</p>
-                        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
-                            Ir a comprar
-                        </button>
-                    </div>
-                `;
-            } else {
-                let itemsHtml = '<div class="space-y-4">';
-                list.items.forEach(item => {
-                    // Get current prices
-                    const currentLowestPrice = Math.min(...item.supermarkets.map(s => s.price));
-                    const currentLowestSupermarket = item.supermarkets.find(s => s.price === currentLowestPrice);
-                    const { quantity, unit } = extractQuantity(item.name);
-                    const pricePerUnit = quantity > 0 ? currentLowestPrice / quantity : currentLowestPrice;
-                    itemsHtml += `
-                        <div class="border rounded-lg p-4">
-                            <div class="flex items-center gap-4">
-                                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold">${item.name}</h3>
-                                    <p class="text-sm text-gray-600">${item.description}</p>
-                                    <div class="mt-2">
-                                        <div class="flex items-center">
-                                            <span class="text-lg font-bold text-green-600">${renderPrice(currentLowestPrice)}</span>
-                                            <span class="text-sm text-gray-500 ml-2">en ${currentLowestSupermarket.name}</span>
-                                        </div>
-                                        <p class="text-xs text-purple-600">Precio por ${unit}: ${renderPrice(pricePerUnit)}</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" ${item.purchased ? 'checked' : ''} onchange="togglePurchased('${listId}', ${item.id})" class="w-5 h-5">
-                                    <button onclick="removeFromShoppingList('${listId}', ${item.id})" class="text-red-500 hover:text-red-700">
-                                        ×
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                itemsHtml += '</div>';
+       function showShoppingListDetail(listId) {
+  state.currentListId = listId;
+  const list = state.shoppingLists.find(l => l.id === listId);
+  const detailContent = document.getElementById('shopping-list-detail-content');
+  const title = document.getElementById('list-detail-title');
 
-// ✅ Agregar comparador automático justo al final del detalle
-const comparisonHtml = renderListComparison(list);
+  if (!list) {
+    console.error("❌ Lista no encontrada:", listId);
+    return;
+  }
 
-// ✅ Reemplazar TODO el contenido del detalle en orden
-detailContent.innerHTML = itemsHtml + comparisonHtml;
+  title.textContent = list.name;
 
+  if (!list.items || list.items.length === 0) {
+    detailContent.innerHTML = `
+      <div class="text-center py-12">
+        <h2 class="text-2xl font-bold text-gray-700 mb-4">Esta lista está vacía</h2>
+        <p class="text-gray-500 mb-6">Agrega productos desde la página de categorías</p>
+        <button onclick="showCategoriesPage()" class="bg-[#35008a] text-white px-6 py-3 rounded-lg">
+          Ir a comprar
+        </button>
+      </div>
+    `;
+  } else {
+    let itemsHtml = '<div class="space-y-4">';
 
+    list.items.forEach(item => {
+      const supermarkets = Array.isArray(item.supermarkets) ? item.supermarkets : [];
+      const currentLowestPrice = supermarkets.length
+        ? Math.min(...supermarkets.map(s => s.price))
+        : 0;
+      const currentLowestSupermarket = supermarkets.find(s => s.price === currentLowestPrice) || { name: "Sin datos" };
 
-            }
-            showPage('shopping-list-detail-page');
-        }
+      const { quantity, unit } = extractQuantity(item.name);
+      const pricePerUnit = quantity > 0 ? currentLowestPrice / quantity : currentLowestPrice;
+
+      itemsHtml += `
+        <div class="border rounded-lg p-4 bg-white shadow-sm">
+          <div class="flex items-center gap-4">
+            <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+            <div class="flex-1">
+              <h3 class="font-semibold">${item.name}</h3>
+              <p class="text-sm text-gray-600">${item.description || 'Sin descripción'}</p>
+              <div class="mt-2">
+                <div class="flex items-center">
+                  <span class="text-lg font-bold text-green-600">
+                    ${currentLowestPrice ? renderPrice(currentLowestPrice) : 'N/D'}
+                  </span>
+                  <span class="text-sm text-gray-500 ml-2">en ${currentLowestSupermarket.name}</span>
+                </div>
+                <p class="text-xs text-purple-600">Precio por ${unit || 'unidad'}: ${currentLowestPrice ? renderPrice(pricePerUnit) : 'N/D'}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" ${item.purchased ? 'checked' : ''} onchange="togglePurchased('${listId}', ${item.id})" class="w-5 h-5">
+              <button onclick="removeFromShoppingList('${listId}', ${item.id})" class="text-red-500 hover:text-red-700">
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    itemsHtml += '</div>';
+
+    // ✅ Comparador con seguridad
+    const comparisonHtml = renderListComparison(list);
+    detailContent.innerHTML = itemsHtml + comparisonHtml;
+  }
+
+  showPage('shopping-list-detail-page');
+}
+
 
 
 
         // ✅ Comparador automático de supermercados
 function renderListComparison(list) {
-  if (!list || !list.items?.length) return "";
+  if (!list || !Array.isArray(list.items) || list.items.length === 0) return "";
 
-  // Calcular totales por supermercado y detectar faltantes
   const totals = {};
-  const missing = {}; // productos no disponibles en cada supermercado
+  const missing = {};
+
   list.items.forEach(item => {
-    const available = new Set(item.supermarkets.map(s => s.name));
-    item.supermarkets?.forEach(s => {
+    const supermarkets = Array.isArray(item.supermarkets) ? item.supermarkets : [];
+
+    // si el producto no tiene precios aún
+    if (!supermarkets.length) return;
+
+    const available = new Set(supermarkets.map(s => s.name));
+    supermarkets.forEach(s => {
       if (!totals[s.name]) totals[s.name] = 0;
       totals[s.name] += s.price;
     });
-    // detectar supermercados donde no está disponible
+
     Object.keys(totals).forEach(name => {
       if (!available.has(name)) {
         if (!missing[name]) missing[name] = [];
@@ -20732,10 +20868,11 @@ function renderListComparison(list) {
     });
   });
 
-  // Ordenar por precio total ascendente
   const sorted = Object.entries(totals)
     .map(([name, total]) => ({ name, total }))
     .sort((a, b) => a.total - b.total);
+
+  if (sorted.length === 0) return "";
 
   const cheapest = sorted[0]?.total || 0;
   const formatted = sorted.map((s, i) => ({
@@ -20745,48 +20882,26 @@ function renderListComparison(list) {
     pct: cheapest ? ((s.total / cheapest) * 100).toFixed(1) : 100
   }));
 
-  // Renderizar HTML
-  const html = `
-    <div class="mt-10 bg-white rounded-2xl shadow-lg p-6 transition-all duration-700 hover:shadow-2xl animate-fade-in">
-      <h2 class="text-2xl font-bold text-[#35008a] mb-6 flex items-center gap-2">
-        🛒 Comparador de Supermercados
-      </h2>
-      ${formatted.map(f => `
-        <div class="p-4 mb-3 rounded-lg ${f.rank === 1 ? 'bg-green-50 border-2 border-green-500' : 'bg-gray-50 border'}">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-lg font-semibold">${f.rank === 1 ? '🏆 ' : ''}${f.name}</span>
-            <span class="text-lg font-bold text-[#35008a]">$${f.total.toLocaleString()}</span>
-          </div>
-          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-2 bg-green-500 transition-all duration-700 ease-out" 
-                 style="width:${Math.min((cheapest / f.total) * 100, 100)}%"></div>
-          </div>
-          ${f.rank > 1 ? `<p class="text-sm text-gray-600 mt-1">+ $${f.diff.toLocaleString()} vs ${formatted[0].name}</p>` : ""}
-
-          ${missing[f.name]?.length ? `
-            <div class="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
-              <p class="font-semibold text-yellow-800">⚠️ ${missing[f.name].length} productos no disponibles</p>
-              <ul class="text-sm text-gray-700 list-disc ml-5 mt-1">
-                ${missing[f.name].map(item => `
-                  <li>${item.name} 
-                    ${suggestAlternative(item, f.name)}
-                  </li>
-                `).join('')}
-              </ul>
-            </div>
-          ` : ""}
-        </div>
-      `).join('')}
-
-      <p class="mt-6 text-center text-green-700 font-semibold">
-        💰 Si compras todo en <b>${formatted[0].name}</b>, ahorras hasta 
-        $${(formatted[formatted.length - 1].diff).toLocaleString()} comparado con el más caro.
-      </p>
-    </div>
+  let html = `
+    <div class="mt-10 border-t pt-6">
+      <h3 class="text-lg font-bold text-[#35008a] mb-4">Comparador de supermercados</h3>
+      <div class="space-y-2">
   `;
 
+  formatted.forEach(s => {
+    html += `
+      <div class="flex justify-between items-center bg-gray-50 px-4 py-2 rounded">
+        <span class="font-medium">${s.rank}. ${s.name}</span>
+        <span class="font-semibold text-green-700">${renderPrice(s.total)}</span>
+        <span class="text-sm text-gray-500">${s.pct}% del más barato</span>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
   return html;
 }
+
 
 // 🔍 Sugerir alternativa en el mismo supermercado
 function suggestAlternative(item, supermarketName) {
@@ -20952,58 +21067,80 @@ function suggestAlternative(item, supermarketName) {
             }
         }
         function createListFromModal() {
-            const nameInput = document.getElementById("new-list-name");
-            const name = nameInput.value.trim();
-            if (!name) {
-                showNotification("El nombre de la lista no puede estar vacío");
-                return;
-            }
-            const newList = { id: Date.now().toString(), name, items: [] };
-            state.shoppingLists.push(newList);
-            state.currentListId = newList.id;
-            populateExistingLists();
-            nameInput.value = "";
-            showNotification("Lista creada correctamente");
-        }
+  const nameInput = document.getElementById("new-list-name");
+  const name = nameInput.value.trim();
+
+  if (!name) {
+    showNotification("⚠️ El nombre de la lista no puede estar vacío");
+    return;
+  }
+
+  const newList = { id: Date.now().toString(), name, items: [] };
+  if (!Array.isArray(state.shoppingLists)) state.shoppingLists = [];
+
+  state.shoppingLists.push(newList);
+  state.currentListId = newList.id;
+
+  populateExistingLists();
+  nameInput.value = "";
+  showNotification(`✅ Lista "${name}" creada correctamente`);
+
+  try {
+    if (typeof saveUserDataToSupabase === "function") {
+      saveUserDataToSupabase(state);
+    }
+  } catch (error) {
+    console.error("❌ Error al guardar lista en Supabase:", error);
+  }
+}
+
         // Función para confirmar selección de lista en el modal
 function confirmListSelection() {
-    console.log("confirmListSelection() llamada"); // ← DEBE APARECER
+  const selectedListId = document.getElementById('existing-lists').value;
+  const product = state.selectedProduct;
 
-    const selectedListId = document.getElementById('existing-lists').value;
-    const productId = state.selectedProduct?.id;
+  if (!selectedListId || !product) {
+    alert("Selecciona una lista y un producto válido.");
+    return;
+  }
 
-    console.log("Lista seleccionada:", selectedListId, "Producto:", productId);
+  const list = state.shoppingLists.find(l => l.id === selectedListId);
+  if (!list) {
+    console.error("❌ Lista no encontrada:", selectedListId);
+    return;
+  }
 
-    if (!selectedListId || !productId) {
-        alert("Selecciona una lista y un producto.");
-        return;
-    }
+  if (!list.items) list.items = [];
 
-    const list = state.shoppingLists.find(l => l.id === selectedListId);
-    if (!list) {
-        console.error("Lista no encontrada:", selectedListId);
-        return;
-    }
+  // Verificamos si ya está el producto
+  const alreadyExists = list.items.some(item => item.id === product.id);
+  if (alreadyExists) {
+    console.warn("⚠️ Producto ya está en la lista");
+    showNotification("Producto ya está en la lista");
+    return;
+  }
 
-    if (!list.items) list.items = [];
+  // Guardamos el producto completo (con nombre, imagen, supermercados, etc.)
+  const productToSave = {
+    id: product.id,
+    name: product.name || "Producto sin nombre",
+    image: product.image || "https://via.placeholder.com/100",
+    description: product.description || "",
+    supermarkets: Array.isArray(product.supermarkets) ? product.supermarkets : [],
+    purchased: false,
+  };
 
-    if (!list.items.some(item => item.id === productId)) {
-        list.items.push({ id: productId, quantity: 1, purchased: false });
-        
-        console.log("agregado"); // ← DEBE APARECER
-    } else {
-        console.log("Producto ya está en la lista");
-    }
+  list.items.push(productToSave);
+  showNotification("✅ Producto agregado a la lista");
 
-    closeListModal(); // Asegúrate de que esta función exista
-    renderShoppingLists(); // ← Actualiza la UI
+  closeListModal();
+  renderShoppingLists();
 
-    // scheduleSave() se llama automáticamente por el sync
+  // Guardar los datos en Supabase
+  saveUserDataToSupabase().then(() => console.log("💾 Lista actualizada correctamente en Supabase"));
 }
-// Forzar guardado inmediato (solo para pruebas)
-saveUserDataToSupabase().then(() => {
-    console.log("guardado (forzado)");
-});
+
+
         // New function for automatic price alerts
         function setPriceAlert(product) {
             const lowestPrice = Math.min(...product.supermarkets.map(s => s.price));
