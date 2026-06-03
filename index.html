@@ -1880,52 +1880,52 @@ renderFeaturedProducts();
     const title = document.getElementById('products-title');
     
     if (title) {
-        title.textContent = subsubName ? `Productos en ${subsubName}` : "Productos";
+        title.textContent = subsubName ? `Productos en ${subsubName}` : "Todos los productos";
     }
 
-    // Obtener productos de forma segura
+    container.innerHTML = '';
+
+    // === FILTRADO MEJORADO ===
     let productList = [];
+
     if (subsubName && categories?.subsub?.[subsubName]) {
-        productList = categories.subsub[subsubName].map(cat => {
-            return state.products.find(p => p && p.name === cat.name) || cat;
+        // Opción 1: Filtrar usando los nombres definidos en categories.subsub
+        const subsubItems = categories.subsub[subsubName];
+
+        productList = state.products.filter(product => {
+            if (!product || !product.name) return false;
+            return subsubItems.some(item => 
+                item.name === product.name || 
+                product.name.toLowerCase().includes(item.name.toLowerCase())
+            );
         });
-    } else {
+    } 
+
+    // Si no encontró productos por nombre, buscar por coincidencia parcial (backup)
+    if (productList.length === 0 && subsubName) {
+        productList = state.products.filter(product => 
+            product.name && 
+            product.name.toLowerCase().includes(subsubName.toLowerCase())
+        );
+    }
+
+    // Si aún está vacío, mostrar todos (último recurso)
+    if (productList.length === 0) {
         productList = state.products || [];
     }
 
     state.currentProductList = productList;
 
-    container.innerHTML = '';
-
-    if (!productList || productList.length === 0) {
+    if (productList.length === 0) {
         container.innerHTML = `
             <p class="text-center text-gray-400 py-12 text-lg">
-                No hay productos disponibles en esta categoría por el momento.
+                No hay productos en esta categoría por el momento.
             </p>`;
         showPage('products-page');
         return;
     }
 
-    // Procesar y ordenar productos
-    productList = productList.map(product => {
-        const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
-        const { quantity, unit } = extractQuantity ? extractQuantity(product.name) : {quantity: 0, unit: 'unidad'};
-        
-        const lowestPrice = supermarkets.length 
-            ? Math.min(...supermarkets.map(s => s?.price || 0)) 
-            : 0;
-
-        const pricePerUnit = quantity > 0 ? lowestPrice / quantity : lowestPrice;
-
-        return { 
-            ...product, 
-            supermarkets,
-            pricePerUnit, 
-            quantity, 
-            unit 
-        };
-    }).sort((a, b) => a.pricePerUnit - b.pricePerUnit);
-
+    // === RENDERIZADO (con protección) ===
     productList.forEach(product => {
         const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
         const lowestSupermarket = supermarkets.length 
@@ -1949,9 +1949,7 @@ renderFeaturedProducts();
                 <img src="${product.image || 'https://via.placeholder.com/300'}" 
                      alt="${product.name}" 
                      class="w-full h-56 object-cover group-hover:scale-105 transition duration-300 cursor-pointer">
-                <div class="absolute top-2 right-2 flex flex-col gap-1">
-                    ${savings > 0 ? `<span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold">-${savings}%</span>` : ''}
-                </div>
+                ${savings > 0 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">-${savings}%</span>` : ''}
                 <button class="favorite-btn absolute top-2 left-2 p-2 rounded-full transition duration-300 ${isFavorite ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-white bg-opacity-80 text-gray-700 hover:bg-opacity-100'}">
                     ${isFavorite ? '❤️' : '🤍'}
                 </button>
@@ -1960,62 +1958,33 @@ renderFeaturedProducts();
                 </button>
             </div>
             <div class="p-4">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-gray-800 text-sm line-clamp-2">${product.name}</h3>
-                    <div class="flex items-center">
-                        <span class="text-yellow-500 text-sm font-bold">${product.rating || '★'}</span>
-                    </div>
-                </div>
-                <p class="text-gray-600 text-xs mb-3 line-clamp-2">${product.description || ''}</p>
-                <div class="mb-3">
-                    <div class="flex items-center">
-                        <span class="text-xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
+                <h3 class="font-bold text-gray-800 text-sm line-clamp-2">${product.name}</h3>
+                <p class="text-xs text-gray-500 mt-1">${lowestSupermarket.name}</p>
+                <div class="mt-3 flex justify-between items-end">
+                    <div>
+                        <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
                         ${previousPrice > lowestPrice ? 
-                            `<div class="ml-2 flex items-center text-sm text-green-600">↓ ${(((previousPrice - lowestPrice) / previousPrice) * 100).toFixed(1)}%</div>` : ''}
+                            `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
                     </div>
-                    <p class="text-xs text-gray-500">En ${lowestSupermarket.name}</p>
-                    <p class="text-xs text-purple-600 mt-1">Precio por ${product.unit}: ${renderPrice(product.pricePerUnit)}</p>
-                    ${savings > 0 ? `<p class="text-xs text-blue-600 mt-1">Ahorras ${renderPrice(savings)} vs. el más caro</p>` : ''}
-                </div>
-                <div class="flex gap-2">
-                    <button class="view-prices-btn flex-1 bg-[#35008a] text-white py-2 px-3 rounded-lg font-semibold hover:bg-[#2b006e] transition duration-300 text-sm">
-                        Ver supermercados
-                    </button>
-                    <button class="add-to-cart-btn bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition duration-300">
-                        +
+                    <button class="bg-[#35008a] hover:bg-[#2b006e] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition">
+                        Ver precios
                     </button>
                 </div>
             </div>
         `;
 
-        // Event listeners seguros
-        const viewBtn = productCard.querySelector('.view-prices-btn');
-        const cartBtn = productCard.querySelector('.add-to-cart-btn');
-        const favBtn = productCard.querySelector('.favorite-btn');
-        const alertBtn = productCard.querySelector('.alert-btn');
-
+        // Eventos
         productCard.querySelector('img').onclick = () => {
             state.selectedProduct = product;
             showPricesPage();
         };
 
-        viewBtn.onclick = (e) => {
-            e.stopPropagation();
-            state.selectedProduct = product;
-            showPricesPage();
-        };
-
-        cartBtn.onclick = (e) => {
-            e.stopPropagation();
-            addToCart(product, lowestSupermarket.name);
-        };
-
-        favBtn.onclick = (e) => {
+        productCard.querySelector('.favorite-btn').onclick = (e) => {
             e.stopPropagation();
             toggleFavorite(product);
         };
 
-        alertBtn.onclick = (e) => {
+        productCard.querySelector('.alert-btn').onclick = (e) => {
             e.stopPropagation();
             toggleAlert(product);
         };
