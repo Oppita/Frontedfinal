@@ -1434,7 +1434,7 @@ async function loadProductsFromSupabase() {
     renderFeaturedProducts();
     renderDestacados(); // ← agrega esta línea
     
-    if (state.isLoggedIn) showCategoriesPage();
+    
 
   } catch (err) {
     console.error("❌ Error cargando productos", err);
@@ -3596,6 +3596,9 @@ async function handleLogin(e) {
         
         // Cargar datos del usuario
         await loadUserDataFromSupabase(data.user.id);
+
+// Cargar productos desde Supabase
+        await loadProductsFromSupabase();
         
         // Redirigir a categorías
         if (typeof showCategoriesPage === "function") {
