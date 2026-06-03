@@ -1,5 +1,3 @@
-
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -1426,10 +1424,27 @@ const categories = {
 
 async function loadProductsFromSupabase() {
   try {
-    const { data, error } = await supabaseClient.from("products").select("*");
-    if (error) throw error;
+    // Cargar productos
+    const { data: productosData, error: errorProductos } = await supabaseClient.from("productos").select("*");
+    if (errorProductos) throw errorProductos;
 
-    state.products = (data || []).map(prod => ({
+    // Cargar precios
+    const { data: preciosData, error: errorPrecios } = await supabaseClient.from("precios").select("*");
+    if (errorPrecios) console.warn("⚠️ No se pudieron cargar precios:", errorPrecios.message);
+
+    // Agrupar precios por producto_id
+    const preciosPorProducto = {};
+    (preciosData || []).forEach(p => {
+      if (!preciosPorProducto[p.producto_id]) preciosPorProducto[p.producto_id] = [];
+      preciosPorProducto[p.producto_id].push({
+        supermarket: p.supermercado,
+        price: p.precio,
+        previousPrice: p.precio_anterior || null,
+        unit: p.unidad || ""
+      });
+    });
+
+    state.products = (productosData || []).map(prod => ({
       id: prod.id,
       name: prod.nombre,
       image: prod.imagen,
@@ -1443,6 +1458,7 @@ async function loadProductsFromSupabase() {
     }));
 
     console.log("✅ Productos cargados:", state.products.length);
+    console.log("✅ Precios cargados:", (preciosData || []).length);
 
     renderFeaturedProducts();
     if (typeof renderDestacados === "function") renderDestacados();
@@ -4112,4 +4128,3 @@ window.removeFromShoppingList = removeFromShoppingList;
 
 </body>
 </html>
-
