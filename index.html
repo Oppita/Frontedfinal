@@ -1460,51 +1460,28 @@ precios.forEach(p => {
   }
 
   preciosPorProducto[p.product_id].push({
-
     name: p.supermercado,
-
     price: Number(p.precio),
-
-    previousPrice:
-      Number(p.precio_anterior || 0),
-
-    rating:
-      Number(p.rating || 4.5),
-
-    delivery:
-      p.delivery || ""
-
+    previousPrice: Number(p.precio_anterior || 0),
+    rating: Number(p.rating || 4.5),
+    delivery: p.delivery || ""
   });
 
 });
 
 state.products = productos.map(prod => ({
-
   id: prod.id,
-
   name: prod.nombre,
-
   image: prod.imagen,
-
   category: prod.categoria,
-
   subcategory: prod.subcategoria,
-
   subsubcategory: prod.subsubcategoria,
-
-  description:
-    prod.descripcion || "",
-
-  rating:
-    Number(prod.rating || 4.5),
-
-  brand:
-    prod.marca || "",
-
-  supermarkets:
-    preciosPorProducto[prod.id] || []
-
+  description: prod.descripcion || "",
+  rating: Number(prod.rating || 4.5),
+  brand: prod.marca || "",
+  supermarkets: preciosPorProducto[prod.id] || []
 }));
+
 window.products = state.products;
 
 console.log(
@@ -1529,6 +1506,7 @@ document.addEventListener(
 "DOMContentLoaded",
 loadProductsFromSupabase
 );
+
 
         
         // Products data with specific supermarket prices
