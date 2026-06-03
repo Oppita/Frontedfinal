@@ -4009,126 +4009,63 @@ async function initializeApp() {
         console.log("🚀 Inicializando aplicación...");
         
         const { data, error } = await supabaseClient.auth.getSession();
+
         if (error) {
             console.error("❌ Error al obtener sesión:", error);
             if (typeof showLandingPage === "function") showLandingPage();
             return;
         }
-        
-        if (data?.session?.user) {
-            console.log("✅ Sesión activa detectada:", data.session.user.email);
-            state.isLoggedIn = true;
-            state.user = data.session.user;
-            
-            // Cargar datos usuario
-            await loadUserDataFromSupabase(data.session.user.id);
 
-            // 🔥 CARGAR PRODUCTOS (CRÍTICO)
-            await loadProductsFromSupabase();
+        const user = data?.session?.user;
 
-            // Sync
-            setTimeout(setupSyncForCriticalFunctions, 1000);
-
-            // UI
-            if (typeof showCategoriesPage === "function") {
-                setTimeout(showCategoriesPage, 500);
-            }
-
-        } else {
+        if (!user) {
             console.log("🚪 No hay sesión activa");
             if (typeof showLandingPage === "function") showLandingPage();
+            return;
+        }
+
+        console.log("✅ Sesión activa detectada:", user.email);
+
+        // =========================
+        // ESTADO GLOBAL
+        // =========================
+        state.isLoggedIn = true;
+        state.user = user;
+
+        // =========================
+        // FUNCIONES CRÍTICAS (SAFE CALLS)
+        // =========================
+
+        if (typeof loadUserDataFromSupabase === "function") {
+            await loadUserDataFromSupabase(user.id);
+        } else {
+            console.error("❌ loadUserDataFromSupabase NO existe");
+        }
+
+        if (typeof loadProductsFromSupabase === "function") {
+            await loadProductsFromSupabase();
+        } else {
+            console.error("❌ loadProductsFromSupabase NO existe");
+        }
+
+        if (typeof setupSyncForCriticalFunctions === "function") {
+            setTimeout(setupSyncForCriticalFunctions, 1000);
+        }
+
+        if (typeof showCategoriesPage === "function") {
+            setTimeout(() => showCategoriesPage(), 500);
+        } else {
+            console.error("❌ showCategoriesPage NO existe");
         }
 
     } catch (err) {
-        console.error("❌ Error en inicialización:", err);
-        if (typeof showLandingPage === "function") showLandingPage();
+        console.error("❌ Error en initializeApp:", err);
+
+        if (typeof showLandingPage === "function") {
+            showLandingPage();
+        }
     }
 }
-
-/* --- AUTH LISTENER --- */
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log("📡 Evento de autenticación:", event);
-    
-    if (event === 'SIGNED_IN') {
-        console.log("✅ Login exitoso");
-        state.isLoggedIn = true;
-        state.user = session.user;
-
-        loadUserDataFromSupabase(session.user.id).then(() => {
-            setupSyncForCriticalFunctions();
-            showCategoriesPage();
-        });
-    }
-
-    if (event === 'SIGNED_OUT') {
-        console.log("🚪 Logout");
-        state.isLoggedIn = false;
-        state.user = null;
-        showLandingPage();
-    }
-});
-
-/* --- INIT --- */
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("🎬 DOM cargado");
-
-    setTimeout(() => {
-        initializeApp();
-    }, 300);
-});
-
-// Event listeners de auth
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log("📡 Evento de autenticación:", event);
-    
-    switch (event) {
-        case 'SIGNED_IN':
-            if (window.manualLoginTriggered) {
-                console.log("✅ Login manual exitoso");
-                state.isLoggedIn = true;
-                state.user = session.user;
-                loadUserDataFromSupabase(session.user.id).then(() => {
-                    setTimeout(setupSyncForCriticalFunctions, 500);
-                    if (typeof showCategoriesPage === "function") {
-                        showCategoriesPage();
-                    }
-                });
-                window.manualLoginTriggered = false;
-            }
-            break;
-            
-        case 'SIGNED_OUT':
-            console.log("🚪 Usuario cerró sesión");
-            state.isLoggedIn = false;
-            state.user = null;
-            state.shoppingCart = [];
-            state.favorites = [];
-            state.priceAlerts = [];
-            state.shoppingLists = [];
-            if (typeof showLandingPage === "function") showLandingPage();
-            break;
-    }
-});
-
-// Inicializar aplicación
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("🎬 DOM cargado - iniciando aplicación");
-
-    setTimeout(async () => {
-        await initializeApp();
-
-        // 👇 🔥 FORZAR carga de productos DESPUÉS de iniciar app
-        if (typeof loadProductsFromSupabase === "function") {
-            await loadProductsFromSupabase();
-        }
-
-        // 👇 🔥 IMPORTANTE: render inicial SOLO si hay sesión
-        if (state.isLoggedIn) {
-            showCategoriesPage();
-        }
-
-    }, 300);
-});
 
 // Configurar sincronización después de que se carguen las funciones
 setTimeout(setupSyncForCriticalFunctions, 2000);
