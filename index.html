@@ -1869,7 +1869,7 @@ renderFeaturedProducts();
 }
 
 
-      function showProductsPage() {
+     function showProductsPage() {
     if (!state.isLoggedIn) {
         showLoginPage();
         return;
@@ -1879,9 +1879,7 @@ renderFeaturedProducts();
     const container = document.getElementById('products-container');
     const title = document.getElementById('products-title');
     
-    if (title) {
-        title.textContent = subsubName ? `Productos en ${subsubName}` : "Productos";
-    }
+    if (title) title.textContent = subsubName ? `Productos en ${subsubName}` : "Productos";
 
     container.innerHTML = '';
 
@@ -1891,7 +1889,7 @@ renderFeaturedProducts();
         return;
     }
 
-    // Filtrado por subsubcategoría desde Supabase
+    // Filtrado
     const productList = (state.products || []).filter(product => {
         const productSub = product.subsubcategory || product.subsubcategoría || product.subsub || "";
         return productSub.toLowerCase().trim() === subsubName.toLowerCase().trim();
@@ -1900,60 +1898,51 @@ renderFeaturedProducts();
     state.currentProductList = productList;
 
     if (productList.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-16">
-                <p class="text-lg text-gray-300">No se encontraron productos en <strong>${subsubName}</strong></p>
-            </div>`;
+        container.innerHTML = `<div class="text-center py-16 text-gray-400">No se encontraron productos en ${subsubName}</div>`;
         showPage('products-page');
         return;
     }
 
-    // Render con mejor manejo de precios
-    productList.forEach(product => {
-        // Protección fuerte para supermarkets
-        let supermarkets = [];
-        if (Array.isArray(product.supermarkets)) {
-            supermarkets = product.supermarkets;
-        } else if (Array.isArray(product.precios)) {   // por si el campo tiene otro nombre
-            supermarkets = product.precios;
+    console.log(`📊 Mostrando ${productList.length} productos en "${subsubName}"`); // Debug
+
+    productList.forEach((product, index) => {
+        // === DEBUG: Ver estructura real del producto ===
+        if (index === 0) {
+            console.log("🔍 Estructura del primer producto:", product);
+            console.log("🔍 Supermarkets:", product.supermarkets);
         }
 
-        // Buscar el precio más bajo de forma segura
-        let lowestSupermarket = { name: "Sin precio", price: 0, previousPrice: 0 };
-
-        if (supermarkets.length > 0) {
-            lowestSupermarket = supermarkets.reduce((prev, curr) => {
-                const prevPrice = prev.price || 0;
-                const currPrice = curr.price || 0;
-                return prevPrice < currPrice ? prev : curr;
-            });
+        let supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
+        
+        // Posibles nombres alternativos del campo
+        if (supermarkets.length === 0) {
+            if (Array.isArray(product.precios)) supermarkets = product.precios;
+            if (Array.isArray(product.supermercados)) supermarkets = product.supermercados;
         }
+
+        const lowestSupermarket = supermarkets.length > 0 
+            ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
+            : { name: "Sin precio", price: 0, previousPrice: 0 };
 
         const lowestPrice = lowestSupermarket.price || 0;
         const previousPrice = lowestSupermarket.previousPrice || lowestPrice;
-        const savings = previousPrice > lowestPrice 
-            ? Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) 
-            : 0;
+        const savings = previousPrice > lowestPrice ? Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) : 0;
 
         const card = document.createElement('div');
         card.className = 'product-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden group cursor-pointer';
 
         card.innerHTML = `
             <div class="relative">
-                <img src="${product.image || 'https://via.placeholder.com/300'}" 
-                     alt="${product.name}" 
-                     class="w-full h-56 object-cover group-hover:scale-105 transition">
+                <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}" class="w-full h-56 object-cover group-hover:scale-105 transition">
                 ${savings > 5 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">-${savings}%</span>` : ''}
             </div>
             <div class="p-4">
                 <h3 class="font-semibold text-sm line-clamp-2 mb-2">${product.name}</h3>
                 <p class="text-xs text-gray-500 mb-3">${lowestSupermarket.name}</p>
-                
                 <div class="flex justify-between items-end">
                     <div>
                         <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
-                        ${previousPrice > lowestPrice ? 
-                            `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
+                        ${previousPrice > lowestPrice ? `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
                     </div>
                     <button class="view-prices-btn bg-[#35008a] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#2b006e]">
                         Ver precios
