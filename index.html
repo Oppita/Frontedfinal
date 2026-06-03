@@ -1536,14 +1536,10 @@ loadProductsFromSupabase
   return { quantity: 1, unit: "unidad" };
 }
 
-        // Get all products (for global search)
-        function getAllProducts() {
-            let allProducts = [];
-            for (const subsub in products) {
-                allProducts = allProducts.concat(products[subsub]);
-            }
-            return allProducts;
-        }
+        // function getAllProducts() {
+    return state.products || [];
+}
+        
         // --- Productos Destacados (nuevo) ---
         function renderFeaturedProducts(limit = 5) {
             const container = document.getElementById('featured-products-container');
