@@ -1425,47 +1425,28 @@ const categories = {
 window.state = window.state || {};
 
 async function loadProductsFromSupabase() {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*");
 
-try {
+    if (error) throw error;
 
-```
-console.log("📦 Cargando productos desde Supabase...");
+    state.products = data || [];
 
-const { data: productos, error: errorProductos } =
-  await supabaseClient
-    .from("productos")
-    .select("*");
+    console.log("✅ Productos cargados:", state.products.length);
 
-if (errorProductos) {
-  console.error(errorProductos);
-  return;
-}
+    // 👇 IMPORTANTE: render después de cargar
+    renderFeaturedProducts();
 
-const { data: precios, error: errorPrecios } =
-  await supabaseClient
-    .from("precios")
-    .select("*");
+    if (state.isLoggedIn) {
+      showCategoriesPage();
+    }
 
-if (errorPrecios) {
-  console.error(errorPrecios);
-  return;
-}
-
-const preciosPorProducto = {};
-
-precios.forEach(p => {
-
-  if (!preciosPorProducto[p.product_id]) {
-    preciosPorProducto[p.product_id] = [];
+  } catch (err) {
+    console.error("❌ Error cargando productos", err);
   }
-
-  preciosPorProducto[p.product_id].push({
-    name: p.supermercado,
-    price: Number(p.precio),
-    previousPrice: Number(p.precio_anterior || 0),
-    rating: Number(p.rating || 4.5),
-    delivery: p.delivery || ""
-  });
+}
 
 });
 
@@ -1482,30 +1463,6 @@ state.products = productos.map(prod => ({
   supermarkets: preciosPorProducto[prod.id] || []
 }));
 
-window.products = state.products;
-
-console.log(
-  "✅ Productos cargados:",
-  state.products.length
-);
-```
-
-} catch(err) {
-
-```
-console.error(
-  "❌ Error cargando productos",
-  err
-);
-```
-
-}
-}
-
-document.addEventListener(
-"DOMContentLoaded",
-loadProductsFromSupabase
-);
 
 
         
@@ -1544,7 +1501,7 @@ loadProductsFromSupabase
         function renderFeaturedProducts(limit = 5) {
             const container = document.getElementById('featured-products-container');
             if (!container) return;
-            const all = getAllProducts();
+const all = Array.isArray(state.products) ? state.products : [];
             if (!all || all.length === 0) {
                 container.innerHTML = '<p class="text-white text-center col-span-full">No hay productos para mostrar</p>';
                 return;
@@ -4066,6 +4023,26 @@ async function initializeApp() {
             
             // Cargar datos del usuario
             await loadUserDataFromSupabase(data.session.user.id);
+            async function initializeApp() {
+    try {
+        console.log("🚀 Inicializando aplicación...");
+        
+        const { data, error } = await supabaseClient.auth.getSession();
+        if (error) {
+            console.error("❌ Error al obtener sesión:", error);
+            if (typeof showLandingPage === "function") showLandingPage();
+            return;
+        }
+        
+        if (data?.session?.user) {
+            console.log("✅ Sesión activa detectada:", data.session.user.email);
+            state.isLoggedIn = true;
+            state.user = data.session.user;
+            
+            // Cargar datos del usuario
+            await loadUserDataFromSupabase(data.session.user.id);
+            
+            await loadProductsFromSupabase();
             
             // Configurar sincronización
             setTimeout(setupSyncForCriticalFunctions, 1000);
@@ -4120,7 +4097,21 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 // Inicializar aplicación
 document.addEventListener("DOMContentLoaded", function() {
     console.log("🎬 DOM cargado - iniciando aplicación");
-    setTimeout(initializeApp, 300);
+
+    setTimeout(async () => {
+        await initializeApp();
+
+        // 👇 🔥 FORZAR carga de productos DESPUÉS de iniciar app
+        if (typeof loadProductsFromSupabase === "function") {
+            await loadProductsFromSupabase();
+        }
+
+        // 👇 🔥 IMPORTANTE: render inicial SOLO si hay sesión
+        if (state.isLoggedIn) {
+            showCategoriesPage();
+        }
+
+    }, 300);
 });
 
 // Configurar sincronización después de que se carguen las funciones
