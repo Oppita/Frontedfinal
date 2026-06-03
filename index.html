@@ -1891,46 +1891,20 @@ renderFeaturedProducts();
         return;
     }
 
-    // ==================== FILTRADO FLEXIBLE ====================
-    let productList = [];
-
-    // Filtrado principal (más permisivo)
-    if (categories?.subsub?.[subsubName]) {
-        const references = categories.subsub[subsubName];
-
-        productList = state.products.filter(product => {
-            if (!product?.name) return false;
-            const productName = product.name.toLowerCase();
-
-            return references.some(ref => {
-                if (!ref?.name) return false;
-                const refName = ref.name.toLowerCase();
-                return productName === refName || 
-                       productName.includes(refName) || 
-                       refName.includes(productName);
-            });
-        });
-    }
-
-    // Backup 1: Búsqueda por palabra clave
-    if (productList.length === 0 && subsubName) {
-        const keyword = subsubName.toLowerCase();
-        productList = state.products.filter(product => 
-            product?.name && product.name.toLowerCase().includes(keyword)
-        );
-    }
-
-    // Backup 2: Si sigue vacío, mostrar algunos productos relacionados (opcional)
-    if (productList.length === 0) {
-        productList = state.products.slice(0, 20); // temporal para ver que cargue algo
-    }
+    // ==================== FILTRADO POR CAMPO DE SUPABASE ====================
+    const productList = state.products.filter(product => {
+        // Comparación flexible con el campo subsubcategoría de Supabase
+        const productSubsub = product.subsubcategoría || product.subsubcategoria || "";
+        return productSubsub.toLowerCase().trim() === subsubName.toLowerCase().trim();
+    });
 
     state.currentProductList = productList;
 
     if (productList.length === 0) {
         container.innerHTML = `
             <div class="text-center py-16">
-                <p class="text-xl text-gray-300">No se encontraron productos en "${subsubName}"</p>
+                <p class="text-lg text-gray-300">No se encontraron productos en <strong>${subsubName}</strong></p>
+                <p class="text-gray-500 mt-2">Revisa que el campo "subsubcategoría" en Supabase coincida exactamente.</p>
             </div>`;
         showPage('products-page');
         return;
@@ -1939,12 +1913,16 @@ renderFeaturedProducts();
     // ==================== RENDER ====================
     productList.forEach(product => {
         const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
+        
         const lowestSupermarket = supermarkets.length 
             ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
-            : { name: "Sin precio", price: 0 };
+            : { name: "Sin precio", price: 0, previousPrice: 0 };
 
         const lowestPrice = lowestSupermarket.price || 0;
-        const savings = 0; // simplificado por ahora
+        const previousPrice = lowestSupermarket.previousPrice || lowestPrice;
+        const savings = previousPrice > lowestPrice 
+            ? Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) 
+            : 0;
 
         const card = document.createElement('div');
         card.className = 'product-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden group cursor-pointer';
@@ -1954,16 +1932,22 @@ renderFeaturedProducts();
                 <img src="${product.image || 'https://via.placeholder.com/300'}" 
                      alt="${product.name}" 
                      class="w-full h-56 object-cover group-hover:scale-105 transition">
+                ${savings > 5 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">-${savings}%</span>` : ''}
             </div>
             <div class="p-4">
                 <h3 class="font-semibold text-sm line-clamp-2 mb-2">${product.name}</h3>
-                <p class="text-xs text-gray-500">${lowestSupermarket.name}</p>
-                <div class="mt-3">
-                    <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
+                <p class="text-xs text-gray-500 mb-3">${lowestSupermarket.name}</p>
+                
+                <div class="flex justify-between items-end">
+                    <div>
+                        <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
+                        ${previousPrice > lowestPrice ? 
+                            `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
+                    </div>
+                    <button class="view-prices-btn bg-[#35008a] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#2b006e]">
+                        Ver precios
+                    </button>
                 </div>
-                <button class="mt-4 w-full bg-[#35008a] text-white py-3 rounded-xl text-sm hover:bg-[#2b006e]">
-                    Ver precios
-                </button>
             </div>
         `;
 
