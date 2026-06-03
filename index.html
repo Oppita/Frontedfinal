@@ -1891,11 +1891,10 @@ renderFeaturedProducts();
         return;
     }
 
-    // ==================== FILTRADO POR CAMPO DE SUPABASE ====================
-    const productList = state.products.filter(product => {
-        // Comparación flexible con el campo subsubcategoría de Supabase
-        const productSubsub = product.subsubcategoría || product.subsubcategoria || "";
-        return productSubsub.toLowerCase().trim() === subsubName.toLowerCase().trim();
+    // Filtrado correcto usando el campo de Supabase
+    const productList = (state.products || []).filter(product => {
+        const productSub = product.subsubcategory || product.subsubcategoría || "";
+        return productSub.toLowerCase().trim() === subsubName.toLowerCase().trim();
     });
 
     state.currentProductList = productList;
@@ -1904,16 +1903,15 @@ renderFeaturedProducts();
         container.innerHTML = `
             <div class="text-center py-16">
                 <p class="text-lg text-gray-300">No se encontraron productos en <strong>${subsubName}</strong></p>
-                <p class="text-gray-500 mt-2">Revisa que el campo "subsubcategoría" en Supabase coincida exactamente.</p>
+                <p class="text-sm text-gray-500 mt-3">Revisa que el nombre en Supabase coincida exactamente con "${subsubName}"</p>
             </div>`;
         showPage('products-page');
         return;
     }
 
-    // ==================== RENDER ====================
+    // Renderizado
     productList.forEach(product => {
         const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
-        
         const lowestSupermarket = supermarkets.length 
             ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
             : { name: "Sin precio", price: 0, previousPrice: 0 };
