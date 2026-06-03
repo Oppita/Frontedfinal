@@ -1426,32 +1426,17 @@ const categories = {
 
 async function loadProductsFromSupabase() {
   try {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*");
-
+    const { data, error } = await supabase.from("products").select("*");
     if (error) throw error;
 
-    state.products = (data || []).map(prod => ({
-  id: prod.id,
-  name: prod.nombre,
-  image: prod.imagen,
-  category: prod.categoria,
-  subcategory: prod.subcategoria,
-  subsubcategory: prod.subsubcategoria,
-  description: prod.descripcion || "",
-  rating: Number(prod.rating || 4.5),
-  brand: prod.marca || "",
-  supermarkets: preciosPorProducto[prod.id] || []
-}));
+    state.products = (data || []).map(prod => ({ ... }));
+
     console.log("✅ Productos cargados:", state.products.length);
-
-    // 👇 IMPORTANTE: render después de cargar
+    
     renderFeaturedProducts();
-
-    if (state.isLoggedIn) {
-      showCategoriesPage();
-    }
+    renderDestacados(); // ← agrega esta línea
+    
+    if (state.isLoggedIn) showCategoriesPage();
 
   } catch (err) {
     console.error("❌ Error cargando productos", err);
@@ -3515,29 +3500,41 @@ function renderPrice(value) {
 
 
 <script>
-  function getTopProductsByAhorro(products, limit = 4) {
+  function getTopProductsByAhorro(limit = 4) {
     let allProducts = [];
-    for (const category in products) {
-      products[category].forEach(p => {
-        p.supermarkets.forEach(s => {
-          if (s.previousPrice && s.previousPrice > s.price) {
-            let ahorro = ((s.previousPrice - s.price) / s.previousPrice) * 100;
-            allProducts.push({
-              name: p.name,
-              image: p.image,
-              price: s.price,
-              previousPrice: s.previousPrice,
-              ahorro: ahorro.toFixed(1)
-            });
-          }
-        });
+    const products = state.products || [];
+    
+    products.forEach(p => {
+      if (!p.supermarkets) return;
+      p.supermarkets.forEach(s => {
+        if (s.previousPrice && s.previousPrice > s.price) {
+          let ahorro = ((s.previousPrice - s.price) / s.previousPrice) * 100;
+          allProducts.push({
+            name: p.name,
+            image: p.image,
+            price: s.price,
+            previousPrice: s.previousPrice,
+            ahorro: ahorro.toFixed(1)
+          });
+        }
       });
-    }
+    });
+    
     return allProducts.sort((a, b) => b.ahorro - a.ahorro).slice(0, limit);
   }
-  document.addEventListener("DOMContentLoaded", () => {
-    const destacados = getTopProductsByAhorro(products, 4);
+
+  function renderDestacados() {
+    const destacados = getTopProductsByAhorro(4);
     const destacadosList = document.getElementById("destacados-list");
+    if (!destacadosList) return;
+    
+    destacadosList.innerHTML = "";
+    
+    if (destacados.length === 0) {
+      destacadosList.innerHTML = `<p class="text-gray-400 text-sm col-span-4">No hay productos destacados aún.</p>`;
+      return;
+    }
+    
     destacados.forEach(prod => {
       destacadosList.innerHTML += `
         <div class="bg-white rounded-xl shadow p-4">
@@ -3549,7 +3546,7 @@ function renderPrice(value) {
         </div>
       `;
     });
-  });
+  }
 </script>
 
 
