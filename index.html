@@ -1608,8 +1608,10 @@ loadProductsFromSupabase
 
         // Get products for a subsubcategory
         function getProducts(subsubcategory) {
-            return products[subsubcategory] || [];
-        }
+    return (state.products || []).filter(
+        p => p.subsubcategory === subsubcategory
+    );
+}
         // Show notification
         function showNotification(message) {
             const notification = document.getElementById('notification');
