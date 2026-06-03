@@ -1432,8 +1432,18 @@ async function loadProductsFromSupabase() {
 
     if (error) throw error;
 
-    state.products = data || [];
-
+    state.products = (data || []).map(prod => ({
+  id: prod.id,
+  name: prod.nombre,
+  image: prod.imagen,
+  category: prod.categoria,
+  subcategory: prod.subcategoria,
+  subsubcategory: prod.subsubcategoria,
+  description: prod.descripcion || "",
+  rating: Number(prod.rating || 4.5),
+  brand: prod.marca || "",
+  supermarkets: preciosPorProducto[prod.id] || []
+}));
     console.log("✅ Productos cargados:", state.products.length);
 
     // 👇 IMPORTANTE: render después de cargar
@@ -1448,20 +1458,9 @@ async function loadProductsFromSupabase() {
   }
 }
 
-});
 
-state.products = productos.map(prod => ({
-  id: prod.id,
-  name: prod.nombre,
-  image: prod.imagen,
-  category: prod.categoria,
-  subcategory: prod.subcategoria,
-  subsubcategory: prod.subsubcategoria,
-  description: prod.descripcion || "",
-  rating: Number(prod.rating || 4.5),
-  brand: prod.marca || "",
-  supermarkets: preciosPorProducto[prod.id] || []
-}));
+
+
 
 
 
