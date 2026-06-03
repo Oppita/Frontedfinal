@@ -1869,7 +1869,7 @@ renderFeaturedProducts();
 }
 
 
-        function showProductsPage() {
+       function showProductsPage() {
     if (!state.isLoggedIn) {
         showLoginPage();
         return;
@@ -1880,116 +1880,101 @@ renderFeaturedProducts();
     const title = document.getElementById('products-title');
     
     if (title) {
-        title.textContent = subsubName ? `Productos en ${subsubName}` : "Todos los productos";
+        title.textContent = subsubName ? `Productos en ${subsubName}` : "Productos";
     }
 
     container.innerHTML = '';
 
-    // === FILTRADO MEJORADO ===
-    let productList = [];
-
-    if (subsubName && categories?.subsub?.[subsubName]) {
-        // Opción 1: Filtrar usando los nombres definidos en categories.subsub
-        const subsubItems = categories.subsub[subsubName];
-
-        productList = state.products.filter(product => {
-            if (!product || !product.name) return false;
-            return subsubItems.some(item => 
-                item.name === product.name || 
-                product.name.toLowerCase().includes(item.name.toLowerCase())
-            );
-        });
-    } 
-
-    // Si no encontró productos por nombre, buscar por coincidencia parcial (backup)
-    if (productList.length === 0 && subsubName) {
-        productList = state.products.filter(product => 
-            product.name && 
-            product.name.toLowerCase().includes(subsubName.toLowerCase())
-        );
-    }
-
-    // Si aún está vacío, mostrar todos (último recurso)
-    if (productList.length === 0) {
-        productList = state.products || [];
-    }
-
-    state.currentProductList = productList;
-
-    if (productList.length === 0) {
-        container.innerHTML = `
-            <p class="text-center text-gray-400 py-12 text-lg">
-                No hay productos en esta categoría por el momento.
-            </p>`;
+    if (!subsubName) {
+        container.innerHTML = `<p class="text-center py-10 text-gray-400">Selecciona una subcategoría</p>`;
         showPage('products-page');
         return;
     }
 
-    // === RENDERIZADO (con protección) ===
+    // ==================== FILTRADO FUERTE ====================
+    let productList = [];
+
+    // 1. Filtrado principal usando categories.subsub
+    if (categories?.subsub?.[subsubName]) {
+        const referenceItems = categories.subsub[subsubName];
+
+        productList = state.products.filter(product => {
+            if (!product?.name) return false;
+            
+            return referenceItems.some(ref => {
+                if (!ref?.name) return false;
+                return product.name.toLowerCase() === ref.name.toLowerCase() ||
+                       product.name.toLowerCase().includes(ref.name.toLowerCase()) ||
+                       ref.name.toLowerCase().includes(product.name.toLowerCase());
+            });
+        });
+    }
+
+    // 2. Backup: búsqueda por palabra clave
+    if (productList.length === 0 && subsubName) {
+        productList = state.products.filter(product => 
+            product?.name && 
+            product.name.toLowerCase().includes(subsubName.toLowerCase())
+        );
+    }
+
+    // 3. Último recurso: mostrar mensaje si no hay productos
+    if (productList.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-16">
+                <p class="text-xl text-gray-300">No se encontraron productos en "${subsubName}"</p>
+                <p class="text-gray-500 mt-2">Pronto agregaremos más productos a esta categoría.</p>
+            </div>`;
+        showPage('products-page');
+        return;
+    }
+
+    state.currentProductList = productList;
+
+    // ==================== RENDER ====================
     productList.forEach(product => {
         const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
         const lowestSupermarket = supermarkets.length 
-            ? supermarkets.reduce((prev, curr) => (prev.price || 0) < (curr.price || 0) ? prev : curr)
+            ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
             : { name: "Sin precio", price: 0, previousPrice: 0 };
 
         const lowestPrice = lowestSupermarket.price || 0;
         const previousPrice = lowestSupermarket.previousPrice || lowestPrice;
-        const savings = previousPrice > lowestPrice 
-            ? Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) 
-            : 0;
+        const savings = previousPrice > lowestPrice ? 
+            Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) : 0;
 
-        const isFavorite = state.favorites?.some(fav => fav.id === product.id) || false;
-        const hasAlert = state.priceAlerts?.some(alert => alert.productId === product.id) || false;
+        const isFavorite = state.favorites?.some(f => f.id === product.id) || false;
+        const hasAlert = state.priceAlerts?.some(a => a.productId === product.id) || false;
 
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group w-full';
+        const card = document.createElement('div');
+        card.className = 'product-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden group cursor-pointer';
 
-        productCard.innerHTML = `
+        card.innerHTML = `
             <div class="relative">
-                <img src="${product.image || 'https://via.placeholder.com/300'}" 
-                     alt="${product.name}" 
-                     class="w-full h-56 object-cover group-hover:scale-105 transition duration-300 cursor-pointer">
-                ${savings > 0 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">-${savings}%</span>` : ''}
-                <button class="favorite-btn absolute top-2 left-2 p-2 rounded-full transition duration-300 ${isFavorite ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-white bg-opacity-80 text-gray-700 hover:bg-opacity-100'}">
-                    ${isFavorite ? '❤️' : '🤍'}
-                </button>
-                <button class="alert-btn absolute bottom-2 right-2 p-2 rounded-full transition duration-300 ${hasAlert ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-white bg-opacity-80 text-gray-700 hover:bg-opacity-100'}">
-                    ${hasAlert ? '🔔' : '🔕'}
-                </button>
+                <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}" 
+                     class="w-full h-56 object-cover group-hover:scale-105 transition">
+                ${savings > 5 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">-${savings}%</span>` : ''}
             </div>
             <div class="p-4">
-                <h3 class="font-bold text-gray-800 text-sm line-clamp-2">${product.name}</h3>
-                <p class="text-xs text-gray-500 mt-1">${lowestSupermarket.name}</p>
+                <h3 class="font-semibold text-sm line-clamp-2 mb-2">${product.name}</h3>
+                <p class="text-xs text-gray-500">${lowestSupermarket.name}</p>
                 <div class="mt-3 flex justify-between items-end">
                     <div>
                         <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
-                        ${previousPrice > lowestPrice ? 
-                            `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
                     </div>
-                    <button class="bg-[#35008a] hover:bg-[#2b006e] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition">
+                    <button class="bg-[#35008a] text-white px-5 py-2.5 rounded-xl text-sm hover:bg-[#2b006e]">
                         Ver precios
                     </button>
                 </div>
             </div>
         `;
 
-        // Eventos
-        productCard.querySelector('img').onclick = () => {
+        card.onclick = () => {
             state.selectedProduct = product;
             showPricesPage();
         };
 
-        productCard.querySelector('.favorite-btn').onclick = (e) => {
-            e.stopPropagation();
-            toggleFavorite(product);
-        };
-
-        productCard.querySelector('.alert-btn').onclick = (e) => {
-            e.stopPropagation();
-            toggleAlert(product);
-        };
-
-        container.appendChild(productCard);
+        container.appendChild(card);
     });
 
     showPage('products-page');
