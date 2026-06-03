@@ -1869,7 +1869,7 @@ renderFeaturedProducts();
 }
 
 
-       function showProductsPage() {
+      function showProductsPage() {
     if (!state.isLoggedIn) {
         showLoginPage();
         return;
@@ -1891,9 +1891,9 @@ renderFeaturedProducts();
         return;
     }
 
-    // Filtrado correcto usando el campo de Supabase
+    // Filtrado por subsubcategoría desde Supabase
     const productList = (state.products || []).filter(product => {
-        const productSub = product.subsubcategory || product.subsubcategoría || "";
+        const productSub = product.subsubcategory || product.subsubcategoría || product.subsub || "";
         return productSub.toLowerCase().trim() === subsubName.toLowerCase().trim();
     });
 
@@ -1903,18 +1903,31 @@ renderFeaturedProducts();
         container.innerHTML = `
             <div class="text-center py-16">
                 <p class="text-lg text-gray-300">No se encontraron productos en <strong>${subsubName}</strong></p>
-                <p class="text-sm text-gray-500 mt-3">Revisa que el nombre en Supabase coincida exactamente con "${subsubName}"</p>
             </div>`;
         showPage('products-page');
         return;
     }
 
-    // Renderizado
+    // Render con mejor manejo de precios
     productList.forEach(product => {
-        const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
-        const lowestSupermarket = supermarkets.length 
-            ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
-            : { name: "Sin precio", price: 0, previousPrice: 0 };
+        // Protección fuerte para supermarkets
+        let supermarkets = [];
+        if (Array.isArray(product.supermarkets)) {
+            supermarkets = product.supermarkets;
+        } else if (Array.isArray(product.precios)) {   // por si el campo tiene otro nombre
+            supermarkets = product.precios;
+        }
+
+        // Buscar el precio más bajo de forma segura
+        let lowestSupermarket = { name: "Sin precio", price: 0, previousPrice: 0 };
+
+        if (supermarkets.length > 0) {
+            lowestSupermarket = supermarkets.reduce((prev, curr) => {
+                const prevPrice = prev.price || 0;
+                const currPrice = curr.price || 0;
+                return prevPrice < currPrice ? prev : curr;
+            });
+        }
 
         const lowestPrice = lowestSupermarket.price || 0;
         const previousPrice = lowestSupermarket.previousPrice || lowestPrice;
