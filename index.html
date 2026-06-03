@@ -4004,7 +4004,6 @@ function setupOAuthButtons() {
 
 
 
-/* --- INICIALIZACIÓN --- */
 async function initializeApp() {
     try {
         console.log("🚀 Inicializando aplicación...");
@@ -4021,45 +4020,62 @@ async function initializeApp() {
             state.isLoggedIn = true;
             state.user = data.session.user;
             
-            // Cargar datos del usuario
+            // Cargar datos usuario
             await loadUserDataFromSupabase(data.session.user.id);
-            async function initializeApp() {
-    try {
-        console.log("🚀 Inicializando aplicación...");
-        
-        const { data, error } = await supabaseClient.auth.getSession();
-        if (error) {
-            console.error("❌ Error al obtener sesión:", error);
-            if (typeof showLandingPage === "function") showLandingPage();
-            return;
-        }
-        
-        if (data?.session?.user) {
-            console.log("✅ Sesión activa detectada:", data.session.user.email);
-            state.isLoggedIn = true;
-            state.user = data.session.user;
-            
-            // Cargar datos del usuario
-            await loadUserDataFromSupabase(data.session.user.id);
-            
+
+            // 🔥 CARGAR PRODUCTOS (CRÍTICO)
             await loadProductsFromSupabase();
-            
-            // Configurar sincronización
+
+            // Sync
             setTimeout(setupSyncForCriticalFunctions, 1000);
-            
-            // Mostrar categorías
+
+            // UI
             if (typeof showCategoriesPage === "function") {
-                setTimeout(() => showCategoriesPage(), 500);
+                setTimeout(showCategoriesPage, 500);
             }
+
         } else {
             console.log("🚪 No hay sesión activa");
             if (typeof showLandingPage === "function") showLandingPage();
         }
+
     } catch (err) {
         console.error("❌ Error en inicialización:", err);
         if (typeof showLandingPage === "function") showLandingPage();
     }
 }
+
+/* --- AUTH LISTENER --- */
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    console.log("📡 Evento de autenticación:", event);
+    
+    if (event === 'SIGNED_IN') {
+        console.log("✅ Login exitoso");
+        state.isLoggedIn = true;
+        state.user = session.user;
+
+        loadUserDataFromSupabase(session.user.id).then(() => {
+            setupSyncForCriticalFunctions();
+            showCategoriesPage();
+        });
+    }
+
+    if (event === 'SIGNED_OUT') {
+        console.log("🚪 Logout");
+        state.isLoggedIn = false;
+        state.user = null;
+        showLandingPage();
+    }
+});
+
+/* --- INIT --- */
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("🎬 DOM cargado");
+
+    setTimeout(() => {
+        initializeApp();
+    }, 300);
+});
 
 // Event listeners de auth
 supabaseClient.auth.onAuthStateChange((event, session) => {
