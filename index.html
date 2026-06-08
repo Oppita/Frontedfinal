@@ -1991,9 +1991,17 @@ renderFeaturedProducts();
             if (!state.isLoggedIn) {
                 showLoginPage();
                 return;
-            }
-            // Sort supermarkets by price (lowest first)
-            const sortedSupermarkets = [...state.selectedProduct.supermarkets].sort((a, b) => a.price - b.price);
+            }// ✅ NORMALIZAR supermarkets antes de ordenar
+    const normalizedSupermarkets = (state.selectedProduct.supermarkets || []).map(s => ({
+        name: s.supermarket || s.name || "Supermercado",
+        price: Number(s.price) || 0,
+        previousPrice: Number(s.previousPrice) || Number(s.price) || 0,
+        rating: s.rating || "N/A",
+        delivery: s.delivery || ""
+    }));
+
+    const sortedSupermarkets = [...normalizedSupermarkets].sort((a, b) => a.price - b.price);
+ 
             const isFavorite = state.favorites.some(fav => fav.id === state.selectedProduct.id);
             const productDetails = document.getElementById('product-details');
             const pricesContainer = document.getElementById('prices-container');
@@ -3558,10 +3566,13 @@ async function handleRegister(e) {
     try {
         console.log("📝 Intentando registro con:", email);
         const { data, error } = await supabaseClient.auth.signUp({
-            email: email, 
-            password: password, 
-            options: { data: { name: name } }
-        });
+    email: email, 
+    password: password, 
+    options: { 
+        data: { name: name },
+        emailRedirectTo: window.location.origin  // ← agrega esto
+    }
+});
         
         if (error) {
             console.error("❌ Error en registro:", error.message);
