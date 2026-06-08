@@ -1424,42 +1424,30 @@ const categories = {
 
 async function loadProductsFromSupabase() {
   try {
-    console.log("🔄 Cargando productos y precios desde Supabase...");
-
     // Cargar productos
-    const { data: productosData, error: errorProductos } = await supabaseClient
-      .from("productos")
-      .select("*")
-      .order('nombre', { ascending: true });
-
+    const { data: productosData, error: errorProductos } = await supabaseClient.from("productos").select("*");
     if (errorProductos) throw errorProductos;
 
     // Cargar precios
-    const { data: preciosData, error: errorPrecios } = await supabaseClient
-      .from("precios")
-      .select("*");
-
-    if (errorPrecios) console.warn("⚠️ Error al cargar precios:", errorPrecios.message);
+    const { data: preciosData, error: errorPrecios } = await supabaseClient.from("precios").select("*");
+    if (errorPrecios) console.warn("⚠️ No se pudieron cargar precios:", errorPrecios.message);
 
     // Agrupar precios por producto_id
     const preciosPorProducto = {};
     (preciosData || []).forEach(p => {
-      if (!preciosPorProducto[p.producto_id]) {
-        preciosPorProducto[p.producto_id] = [];
-      }
+      if (!preciosPorProducto[p.producto_id]) preciosPorProducto[p.producto_id] = [];
       preciosPorProducto[p.producto_id].push({
-        name: p.supermercado || "Supermercado",
-        price: Number(p.precio) || 0,
-        previousPrice: Number(p.precio_anterior) || Number(p.precio) || 0,
+        supermarket: p.supermercado,
+        price: p.precio,
+        previousPrice: p.precio_anterior || null,
         unit: p.unidad || ""
       });
     });
 
-    // Mapear productos con mejor manejo
     state.products = (productosData || []).map(prod => ({
       id: prod.id,
       name: prod.nombre,
-      image: prod.imagen || "",                    // Acepta cualquier URL (webp incluida)
+      image: prod.imagen,
       category: prod.categoria,
       subcategory: prod.subcategoria,
       subsubcategory: prod.subsubcategoria,
@@ -1469,17 +1457,14 @@ async function loadProductsFromSupabase() {
       supermarkets: preciosPorProducto[prod.id] || []
     }));
 
-    console.log(`✅ ${state.products.length} productos cargados correctamente`);
-    
-    // Debug: mostrar los primeros 3 productos para verificar
-    console.log("📋 Primeros productos:", state.products.slice(0, 3));
+    console.log("✅ Productos cargados:", state.products.length);
+    console.log("✅ Precios cargados:", (preciosData || []).length);
 
-    // Renderizar secciones
-    if (typeof renderFeaturedProducts === "function") renderFeaturedProducts();
+    renderFeaturedProducts();
     if (typeof renderDestacados === "function") renderDestacados();
 
   } catch (err) {
-    console.error("❌ Error cargando productos:", err);
+    console.error("❌ Error cargando productos", err);
   }
 }
 
@@ -1904,10 +1889,13 @@ renderFeaturedProducts();
         return;
     }
 
+    // Filtrado
     const productList = (state.products || []).filter(product => {
-        const productSub = (product.subsubcategory || product.subsubcategoría || product.subsub || "").toLowerCase().trim();
-        return productSub === subsubName.toLowerCase().trim();
+        const productSub = product.subsubcategory || product.subsubcategoría || product.subsub || "";
+        return productSub.toLowerCase().trim() === subsubName.toLowerCase().trim();
     });
+
+    state.currentProductList = productList;
 
     if (productList.length === 0) {
         container.innerHTML = `<div class="text-center py-16 text-gray-400">No se encontraron productos en ${subsubName}</div>`;
@@ -1916,28 +1904,43 @@ renderFeaturedProducts();
     }
 
     productList.forEach(product => {
-        const supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
-        const lowest = supermarkets.length > 0 
-            ? supermarkets.reduce((a, b) => (a.price || 0) < (b.price || 0) ? a : b)
-            : { name: "Sin precio", price: 0 };
+        let supermarkets = Array.isArray(product.supermarkets) ? product.supermarkets : [];
+
+        // Normalizar estructura de supermercados
+        const normalizedSupermarkets = supermarkets.map(s => ({
+            name: s.supermarket || s.name || "Supermercado",
+            price: Number(s.price) || 0,
+            previousPrice: Number(s.previousPrice) || Number(s.price) || 0
+        }));
+
+        const lowestSupermarket = normalizedSupermarkets.length > 0 
+            ? normalizedSupermarkets.reduce((a, b) => a.price < b.price ? a : b)
+            : { name: "Sin precio", price: 0, previousPrice: 0 };
+
+        const lowestPrice = lowestSupermarket.price;
+        const previousPrice = lowestSupermarket.previousPrice;
+        const savings = previousPrice > lowestPrice 
+            ? Math.round(((previousPrice - lowestPrice) / previousPrice) * 100) 
+            : 0;
 
         const card = document.createElement('div');
         card.className = 'product-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden group cursor-pointer';
 
         card.innerHTML = `
             <div class="relative">
-                <img 
-                    src="${product.image || ''}" 
-                    alt="${product.name}" 
-                    class="w-full h-56 object-cover group-hover:scale-105 transition"
-                    onerror="this.src='https://via.placeholder.com/400x300?text=Sin+Imagen'; this.onerror=null;"
-                >
+                <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}" 
+                     class="w-full h-56 object-cover group-hover:scale-105 transition">
+                ${savings > 5 ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-bold">-${savings}%</span>` : ''}
             </div>
             <div class="p-4">
                 <h3 class="font-semibold text-sm line-clamp-2 mb-2">${product.name}</h3>
-                <p class="text-xs text-gray-500 mb-3">${lowest.name}</p>
+                <p class="text-xs text-gray-500 mb-3">${lowestSupermarket.name}</p>
                 <div class="flex justify-between items-end">
-                    <span class="text-2xl font-bold text-green-600">${renderPrice(lowest.price)}</span>
+                    <div>
+                        <span class="text-2xl font-bold text-green-600">${renderPrice(lowestPrice)}</span>
+                        ${previousPrice > lowestPrice ? 
+                            `<span class="text-xs text-gray-400 line-through block">${renderPrice(previousPrice)}</span>` : ''}
+                    </div>
                     <button class="view-prices-btn bg-[#35008a] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#2b006e]">
                         Ver precios
                     </button>
