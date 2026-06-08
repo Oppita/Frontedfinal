@@ -1424,17 +1424,46 @@ const categories = {
 
 async function loadProductsFromSupabase() {
   try {
-    // Cargar productos
-    const { data: productosData, error: errorProductos } = await supabaseClient.from("productos").select("*");
-    if (errorProductos) throw errorProductos;
+    // ── Cargar TODOS los productos paginando (Supabase limita a 1000 por request) ──
+    let allProductos = [];
+    let from = 0;
+    const pageSize = 1000;
 
-    // Cargar precios
-    const { data: preciosData, error: errorPrecios } = await supabaseClient.from("precios").select("*");
-    if (errorPrecios) console.warn("⚠️ No se pudieron cargar precios:", errorPrecios.message);
+    while (true) {
+      const { data: batch, error } = await supabaseClient
+        .from("productos")
+        .select("*")
+        .range(from, from + pageSize - 1);
 
-    // Agrupar precios por producto_id
+      if (error) throw error;
+      if (!batch || batch.length === 0) break;
+
+      allProductos = allProductos.concat(batch);
+      if (batch.length < pageSize) break; // última página
+      from += pageSize;
+    }
+
+    // ── Cargar TODOS los precios paginando también ──
+    let allPrecios = [];
+    from = 0;
+
+    while (true) {
+      const { data: batch, error } = await supabaseClient
+        .from("precios")
+        .select("*")
+        .range(from, from + pageSize - 1);
+
+      if (error) { console.warn("⚠️ No se pudieron cargar precios:", error.message); break; }
+      if (!batch || batch.length === 0) break;
+
+      allPrecios = allPrecios.concat(batch);
+      if (batch.length < pageSize) break;
+      from += pageSize;
+    }
+
+    // ── Agrupar precios por producto_id ──
     const preciosPorProducto = {};
-    (preciosData || []).forEach(p => {
+    allPrecios.forEach(p => {
       if (!preciosPorProducto[p.producto_id]) preciosPorProducto[p.producto_id] = [];
       preciosPorProducto[p.producto_id].push({
         supermarket: p.supermercado,
@@ -1444,7 +1473,7 @@ async function loadProductsFromSupabase() {
       });
     });
 
-    state.products = (productosData || []).map(prod => ({
+    state.products = allProductos.map(prod => ({
       id: prod.id,
       name: prod.nombre,
       image: prod.imagen,
@@ -1458,7 +1487,7 @@ async function loadProductsFromSupabase() {
     }));
 
     console.log("✅ Productos cargados:", state.products.length);
-    console.log("✅ Precios cargados:", (preciosData || []).length);
+    console.log("✅ Precios cargados:", allPrecios.length);
 
     renderFeaturedProducts();
     if (typeof renderDestacados === "function") renderDestacados();
